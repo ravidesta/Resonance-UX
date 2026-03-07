@@ -1,0 +1,361 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  MessageCircle, 
+  Mic, 
+  Video, 
+  Phone, 
+  ArrowLeft, 
+  MoreHorizontal, 
+  Play,
+  StopCircle,
+  PhoneOff,
+  Camera,
+  Image as ImageIcon,
+  Wind
+} from 'lucide-react';
+
+// --- GLOBAL STYLES & FONTS ---
+const CustomStyles = () => (
+  <style dangerouslySetInnerHTML={{__html: `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600&display=swap');
+
+    :root {
+      --bg-base: #FAFAF8;
+      --bg-surface: #FFFFFF;
+      --bg-glass: rgba(255, 255, 255, 0.7);
+      
+      --green-900: #0A1C14;
+      --green-800: #122E21;
+      --green-700: #1B402E;
+      --green-200: #D1E0D7;
+      --green-100: #E8F0EA;
+      
+      --gold-primary: #C5A059;
+      --gold-light: #E6D0A1;
+      --gold-dark: #9A7A3A;
+      
+      --text-main: #122E21;
+      --text-muted: #5C7065;
+      --text-light: #8A9C91;
+
+      --border-light: #E5EBE7;
+    }
+
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
+    .font-sans { font-family: 'Manrope', sans-serif; }
+
+    .paper-noise {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .organic-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: 0;
+      opacity: 0.5;
+      animation: breathe 15s infinite alternate ease-in-out;
+    }
+    
+    .blob-1 {
+      top: -10%; left: -20%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, var(--green-200) 0%, transparent 70%);
+    }
+    
+    .blob-2 {
+      bottom: 20%; right: -20%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(197, 160, 89, 0.15) 0%, transparent 70%);
+      animation-delay: -5s;
+    }
+
+    @keyframes breathe {
+      0% { transform: scale(1) translate(0, 0); }
+      100% { transform: scale(1.05) translate(10px, 15px); }
+    }
+
+    @keyframes ripple {
+      0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.4); }
+      70% { box-shadow: 0 0 0 30px rgba(197, 160, 89, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+    }
+
+    .recording-ripple {
+      animation: ripple 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-panel {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-light);
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Video Call placeholder gradient */
+    .video-feed {
+      background: linear-gradient(145deg, #1B402E 0%, #0A1C14 100%);
+    }
+  `}} />
+);
+
+// --- MOCK DATA ---
+const contacts = [
+  { id: 1, name: "Elena Rostova", intention: "Deep work phase", initial: "E", unread: true },
+  { id: 2, name: "Julian Vance", intention: "Recharging", initial: "J", unread: false },
+  { id: 3, name: "Sarah Chen", intention: "Open to connect", initial: "S", unread: false },
+];
+
+const mockChat = [
+  { id: 1, sender: 'them', type: 'text', content: "Take your time with the proposal. No rush at all.", time: "10:42 AM" },
+  { id: 2, sender: 'me', type: 'text', content: "Appreciate that. The spaciousness really helps.", time: "11:15 AM" },
+  { id: 3, sender: 'them', type: 'audio', duration: "1:24", time: "11:30 AM" },
+];
+
+// --- MAIN APP COMPONENT ---
+export default function App() {
+  const [view, setView] = useState('inbox'); // 'inbox', 'chat', 'call'
+  const [activeContact, setActiveContact] = useState(null);
+
+  const openChat = (contact) => {
+    setActiveContact(contact);
+    setView('chat');
+  };
+
+  const startCall = () => setView('call');
+  const closeCall = () => setView('chat');
+  const goBack = () => {
+    setActiveContact(null);
+    setView('inbox');
+  };
+
+  return (
+    <div className="min-h-screen bg-[#E5EBE7] flex items-center justify-center p-4 font-sans text-[#122E21]">
+      <CustomStyles />
+      
+      {/* Mobile Device Simulator Container */}
+      <div className="relative w-full max-w-[400px] h-[850px] max-h-[90vh] bg-[#FAFAF8] rounded-[40px] shadow-2xl overflow-hidden border-[8px] border-white flex flex-col">
+        
+        {/* Ambient Backgrounds (Only active in Inbox and Chat, not in Call) */}
+        {view !== 'call' && (
+          <>
+            <div className="blob-1 organic-blob"></div>
+            <div className="blob-2 organic-blob"></div>
+            <div className="paper-noise"></div>
+          </>
+        )}
+
+        {/* Dynamic View Routing */}
+        {view === 'inbox' && <InboxView contacts={contacts} onOpenChat={openChat} />}
+        {view === 'chat' && <ChatView contact={activeContact} onBack={goBack} onStartCall={startCall} />}
+        {view === 'call' && <CallView contact={activeContact} onEndCall={closeCall} />}
+
+      </div>
+    </div>
+  );
+}
+
+// --- VIEWS ---
+
+function InboxView({ contacts, onOpenChat }) {
+  return (
+    <div className="flex-1 flex flex-col relative z-10 animate-in fade-in duration-700 h-full">
+      <header className="px-6 pt-12 pb-6 flex justify-between items-end">
+        <div>
+          <span className="text-[10px] font-semibold text-[#9A7A3A] uppercase tracking-[0.2em] block mb-1">
+            Resonance
+          </span>
+          <h1 className="font-serif text-3xl font-semibold text-[#0A1C14] leading-none">
+            Inner Circle
+          </h1>
+        </div>
+        <button className="w-10 h-10 rounded-full bg-[#122E21] text-white flex items-center justify-center shadow-md hover:bg-[#9A7A3A] transition-colors">
+          <MessageCircle size={18} />
+        </button>
+      </header>
+
+      <main className="flex-1 overflow-y-auto px-6 hide-scrollbar space-y-4 pb-12">
+        {contacts.map((contact) => (
+          <button 
+            key={contact.id}
+            onClick={() => onOpenChat(contact)}
+            className="w-full bg-white/60 backdrop-blur-md rounded-[24px] p-4 flex items-center gap-4 border border-[#E5EBE7] hover:bg-white transition-all text-left group"
+          >
+            <div className="relative">
+              <div className="w-14 h-14 rounded-full border-2 border-[#E5EBE7] flex items-center justify-center bg-[#FAFAF8] group-hover:border-[#C5A059] transition-colors">
+                <span className="font-serif text-xl text-[#0A1C14]">{contact.initial}</span>
+              </div>
+              {/* Radically Calm Notification: Subtle Gold Dot instead of Blazing Red Number */}
+              {contact.unread && (
+                <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-[#C5A059] border-2 border-white rounded-full"></div>
+              )}
+            </div>
+            
+            <div className="flex-1">
+              <h3 className="font-serif text-xl text-[#0A1C14] mb-0.5">{contact.name}</h3>
+              {/* Intentional Statuses instead of "Online" or "Read" */}
+              <p className="text-xs text-[#8A9C91] italic font-serif flex items-center gap-1">
+                <Wind size={10} /> "{contact.intention}"
+              </p>
+            </div>
+          </button>
+        ))}
+      </main>
+    </div>
+  );
+}
+
+function ChatView({ contact, onBack, onStartCall }) {
+  const [isRecording, setIsRecording] = useState(false);
+
+  return (
+    <div className="flex-1 flex flex-col relative z-10 animate-in slide-in-from-right-4 duration-500 h-full">
+      {/* Chat Header */}
+      <header className="px-4 pt-12 pb-4 flex justify-between items-center glass-panel border-t-0 border-b relative z-20">
+        <button onClick={onBack} className="p-2 text-[#8A9C91] hover:text-[#0A1C14] transition-colors">
+          <ArrowLeft size={24} strokeWidth={1.5} />
+        </button>
+        
+        <div className="flex flex-col items-center">
+          <h2 className="font-serif text-xl text-[#0A1C14] leading-tight">{contact?.name}</h2>
+          <span className="text-[9px] font-semibold text-[#C5A059] uppercase tracking-widest mt-0.5">Present</span>
+        </div>
+
+        <button onClick={onStartCall} className="p-2 text-[#0A1C14] hover:text-[#C5A059] transition-colors">
+          <Video size={22} strokeWidth={1.5} />
+        </button>
+      </header>
+
+      {/* Messages Area */}
+      <main className="flex-1 overflow-y-auto px-6 py-6 hide-scrollbar flex flex-col gap-6">
+        <div className="text-center mb-4">
+          <span className="text-[10px] font-semibold text-[#8A9C91] uppercase tracking-[0.2em]">Today</span>
+        </div>
+
+        {mockChat.map((msg) => (
+          <div key={msg.id} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[75%] rounded-[24px] p-4 ${
+              msg.sender === 'me' 
+                ? 'bg-[#122E21] text-[#FAFAF8] rounded-br-sm shadow-sm' 
+                : 'bg-white border border-[#E5EBE7] text-[#122E21] rounded-bl-sm shadow-sm'
+            }`}>
+              {msg.type === 'text' ? (
+                <p className="text-sm leading-relaxed">{msg.content}</p>
+              ) : (
+                /* Audio Message Viz - Calm line instead of jagged waveforms */
+                <div className="flex items-center gap-3 w-48">
+                  <button className={`w-8 h-8 rounded-full flex items-center justify-center ${msg.sender === 'me' ? 'bg-[#1B402E] text-[#C5A059]' : 'bg-[#FAFAF8] text-[#C5A059]'}`}>
+                    <Play size={14} className="ml-0.5" />
+                  </button>
+                  <div className="flex-1 h-1 bg-[#E5EBE7]/30 rounded-full relative overflow-hidden">
+                    <div className="absolute top-0 left-0 h-full w-1/3 bg-[#C5A059] rounded-full"></div>
+                  </div>
+                  <span className={`text-xs font-serif italic ${msg.sender === 'me' ? 'text-[#8A9C91]' : 'text-[#8A9C91]'}`}>{msg.duration}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </main>
+
+      {/* Composer Area */}
+      <div className="glass-panel p-4 pb-8 z-20 relative">
+        {isRecording ? (
+          <div className="h-[52px] bg-[#122E21] rounded-full flex items-center justify-between px-4 animate-in slide-in-from-bottom-2 duration-300">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-[#D87050] animate-pulse"></div>
+              <span className="font-serif italic text-[#C5A059] text-sm">Recording intention...</span>
+            </div>
+            <button 
+              onClick={() => setIsRecording(false)}
+              className="text-white bg-[#D87050] px-4 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-wider hover:bg-[#b55b3e] transition-colors"
+            >
+              Send Drop
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <button className="p-3 text-[#8A9C91] hover:text-[#0A1C14] transition-colors">
+              <ImageIcon size={20} strokeWidth={1.5} />
+            </button>
+            <div className="flex-1 bg-white border border-[#E5EBE7] rounded-full h-[52px] flex items-center px-4 shadow-inner">
+              <input 
+                type="text" 
+                placeholder="Compose quietly..." 
+                className="w-full bg-transparent outline-none text-sm text-[#0A1C14] placeholder:text-[#8A9C91] placeholder:italic placeholder:font-serif"
+              />
+            </div>
+            <button 
+              onMouseDown={() => setIsRecording(true)}
+              className="w-[52px] h-[52px] rounded-full bg-[#C5A059] text-white flex items-center justify-center shadow-lg hover:bg-[#9A7A3A] transition-colors recording-ripple"
+            >
+              <Mic size={22} strokeWidth={1.5} />
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CallView({ contact, onEndCall }) {
+  return (
+    <div className="absolute inset-0 z-50 video-feed flex flex-col font-sans text-white overflow-hidden animate-in zoom-in-95 duration-500">
+      
+      {/* Texture over the video feed */}
+      <div className="paper-noise z-10"></div>
+      
+      {/* Simulated Video Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(197,160,89,0.15),transparent_60%)] animate-pulse duration-1000 z-0"></div>
+
+      {/* Top HUD */}
+      <header className="px-6 pt-14 pb-4 flex justify-between items-start z-20">
+        <div>
+          <h2 className="font-serif text-3xl text-white drop-shadow-md">{contact?.name}</h2>
+          <span className="text-sm font-serif italic text-[#C5A059]">Connected securely</span>
+        </div>
+        
+        {/* Minimized / Soft Self-View */}
+        <div className="w-16 h-24 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md overflow-hidden flex items-center justify-center shadow-2xl">
+          <span className="text-[9px] uppercase tracking-widest text-white/40">You</span>
+        </div>
+      </header>
+
+      {/* Main Video Area Placeholder */}
+      <div className="flex-1 flex items-center justify-center z-20 flex-col gap-6">
+         {/* Abstract representation of the caller */}
+         <div className="w-48 h-48 rounded-full border border-[#C5A059]/20 flex items-center justify-center relative">
+            <div className="w-40 h-40 rounded-full bg-gradient-to-tr from-[#C5A059]/10 to-transparent breathe-circle absolute"></div>
+            <span className="font-serif text-6xl text-[#E6D0A1]">{contact?.initial}</span>
+          </div>
+      </div>
+
+      {/* Bottom Controls - Ultra Minimal */}
+      <div className="pb-12 pt-6 px-8 flex justify-center items-center gap-8 z-20">
+        <button className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-colors border border-white/10">
+          <Mic size={20} strokeWidth={1.5} />
+        </button>
+        
+        {/* End Call is prominent but elegant, using a muted terra cotta rather than glaring red */}
+        <button 
+          onClick={onEndCall}
+          className="w-16 h-16 rounded-full bg-[#D87050] flex items-center justify-center text-white shadow-[0_0_30px_rgba(216,112,80,0.3)] hover:bg-[#b55b3e] transition-colors transform hover:scale-105"
+        >
+          <PhoneOff size={24} strokeWidth={1.5} />
+        </button>
+        
+        <button className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-colors border border-white/10">
+          <Camera size={20} strokeWidth={1.5} />
+        </button>
+      </div>
+
+    </div>
+  );
+}
