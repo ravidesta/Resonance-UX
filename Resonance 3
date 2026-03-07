@@ -1,0 +1,534 @@
+import React, { useState } from 'react';
+import { 
+  CheckCircle2, 
+  Circle, 
+  Sun, 
+  Moon, 
+  Leaf, 
+  Briefcase, 
+  Plus, 
+  Sprout,
+  Wind,
+  Calendar,
+  MoreHorizontal,
+  ChevronRight,
+  User,
+  Clock,
+  SunMoon
+} from 'lucide-react';
+
+// --- GLOBAL STYLES & FONTS ---
+const CustomStyles = () => (
+  <style dangerouslySetInnerHTML={{__html: `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600&display=swap');
+
+    :root {
+      /* Light / Day Mode */
+      --bg-base: #FAFAF8;
+      --bg-surface: #FFFFFF;
+      --bg-glass: rgba(255, 255, 255, 0.7);
+      
+      --green-900: #0A1C14;
+      --green-800: #122E21;
+      --green-700: #1B402E;
+      --green-200: #D1E0D7;
+      --green-100: #E8F0EA;
+      
+      --gold-primary: #C5A059;
+      --gold-light: #E6D0A1;
+      --gold-dark: #9A7A3A;
+      
+      --text-main: #122E21;
+      --text-muted: #5C7065;
+      --text-light: #8A9C91;
+
+      --border-light: #E5EBE7;
+      --border-focus: #C5A059;
+      
+      --blob-opacity: 0.5;
+    }
+
+    /* Deep Rest / Night Mode */
+    .theme-deep {
+      --bg-base: #05100B; /* Deepest forest night */
+      --bg-surface: #0A1C14;
+      --bg-glass: rgba(10, 28, 20, 0.75);
+      
+      --text-main: #FAFAF8;
+      --text-muted: #8A9C91;
+      --text-light: #5C7065;
+
+      --border-light: #1B402E;
+      --border-focus: #C5A059;
+      
+      --blob-opacity: 0.15; /* Bioluminescence effect */
+    }
+
+    body {
+      background-color: var(--bg-base);
+      transition: background-color 0.8s ease;
+    }
+
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
+    .font-sans { font-family: 'Manrope', sans-serif; }
+
+    .paper-noise {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .organic-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: 0;
+      opacity: var(--blob-opacity);
+      animation: breathe 15s infinite alternate ease-in-out;
+      transition: opacity 1s ease;
+    }
+    
+    .blob-1 {
+      top: -5%; left: -20%;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, var(--green-200) 0%, transparent 70%);
+    }
+    
+    .blob-2 {
+      bottom: 10%; right: -20%;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(197, 160, 89, 0.3) 0%, transparent 70%);
+      animation-delay: -5s;
+    }
+
+    @keyframes breathe {
+      0% { transform: scale(1) translate(0, 0); }
+      100% { transform: scale(1.05) translate(10px, 15px); }
+    }
+
+    .glass-panel {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-light);
+    }
+    
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .task-check {
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .task-row:hover .task-check:not(.completed) {
+      color: var(--gold-primary);
+      transform: scale(1.1);
+    }
+
+    /* Rhythm Line Animation */
+    .rhythm-line {
+      position: absolute;
+      left: 11px;
+      top: 30px;
+      bottom: -30px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--gold-primary), var(--border-light) 40%);
+      opacity: 0.5;
+    }
+  `}} />
+);
+
+// --- MOCK DATA ---
+const initialTasks = [
+  { id: 1, title: "Review brand strategy deck", energy: "high", domain: "Client Work", completed: false, collaborator: "Elena" },
+  { id: 2, title: "Draft newsletter outline", energy: "balanced", domain: "Cultivation", completed: false },
+  { id: 3, title: "Clear inbox & sort invoices", energy: "low", domain: "Admin", completed: false },
+  { id: 4, title: "Morning grounding practice", energy: "restorative", domain: "Personal", completed: true },
+];
+
+const domains = [
+  { id: 1, name: "Client Work", activeTasks: 4, color: "#122E21" },
+  { id: 2, name: "Cultivation", activeTasks: 2, color: "#9A7A3A" },
+  { id: 3, name: "Admin & Operations", activeTasks: 5, color: "#5C7065" },
+];
+
+const dailyRhythms = [
+  {
+    phase: "Ascend",
+    time: "8:00 AM - 11:00 AM",
+    intent: "Deep Work & Focus",
+    isActive: false,
+    events: [
+      { title: "Review brand strategy", time: "9:30 AM", type: "focus" }
+    ]
+  },
+  {
+    phase: "Zenith",
+    time: "11:00 AM - 2:00 PM",
+    intent: "Collaboration & Connection",
+    isActive: true, // "Current" phase
+    events: [
+      { title: "Sync with Elena", time: "1:00 PM", type: "social" }
+    ]
+  },
+  {
+    phase: "Descent",
+    time: "2:00 PM - 5:00 PM",
+    intent: "Admin & Organization",
+    isActive: false,
+    events: [
+      { title: "Inbox Zero & Invoices", time: "3:30 PM", type: "admin" }
+    ]
+  },
+  {
+    phase: "Rest",
+    time: "5:00 PM Onward",
+    intent: "Detachment",
+    isActive: false,
+    events: [] // Beautiful spaciousness
+  }
+];
+
+// --- MAIN APP COMPONENT ---
+export default function App() {
+  const [view, setView] = useState('rhythms'); // 'focus', 'domains', 'rhythms'
+  const [tasks, setTasks] = useState(initialTasks);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isDeepMode, setIsDeepMode] = useState(false); // Dark Mode toggle
+
+  const toggleTask = (id) => {
+    setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  };
+
+  return (
+    <div className={`min-h-screen flex items-center justify-center p-4 font-sans transition-colors duration-1000 ${isDeepMode ? 'bg-[#05100B] theme-deep' : 'bg-[#E5EBE7]'}`}>
+      <CustomStyles />
+      
+      {/* Mobile Device Simulator */}
+      <div className="relative w-full max-w-[400px] h-[850px] max-h-[90vh] bg-[var(--bg-base)] rounded-[40px] shadow-2xl overflow-hidden border-[8px] border-[var(--bg-surface)] flex flex-col transition-colors duration-1000">
+        
+        <div className="blob-1 organic-blob"></div>
+        <div className="blob-2 organic-blob"></div>
+        <div className="paper-noise"></div>
+
+        {/* Global Header Actions (Deep Rest Toggle) */}
+        <div className="absolute top-6 right-6 z-50">
+          <button 
+            onClick={() => setIsDeepMode(!isDeepMode)}
+            className="w-10 h-10 rounded-full bg-[var(--bg-surface)] border border-[var(--border-light)] text-[var(--gold-primary)] flex items-center justify-center shadow-sm hover:scale-105 transition-all"
+            title="Toggle Deep Rest Mode"
+          >
+            {isDeepMode ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
+          </button>
+        </div>
+
+        {/* Dynamic Views */}
+        {view === 'focus' && <FocusView tasks={tasks} onToggle={toggleTask} />}
+        {view === 'domains' && <DomainsView domains={domains} />}
+        {view === 'rhythms' && <RhythmsView rhythms={dailyRhythms} />}
+
+        {/* Drawer overlay for adding tasks */}
+        {isAdding && <CreateDrawer onClose={() => setIsAdding(false)} />}
+
+        {/* Bottom Navigation */}
+        <nav className="absolute bottom-0 w-full glass-panel z-40 px-6 py-5 pb-8 flex justify-between items-center rounded-t-[30px] transition-colors duration-1000">
+          <NavItem 
+            icon={<Clock />} 
+            label="Rhythms" 
+            active={view === 'rhythms'} 
+            onClick={() => setView('rhythms')} 
+          />
+          <NavItem 
+            icon={<Sprout />} 
+            label="Focus" 
+            active={view === 'focus'} 
+            onClick={() => setView('focus')} 
+          />
+          
+          {/* Gentle Create Action */}
+          <button 
+            onClick={() => setIsAdding(true)}
+            className="w-12 h-12 bg-[var(--text-main)] rounded-full flex items-center justify-center text-[var(--bg-base)] shadow-lg transform -translate-y-4 hover:bg-[var(--gold-dark)] transition-all hover:scale-105"
+          >
+            <Plus size={22} strokeWidth={1.5} />
+          </button>
+          
+          <NavItem 
+            icon={<Briefcase />} 
+            label="Domains" 
+            active={view === 'domains'} 
+            onClick={() => setView('domains')} 
+          />
+        </nav>
+      </div>
+    </div>
+  );
+}
+
+// --- VIEWS ---
+
+function RhythmsView({ rhythms }) {
+  return (
+    <div className="flex-1 flex flex-col relative z-10 animate-in fade-in duration-700 h-full">
+      <header className="px-6 pt-14 pb-4">
+        <span className="text-[10px] font-semibold text-[var(--gold-dark)] uppercase tracking-[0.2em] block mb-1">
+          Tuesday, Oct 24
+        </span>
+        <h1 className="font-serif text-4xl font-semibold text-[var(--text-main)] leading-none mb-4">
+          Daily Flow
+        </h1>
+        
+        {/* Spaciousness Indicator */}
+        <div className="bg-[var(--bg-glass)] border border-[var(--border-light)] rounded-2xl p-4 inline-flex items-center gap-3">
+          <Wind size={16} className="text-[var(--gold-primary)]" />
+          <span className="font-serif italic text-sm text-[var(--text-muted)]">
+            You have <strong className="text-[var(--text-main)] font-medium">4 hours</strong> of spaciousness today.
+          </span>
+        </div>
+      </header>
+
+      <main className="flex-1 overflow-y-auto px-6 hide-scrollbar pb-32 mt-4 relative">
+        {rhythms.map((phase, index) => (
+          <div key={index} className="relative mb-10 pl-8">
+            {/* The flowing timeline line */}
+            {index !== rhythms.length - 1 && <div className="rhythm-line"></div>}
+            
+            {/* Phase Node */}
+            <div className="absolute left-0 top-1 w-6 h-6 rounded-full bg-[var(--bg-surface)] border border-[var(--border-light)] flex items-center justify-center">
+              <div className={`w-2 h-2 rounded-full ${phase.isActive ? 'bg-[var(--gold-primary)] shadow-[0_0_10px_var(--gold-primary)]' : 'bg-[var(--border-light)]'}`}></div>
+            </div>
+
+            {/* Phase Header */}
+            <div className="mb-4">
+              <h3 className={`font-serif text-2xl ${phase.isActive ? 'text-[var(--text-main)]' : 'text-[var(--text-muted)]'}`}>
+                {phase.phase}
+              </h3>
+              <p className="text-[9px] font-sans font-semibold uppercase tracking-widest text-[var(--text-light)]">
+                {phase.time} • {phase.intent}
+              </p>
+            </div>
+
+            {/* Events within Phase */}
+            {phase.events.length > 0 ? (
+              <div className="space-y-3">
+                {phase.events.map((evt, i) => (
+                  <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-[16px] p-3 flex gap-3 items-center group hover:border-[var(--border-focus)] transition-colors">
+                    <span className="text-xs font-serif italic text-[var(--text-light)] w-12 text-right">
+                      {evt.time}
+                    </span>
+                    <div className="w-px h-6 bg-[var(--border-light)]"></div>
+                    <span className="text-sm font-medium text-[var(--text-main)] flex-1">
+                      {evt.title}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* Soft empty state for spaciousness */
+              <div className="border border-dashed border-[var(--border-light)] rounded-[16px] p-4 flex items-center justify-center opacity-50">
+                <span className="text-xs font-serif italic text-[var(--text-light)]">Unstructured flow</span>
+              </div>
+            )}
+          </div>
+        ))}
+      </main>
+    </div>
+  );
+}
+
+function FocusView({ tasks, onToggle }) {
+  const activeTasks = tasks.filter(t => !t.completed);
+  const completedTasks = tasks.filter(t => t.completed);
+
+  return (
+    <div className="flex-1 flex flex-col relative z-10 animate-in fade-in duration-700 h-full">
+      <header className="px-6 pt-14 pb-4">
+        <span className="text-[10px] font-semibold text-[var(--gold-dark)] uppercase tracking-[0.2em] block mb-1">
+          Present Focus
+        </span>
+        <h1 className="font-serif text-4xl font-semibold text-[var(--text-main)] leading-none mb-4">
+          Cultivation
+        </h1>
+      </header>
+
+      <main className="flex-1 overflow-y-auto px-6 hide-scrollbar pb-32">
+        <div className="space-y-3 mt-4">
+          {activeTasks.map(task => (
+            <TaskCard key={task.id} task={task} onToggle={() => onToggle(task.id)} />
+          ))}
+        </div>
+
+        {completedTasks.length > 0 && (
+          <div className="mt-8 mb-4 flex items-center gap-4">
+            <div className="flex-1 h-px bg-[var(--border-light)]"></div>
+            <span className="text-[10px] font-semibold text-[var(--text-light)] uppercase tracking-widest">Completed</span>
+            <div className="flex-1 h-px bg-[var(--border-light)]"></div>
+          </div>
+        )}
+
+        <div className="space-y-3 opacity-60">
+          {completedTasks.map(task => (
+            <TaskCard key={task.id} task={task} onToggle={() => onToggle(task.id)} />
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function DomainsView({ domains }) {
+  return (
+    <div className="flex-1 flex flex-col relative z-10 animate-in fade-in duration-700 h-full">
+      <header className="px-6 pt-14 pb-6">
+        <span className="text-[10px] font-semibold text-[var(--gold-dark)] uppercase tracking-[0.2em] block mb-1">
+          Ecosystem
+        </span>
+        <h1 className="font-serif text-4xl font-semibold text-[var(--text-main)] leading-none">
+          Active Domains
+        </h1>
+      </header>
+
+      <main className="flex-1 overflow-y-auto px-6 hide-scrollbar space-y-4 pb-32">
+        {domains.map(domain => (
+          <button 
+            key={domain.id}
+            className="w-full bg-[var(--bg-surface)] rounded-[24px] p-5 border border-[var(--border-light)] hover:border-[var(--border-focus)] transition-all text-left group flex justify-between items-center"
+          >
+            <div>
+              <h3 className="font-serif text-2xl text-[var(--text-main)] mb-1 group-hover:text-[var(--gold-dark)] transition-colors">{domain.name}</h3>
+              <p className="text-xs text-[var(--text-light)] font-sans uppercase tracking-widest">
+                {domain.activeTasks} items cultivating
+              </p>
+            </div>
+            <div 
+              className="w-3 h-3 rounded-full opacity-50 group-hover:opacity-100 transition-opacity"
+              style={{ backgroundColor: domain.color }}
+            ></div>
+          </button>
+        ))}
+      </main>
+    </div>
+  );
+}
+
+function CreateDrawer({ onClose }) {
+  const [energy, setEnergy] = useState('balanced');
+
+  return (
+    <>
+      <div 
+        className="absolute inset-0 bg-[var(--green-900)] opacity-40 backdrop-blur-sm z-40 animate-in fade-in duration-300"
+        onClick={onClose}
+      ></div>
+      <div className="absolute bottom-0 left-0 right-0 bg-[var(--bg-surface)] rounded-t-[40px] z-50 p-6 pt-8 shadow-2xl animate-in slide-in-from-bottom-full duration-500 border-t border-[var(--border-light)]">
+        
+        <span className="text-[10px] font-semibold text-[var(--gold-primary)] uppercase tracking-[0.2em] block mb-2">
+          Plant a Seed
+        </span>
+        <input 
+          autoFocus
+          type="text" 
+          placeholder="What requires your energy?" 
+          className="w-full font-serif text-3xl text-[var(--text-main)] placeholder:text-[var(--text-light)] outline-none bg-transparent mb-8"
+        />
+
+        <div className="mb-8">
+          <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest block mb-3">
+            Energy Required
+          </span>
+          <div className="flex gap-2">
+            <EnergyBtn type="high" icon={<Sun size={14}/>} label="Deep/High" active={energy === 'high'} onClick={() => setEnergy('high')} />
+            <EnergyBtn type="balanced" icon={<Leaf size={14}/>} label="Flow/Routine" active={energy === 'balanced'} onClick={() => setEnergy('balanced')} />
+            <EnergyBtn type="low" icon={<Moon size={14}/>} label="Light/Admin" active={energy === 'low'} onClick={() => setEnergy('low')} />
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <button className="flex-1 bg-[var(--text-main)] text-[var(--bg-surface)] py-4 rounded-full text-xs font-semibold uppercase tracking-[0.15em] hover:bg-[var(--gold-dark)] hover:text-white transition-colors">
+            Cultivate
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// --- COMPONENTS ---
+
+function TaskCard({ task, onToggle }) {
+  const getEnergyConfig = (energy) => {
+    switch(energy) {
+      case 'high': return { icon: <Sun size={12}/>, color: '#D87050', label: 'Deep Work' };
+      case 'balanced': return { icon: <Leaf size={12}/>, color: '#9A7A3A', label: 'Flow State' };
+      case 'low': return { icon: <Moon size={12}/>, color: '#5C7065', label: 'Light Duty' };
+      case 'restorative': return { icon: <Wind size={12}/>, color: '#8A9C91', label: 'Restorative' };
+      default: return { icon: <Leaf size={12}/>, color: '#9A7A3A', label: 'Flow' };
+    }
+  };
+
+  const config = getEnergyConfig(task.energy);
+
+  return (
+    <div className={`task-row group bg-[var(--bg-surface)] border border-[var(--border-light)] rounded-[20px] p-4 flex gap-4 items-start shadow-sm transition-all hover:border-[var(--border-focus)] ${task.completed ? 'opacity-70' : ''}`}>
+      
+      <button 
+        onClick={onToggle}
+        className={`task-check mt-0.5 flex-shrink-0 ${task.completed ? 'text-[var(--gold-primary)] completed' : 'text-[var(--border-light)]'}`}
+      >
+        {task.completed ? <CheckCircle2 size={24} strokeWidth={1.5} fill="var(--bg-surface)" /> : <Circle size={24} strokeWidth={1.5} />}
+      </button>
+
+      <div className="flex-1 min-w-0">
+        <h3 className={`font-serif text-lg leading-tight mb-2 transition-colors ${task.completed ? 'text-[var(--text-light)] line-through decoration-[var(--border-light)]' : 'text-[var(--text-main)]'}`}>
+          {task.title}
+        </h3>
+        
+        <div className="flex items-center gap-3 flex-wrap">
+          <span 
+            className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest px-2 py-1 rounded-md bg-[var(--bg-base)] border border-[var(--border-light)]"
+            style={{ color: task.completed ? 'var(--text-light)' : config.color }}
+          >
+            {config.icon} {config.label}
+          </span>
+          
+          <span className="text-[10px] font-sans text-[var(--text-light)] uppercase tracking-wider">
+            {task.domain}
+          </span>
+
+          {task.collaborator && !task.completed && (
+            <span className="text-[10px] font-serif italic text-[var(--gold-primary)] ml-auto flex items-center gap-1">
+              <User size={10} /> Shared with {task.collaborator}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EnergyBtn({ icon, label, active, onClick, type }) {
+  // Using simplified visual states that work across both light and deep modes
+  return (
+    <button 
+      onClick={onClick}
+      className={`flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-xl border transition-all ${
+        active 
+        ? 'bg-[var(--bg-base)] text-[var(--gold-primary)] border-[var(--gold-primary)]' 
+        : 'bg-transparent text-[var(--text-light)] border-[var(--border-light)] hover:border-[var(--gold-dark)]'
+      }`}
+    >
+      {icon}
+      <span className="text-[9px] font-semibold uppercase tracking-widest">{label}</span>
+    </button>
+  );
+}
+
+function NavItem({ icon, label, active, onClick }) {
+  return (
+    <button onClick={onClick} className={`flex flex-col items-center gap-1 w-14 transition-colors ${active ? 'text-[var(--gold-dark)]' : 'text-[var(--text-light)] hover:text-[var(--text-main)]'}`}>
+      {React.cloneElement(icon, { size: 22, strokeWidth: active ? 2 : 1.5 })}
+      <span className="text-[9px] font-semibold tracking-wider uppercase mt-1">{label}</span>
+    </button>
+  );
+}
