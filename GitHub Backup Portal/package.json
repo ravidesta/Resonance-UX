@@ -1,0 +1,45 @@
+{
+  "name": "resonance-github-backup-portal",
+  "version": "1.0.0",
+  "description": "Resonance UX GitHub Backup Portal — Bioluminescent repository management with Kopia integration",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "electron": "electron .",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "build:win": "react-scripts build && electron-builder --win",
+    "build:ipad": "react-scripts build",
+    "generate-report": "node scripts/generate-pdf-report.js"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "lucide-react": "^0.263.1",
+    "pdfkit": "^0.13.0",
+    "blob-stream": "^0.1.3"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0",
+    "concurrently": "^8.0.0",
+    "wait-on": "^7.0.0"
+  },
+  "build": {
+    "appId": "com.resonance.github-backup",
+    "productName": "Resonance GitHub Backup Portal",
+    "win": {
+      "target": "nsis",
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+  }
+}
