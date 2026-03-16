@@ -1,0 +1,36 @@
+{
+  "name": "resonance-vault",
+  "version": "1.0.0",
+  "description": "Resonance Vault — GitHub Backup & Portfolio System with Luminous UX",
+  "main": "src/server/index.js",
+  "bin": {
+    "resonance-vault": "./src/cli/index.js"
+  },
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "server": "node src/server/index.js",
+    "cli": "node src/cli/index.js",
+    "briefing": "node src/cli/index.js briefing --format=pdf",
+    "start": "concurrently \"npm run server\" \"npm run dev\""
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "express": "^4.18.2",
+    "better-sqlite3": "^9.4.3",
+    "commander": "^12.0.0",
+    "chalk": "^4.1.2",
+    "node-fetch": "^2.7.0",
+    "concurrently": "^8.2.2",
+    "simple-git": "^3.22.0",
+    "puppeteer": "^21.0.0",
+    "cronstrue": "^2.50.0",
+    "lucide-react": "^0.300.0"
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version"]
+  }
+}
