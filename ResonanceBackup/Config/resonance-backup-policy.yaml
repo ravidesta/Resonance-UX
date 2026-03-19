@@ -1,0 +1,147 @@
+# Resonance Backup — Kopia Policy Configuration
+# Default intuitive settings for GitHub repository backup
+
+# Global policy for all Resonance Backup sources
+global_policy:
+  # Scheduling: Every 6 hours + specific times
+  scheduling:
+    interval_seconds: 21600        # 6 hours
+    times_of_day:
+      - "02:00"                    # Early morning backup
+      - "14:00"                    # Afternoon backup
+    run_missed: true               # Always catch up on missed backups
+
+  # Retention: Generous defaults for code repositories
+  retention:
+    keep_latest: 10                # Always keep last 10 snapshots
+    keep_hourly: 24                # Keep hourly for 1 day
+    keep_daily: 30                 # Keep daily for 1 month
+    keep_weekly: 8                 # Keep weekly for 2 months
+    keep_monthly: 12               # Keep monthly for 1 year
+    keep_annual: 3                 # Keep annual for 3 years
+
+  # Compression: Zstandard for code (great ratio + speed)
+  compression:
+    algorithm: zstd
+    only_compress:
+      - "*.swift"
+      - "*.dart"
+      - "*.go"
+      - "*.rs"
+      - "*.py"
+      - "*.js"
+      - "*.ts"
+      - "*.jsx"
+      - "*.tsx"
+      - "*.json"
+      - "*.yaml"
+      - "*.yml"
+      - "*.toml"
+      - "*.xml"
+      - "*.html"
+      - "*.css"
+      - "*.scss"
+      - "*.md"
+      - "*.txt"
+      - "*.csv"
+      - "*.sql"
+      - "*.proto"
+      - "*.graphql"
+    never_compress:
+      - "*.zip"
+      - "*.gz"
+      - "*.tar"
+      - "*.bz2"
+      - "*.xz"
+      - "*.png"
+      - "*.jpg"
+      - "*.jpeg"
+      - "*.gif"
+      - "*.webp"
+      - "*.mp4"
+      - "*.mov"
+      - "*.avi"
+      - "*.pdf"
+      - "*.woff2"
+      - "*.woff"
+      - "*.ttf"
+
+  # Files: Standard code project ignores
+  files:
+    ignore:
+      - ".git"
+      - "node_modules"
+      - ".build"
+      - "build"
+      - "dist"
+      - "DerivedData"
+      - "__pycache__"
+      - ".pytest_cache"
+      - "target"
+      - ".gradle"
+      - "Pods"
+      - ".cocoapods"
+      - "vendor/bundle"
+      - ".next"
+      - ".nuxt"
+      - ".output"
+      - "*.o"
+      - "*.a"
+      - "*.dylib"
+      - "*.so"
+
+  # Upload settings
+  upload:
+    max_parallel_snapshots: 1
+    max_parallel_file_reads: 4
+
+  # Actions: Pre/post backup hooks
+  actions:
+    before_snapshot:
+      # Pull latest from all remotes before backup
+      command: "git -C {source} fetch --all --prune 2>/dev/null || true"
+      timeout: 120
+    after_snapshot_success:
+      # Log to Resonance calendar and generate bitstamp
+      command: |
+        echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) BACKUP {source} snapshot:{snapshot_id}" >> ~/.resonance/calendar.log
+        HASH=$(git -C {source} rev-parse HEAD 2>/dev/null || echo 'no-git')
+        echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) BITSTAMP {source} hash:${HASH}" >> ~/.resonance/bitstamp.log
+      timeout: 30
+
+  # Logging
+  logging:
+    dir_stats: true
+    entry_stats: true
+
+  # Error handling
+  error_handling:
+    ignore_unknown_directories: true
+    ignore_permission_errors: true
+
+# Per-repository policy overrides (applied via tags)
+repository_policies:
+  # High-priority repos: more frequent backups
+  high_priority:
+    scheduling:
+      interval_seconds: 3600       # Every hour
+    retention:
+      keep_latest: 20
+      keep_hourly: 48
+
+  # Large repos: adjust upload parallelism
+  large_repo:
+    upload:
+      max_parallel_file_reads: 8
+    compression:
+      algorithm: zstd
+
+  # Archive repos: less frequent, longer retention
+  archive:
+    scheduling:
+      interval_seconds: 86400      # Once daily
+    retention:
+      keep_latest: 5
+      keep_daily: 90
+      keep_monthly: 24
+      keep_annual: 10

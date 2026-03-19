@@ -1,0 +1,196 @@
+# Resonance Backup — AppFlowy Integration Configuration
+# Intuitive defaults for Kopia backup integrated into AppFlowy workspace
+
+resonance_backup:
+  version: "1.0.0"
+  name: "Resonance UX GitHub Backup"
+  description: "Bioluminescent portfolio-based GitHub backup system"
+
+  # Default Kopia settings (intuitive, ready to use)
+  kopia:
+    repository_path: "~/ResonanceBackups/kopia-repo"
+    storage_backend: local
+    encryption: aes-256-gcm
+    compression: zstd
+    scheduling:
+      interval_hours: 6
+      times_of_day: ["02:00", "14:00"]
+      run_missed: true
+    retention:
+      keep_latest: 10
+      keep_hourly: 24
+      keep_daily: 30
+      keep_weekly: 8
+      keep_monthly: 12
+      keep_annual: 3
+    upload:
+      max_parallel_snapshots: 1
+      max_parallel_file_reads: 4
+      ignore_patterns:
+        - ".git"
+        - "node_modules"
+        - ".build"
+        - "build"
+        - "DerivedData"
+        - "__pycache__"
+        - "target"
+        - "Pods"
+
+  # AppFlowy database schema for each portfolio slide
+  database_schema:
+    views:
+      - name: "Gallery"
+        type: gallery
+        cover_field: logo
+        title_field: callsign
+      - name: "Database"
+        type: grid
+      - name: "Calendar"
+        type: calendar
+        date_field: last_sync
+
+    properties:
+      - name: "Callsign"
+        type: text
+        format: "OPERATION : {repo_name}"
+      - name: "Repository Name"
+        type: text
+      - name: "Original URL"
+        type: url
+      - name: "Language"
+        type: select
+        options: [Swift, Python, JavaScript, TypeScript, Rust, Go, Dart, Java, Kotlin, Ruby, C, C++]
+      - name: "Upload Date"
+        type: date
+      - name: "Last Sync"
+        type: date
+      - name: "Status"
+        type: select
+        options: [Synced, Syncing, Error, Idle, Queued]
+      - name: "Total Size"
+        type: number
+        format: bytes
+      - name: "File Count"
+        type: number
+      - name: "Commit Count"
+        type: number
+      - name: "Branch Count"
+        type: number
+      - name: "License"
+        type: select
+        options: [MIT, Apache-2.0, GPLv3, AGPLv3, BSD-2, BSD-3, Proprietary, Custom]
+      - name: "Visibility"
+        type: select
+        options: [Public, Private, Internal]
+      - name: "Health"
+        type: select
+        options: [Excellent, Good, Warning, Critical]
+      - name: "Backup Frequency"
+        type: select
+        options: [Hourly, "Every 6h", Daily, Weekly, Manual]
+      - name: "Storage Backend"
+        type: select
+        options: [Local, S3, SFTP, WebDAV, B2, GCS, Azure]
+      - name: "Kopia Snapshot ID"
+        type: text
+      - name: "Bitstamp Hash"
+        type: text
+      - name: "Secrets"
+        type: text
+        sensitive: true
+      - name: "Collaborators"
+        type: multi_select
+      - name: "Tags"
+        type: multi_select
+      - name: "Notes"
+        type: rich_text
+
+    file_slots:
+      - "Design Files"
+      - "Documentation"
+      - "Assets"
+      - "Configuration"
+      - "Test Reports"
+      - "Release Artifacts"
+
+  # Calendar ledger configuration
+  calendar_ledger:
+    log_events:
+      - upload
+      - sync
+      - backup
+      - restore
+      - property_change
+      - secret_added
+      - collaborator_invited
+      - file_attached
+      - note_updated
+    bitstamp:
+      enabled: true
+      sources:
+        - "openbitstamp.org"
+      hash_algorithm: sha256
+      verify_on_upload: true
+
+  # Server commands (file menu)
+  server_commands:
+    backup:
+      - name: "Backup Now"
+        command: "kopia snapshot create --all"
+      - name: "Backup Selected"
+        command: "kopia snapshot create {path}"
+    restore:
+      - name: "Restore Latest"
+        command: "kopia snapshot restore {snapshot_id} {destination}"
+      - name: "Mount Snapshot"
+        command: "kopia mount {snapshot_id} {mountpoint}"
+    maintenance:
+      - name: "Run Maintenance"
+        command: "kopia maintenance run"
+      - name: "Verify Integrity"
+        command: "kopia snapshot verify"
+      - name: "Clear Cache"
+        command: "kopia cache clear"
+    server:
+      - name: "Start Server"
+        command: "kopia server start --address=0.0.0.0:51515"
+      - name: "Stop Server"
+        command: "kopia server shutdown"
+      - name: "Server Status"
+        command: "kopia server status"
+    github:
+      - name: "Clone Repository"
+        command: "git clone --mirror {url} {destination}"
+      - name: "Pull Updates"
+        command: "git -C {path} fetch --all --prune"
+      - name: "Analyze Project"
+        command: "resonance-analyze {path}"
+
+  # Marketplace
+  marketplace:
+    enabled: true
+    listing_types: [sale, license, trade, auction, open_source]
+    license_types: [MIT, Apache-2.0, GPLv3, Proprietary, Commercial, Custom]
+    supported_currencies: [USD, EUR, BTC, ETH]
+
+  # Design tokens (Resonance UX + Luminous OS)
+  design:
+    palette:
+      growth_green: "#59C9A5"
+      strategic_blue: "#7B8CDE"
+      creative_magenta: "#E040FB"
+      warmth_amber: "#F4A261"
+      signal_teal: "#4ECDC4"
+      rhythm_coral: "#EF6461"
+      gold_primary: "#C5A059"
+      forest_deep: "#05100B"
+      forest_dark: "#0A1C14"
+    effects:
+      bioluminescent_indicators: true
+      breathing_surfaces: true
+      glass_panels: true
+      paper_noise_texture: true
+      organic_blob_backgrounds: true
+    typography:
+      heading: "Cormorant Garamond"
+      body: "Manrope"
