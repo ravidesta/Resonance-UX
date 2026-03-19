@@ -1,0 +1,49 @@
+{
+  "resonance_portal_integration": {
+    "version": "1.0.0",
+    "description": "Kopia configuration for Resonance GitHub Backup Portal",
+    "repository": {
+      "type": "filesystem",
+      "path": "%USERPROFILE%\\KopiaGitHubBackups",
+      "encryption": "AES256-GCM-HMAC-SHA256",
+      "block_hash": "BLAKE3-256-128",
+      "splitter": "DYNAMIC-8M-BUZHASH"
+    },
+    "compression": "zstd-fastest",
+    "scheduling": {
+      "interval_hours": 6,
+      "cron": "0 */6 * * *",
+      "run_missed": true
+    },
+    "retention": {
+      "keep_latest": 10,
+      "keep_daily": 7,
+      "keep_weekly": 4,
+      "keep_monthly": 6,
+      "keep_annual": 2
+    },
+    "ignore_patterns": [
+      "node_modules", ".git/objects", "__pycache__", ".next",
+      "target/debug", "build/intermediates", ".gradle",
+      "*.log", ".DS_Store", "Thumbs.db"
+    ],
+    "notifications": {
+      "on_snapshot": true,
+      "on_error": true,
+      "calendar_logging": true,
+      "bitstamp_verification": true,
+      "bitstamp_source": "openbitstamp.org"
+    },
+    "appflowy_bridge": {
+      "enabled": true,
+      "auto_create_database": true,
+      "auto_create_calendar_events": true,
+      "auto_generate_slides": true
+    },
+    "windows": {
+      "scheduled_task_name": "Resonance Kopia Backup",
+      "start_with_windows": false,
+      "run_in_background": true
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "resonance_portal_schema": {
+    "version": "1.0.0",
+    "description": "AppFlowy database schema for Resonance GitHub Backup Portal",
+    "workspace": {
+      "name": "Resonance GitHub Backup Portal",
+      "icon": "chromatic-orb"
+    },
+    "databases": {
+      "portfolio_database": {
+        "name": "GitHub Backup Portfolios",
+        "default_view": "gallery",
+        "views": ["gallery", "grid", "board"],
+        "fields": [
+          { "id": "name", "name": "Portfolio", "type": "RichText", "is_primary": true },
+          { "id": "callsign", "name": "Callsign", "type": "RichText" },
+          { "id": "url", "name": "Repository URL", "type": "URL" },
+          { "id": "status", "name": "Status", "type": "SingleSelect",
+            "options": [
+              { "name": "Synced", "color": "#59C9A5" },
+              { "name": "Pending", "color": "#F4A261" },
+              { "name": "Error", "color": "#EF6461" },
+              { "name": "Backing Up", "color": "#7B8CDE" }
+            ]},
+          { "id": "languages", "name": "Languages", "type": "MultiSelect" },
+          { "id": "upload_date", "name": "Upload Date", "type": "DateTime" },
+          { "id": "last_sync", "name": "Last Sync", "type": "DateTime" },
+          { "id": "file_count", "name": "Files", "type": "Number" },
+          { "id": "stars", "name": "Stars", "type": "Number" },
+          { "id": "forks", "name": "Forks", "type": "Number" },
+          { "id": "bitstamp", "name": "Bitstamp Hash", "type": "RichText" },
+          { "id": "collaborators", "name": "Collaborators", "type": "MultiSelect" },
+          { "id": "notes", "name": "Notes", "type": "RichText" },
+          { "id": "secrets", "name": "Secrets", "type": "RichText" },
+          { "id": "design_files", "name": "Design Files", "type": "RichText" }
+        ]
+      },
+      "calendar_ledger": {
+        "name": "Backup Calendar Ledger",
+        "default_view": "calendar",
+        "date_field": "event_date",
+        "fields": [
+          { "id": "title", "name": "Event", "type": "RichText", "is_primary": true },
+          { "id": "event_date", "name": "Date", "type": "DateTime" },
+          { "id": "portfolio", "name": "Portfolio", "type": "SingleSelect" },
+          { "id": "event_type", "name": "Type", "type": "SingleSelect",
+            "options": [
+              { "name": "Snapshot", "color": "#59C9A5" },
+              { "name": "Upload", "color": "#7B8CDE" },
+              { "name": "Policy Check", "color": "#F4A261" },
+              { "name": "Bitstamp Verify", "color": "#C5A059" },
+              { "name": "Error", "color": "#EF6461" },
+              { "name": "Collaborator Added", "color": "#E040FB" }
+            ]},
+          { "id": "bitstamp", "name": "Bitstamp Hash", "type": "RichText" },
+          { "id": "notes", "name": "Notes", "type": "RichText" }
+        ]
+      }
+    },
+    "slide_template": {
+      "description": "Each repository gets one slide/portfolio page with embedded sections",
+      "sections": [
+        "Portfolio Information (database reference)",
+        "Calendar Ledger (filtered to this repo)",
+        "Notes & Landing Page (rich text editor)",
+        "File Slots (Design Files, Documentation, Assets, Config, Tests, CI/CD)",
+        "Secrets Vault (encrypted key-value pairs)",
+        "Collaborators (invite by email)"
+      ]
+    },
+    "kopia_integration": {
+      "auto_setup": true,
+      "default_schedule": "0 */6 * * *",
+      "default_retention_days": 30,
+      "bitstamp_verification": true,
+      "calendar_event_on_change": true
+    }
+  }
+}
