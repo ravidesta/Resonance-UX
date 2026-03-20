@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="bookid" xml:lang="en">
+
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    <dc:identifier id="bookid">urn:uuid:a1b2c3d4-e5f6-7890-abcd-ef1234567890</dc:identifier>
+    <dc:title>Resonance: Designing Digital Calm</dc:title>
+    <dc:subtitle>A Comprehensive Guide to Nervous-System-Aware Interface Architecture</dc:subtitle>
+    <dc:creator id="creator01">The Resonance Design Collective</dc:creator>
+    <meta refines="#creator01" property="role" scheme="marc:relators">aut</meta>
+    <dc:publisher>Resonance Press</dc:publisher>
+    <dc:language>en</dc:language>
+    <dc:date>2026-03-20</dc:date>
+    <dc:description>Resonance: Designing Digital Calm is the definitive guide to a new paradigm in digital product design — one that treats the human nervous system as the primary stakeholder. Spanning five interconnected applications across thirteen platforms, this book explores how radically calm design, energy-based workflows, intentional presence, and AI co-piloting converge into an ecosystem that genuinely serves human flourishing.</dc:description>
+    <dc:subject>User Experience Design</dc:subject>
+    <dc:subject>Digital Wellness</dc:subject>
+    <dc:subject>Interface Architecture</dc:subject>
+    <dc:subject>Nervous System Regulation</dc:subject>
+    <dc:subject>Calm Technology</dc:subject>
+    <dc:rights>Copyright © 2026 The Resonance Design Collective. All rights reserved.</dc:rights>
+    <meta property="dcterms:modified">2026-03-20T00:00:00Z</meta>
+    <meta property="schema:accessMode">textual</meta>
+    <meta property="schema:accessMode">visual</meta>
+    <meta property="schema:accessModeSufficient">textual</meta>
+    <meta property="schema:accessibilityFeature">structuralNavigation</meta>
+    <meta property="schema:accessibilityFeature">tableOfContents</meta>
+    <meta property="schema:accessibilityHazard">none</meta>
+    <meta property="schema:accessibilitySummary">This publication conforms to WCAG 2.1 Level AA.</meta>
+  </metadata>
+
+  <manifest>
+    <!-- Navigation -->
+    <item id="toc" href="toc.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+
+    <!-- Stylesheet -->
+    <item id="css-resonance" href="styles/resonance.css" media-type="text/css"/>
+
+    <!-- Chapters -->
+    <item id="ch-foreword" href="chapters/00-foreword.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-philosophy" href="chapters/01-philosophy.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-design-system" href="chapters/02-design-system.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-daily-flow" href="chapters/03-daily-flow.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-inner-circle" href="chapters/04-inner-circle.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-writer" href="chapters/05-writer.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-wellness" href="chapters/06-wellness.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-cross-platform" href="chapters/07-cross-platform.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-integration" href="chapters/08-integration.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-technical" href="chapters/09-technical.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ch-future" href="chapters/10-future.xhtml" media-type="application/xhtml+xml"/>
+
+    <!-- Images (placeholders for production) -->
+    <item id="img-cover" href="images/cover.jpg" media-type="image/jpeg" properties="cover-image"/>
+    <item id="img-daily-flow-phases" href="images/daily-flow-phases.svg" media-type="image/svg+xml"/>
+    <item id="img-inner-circle-presence" href="images/inner-circle-presence.svg" media-type="image/svg+xml"/>
+    <item id="img-writer-focus" href="images/writer-focus.svg" media-type="image/svg+xml"/>
+    <item id="img-wellness-holarchy" href="images/wellness-holarchy.svg" media-type="image/svg+xml"/>
+    <item id="img-color-palette" href="images/color-palette.svg" media-type="image/svg+xml"/>
+    <item id="img-typography" href="images/typography.svg" media-type="image/svg+xml"/>
+    <item id="img-cross-platform" href="images/cross-platform.svg" media-type="image/svg+xml"/>
+    <item id="img-architecture" href="images/architecture.svg" media-type="image/svg+xml"/>
+  </manifest>
+
+  <spine>
+    <itemref idref="ch-foreword"/>
+    <itemref idref="ch-philosophy"/>
+    <itemref idref="ch-design-system"/>
+    <itemref idref="ch-daily-flow"/>
+    <itemref idref="ch-inner-circle"/>
+    <itemref idref="ch-writer"/>
+    <itemref idref="ch-wellness"/>
+    <itemref idref="ch-cross-platform"/>
+    <itemref idref="ch-integration"/>
+    <itemref idref="ch-technical"/>
+    <itemref idref="ch-future"/>
+  </spine>
+
+  <guide>
+    <reference type="toc" title="Table of Contents" href="toc.xhtml"/>
+    <reference type="foreword" title="Foreword" href="chapters/00-foreword.xhtml"/>
+    <reference type="text" title="Begin Reading" href="chapters/01-philosophy.xhtml"/>
+  </guide>
+
+</package>
