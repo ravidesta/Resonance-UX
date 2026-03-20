@@ -1,0 +1,648 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Play,
+  Pause,
+  SkipForward,
+  Heart,
+  Footprints,
+  Moon,
+  Check,
+  ChevronRight,
+  Smartphone,
+  Flame,
+  BookOpen
+} from 'lucide-react';
+
+// --- GLOBAL STYLES & FONTS ---
+const WatchStyles = () => (
+  <style dangerouslySetInnerHTML={{__html: `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600&display=swap');
+
+    @keyframes breatheCircle {
+      0%, 100% { transform: scale(0.45); opacity: 0.6; }
+      50% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(197, 160, 89, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(197, 160, 89, 0.6); }
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateX(12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeSlideOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(-12px); }
+    }
+
+    @keyframes hapticBounce {
+      0% { transform: scale(1); }
+      30% { transform: scale(0.88); }
+      60% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .watch-screen-enter {
+      animation: fadeSlideIn 0.25s ease-out forwards;
+    }
+
+    .haptic-tap {
+      animation: hapticBounce 0.3s ease-out;
+    }
+  `}} />
+);
+
+// --- DESIGN TOKENS (DARK / WATCH) ---
+const T = {
+  bgBase: '#05100B',
+  bgSurface: '#0C1F16',
+  bgCard: '#122E21',
+  green900: '#0A1C14',
+  green800: '#122E21',
+  green700: '#1B402E',
+  green600: '#2D5A43',
+  green200: '#D1E0D7',
+  green100: '#E8F0EA',
+  green50: '#F2F7F4',
+  gold: '#D4B06A',
+  goldLight: '#E6D0A1',
+  goldDark: '#9A7A3A',
+  textMain: '#E8F0EA',
+  textMuted: '#8A9C91',
+  textDim: '#5C7065',
+  borderLight: '#1B402E',
+  serif: "'Cormorant Garamond', serif",
+  sans: "'Manrope', sans-serif",
+};
+
+// --- SVG PROGRESS RING ---
+const ProgressRing = ({ radius, stroke, progress, color = T.gold, bgColor = T.green700 }) => {
+  const normalizedRadius = radius - stroke;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+  return (
+    <svg width={radius * 2} height={radius * 2} style={{ transform: 'rotate(-90deg)' }}>
+      <circle
+        stroke={bgColor}
+        fill="transparent"
+        strokeWidth={stroke}
+        r={normalizedRadius}
+        cx={radius}
+        cy={radius}
+      />
+      <circle
+        stroke={color}
+        fill="transparent"
+        strokeWidth={stroke}
+        strokeLinecap="round"
+        strokeDasharray={`${circumference} ${circumference}`}
+        strokeDashoffset={strokeDashoffset}
+        r={normalizedRadius}
+        cx={radius}
+        cy={radius}
+        style={{ transition: 'stroke-dashoffset 0.6s ease' }}
+      />
+    </svg>
+  );
+};
+
+// --- SCREEN 1: WATCH FACE ---
+const WatchFace = () => {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const id = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const hours = time.getHours().toString().padStart(2, '0');
+  const minutes = time.getMinutes().toString().padStart(2, '0');
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 4 }}>
+      {/* Resonance mark */}
+      <div style={{ fontFamily: T.serif, fontSize: 9, color: T.gold, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 2 }}>
+        Resonance
+      </div>
+      {/* Time */}
+      <div style={{ fontFamily: T.serif, fontSize: 48, fontWeight: 300, color: T.textMain, lineHeight: 1, letterSpacing: -1 }}>
+        {hours}:{minutes}
+      </div>
+      {/* Complications row */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6, width: '80%' }}>
+        {/* Book progress */}
+        <div style={{ background: T.bgCard, borderRadius: 10, padding: '5px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <BookOpen size={10} color={T.gold} />
+          <span style={{ fontFamily: T.sans, fontSize: 8, color: T.textMuted }}>68%</span>
+        </div>
+        {/* Mood */}
+        <div style={{ background: T.bgCard, borderRadius: 10, padding: '5px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: 10 }}>&#x1F33F;</span>
+          <span style={{ fontFamily: T.sans, fontSize: 8, color: T.textMuted }}>Calm</span>
+        </div>
+        {/* Streak */}
+        <div style={{ background: T.bgCard, borderRadius: 10, padding: '5px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <Flame size={10} color="#E6834A" />
+          <span style={{ fontFamily: T.sans, fontSize: 8, color: T.textMuted }}>12d</span>
+        </div>
+        {/* Next task */}
+        <div style={{ background: T.bgCard, borderRadius: 10, padding: '5px 6px', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <Check size={10} color={T.green200} />
+          <span style={{ fontFamily: T.sans, fontSize: 8, color: T.textMuted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Journal</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- SCREEN 2: QUICK MOOD ---
+const QuickMood = () => {
+  const [selected, setSelected] = useState(null);
+  const moods = [
+    { label: 'Calm', symbol: '\u{1F33F}' },
+    { label: 'Joyful', symbol: '\u{2728}' },
+    { label: 'Restless', symbol: '\u{1F32A}' },
+    { label: 'Tired', symbol: '\u{1F319}' },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 8 }}>
+      <div style={{ fontFamily: T.sans, fontSize: 10, color: T.textMuted, fontWeight: 500, letterSpacing: 0.5 }}>
+        How are you feeling?
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        {moods.map((m, i) => (
+          <button
+            key={i}
+            onClick={() => setSelected(i)}
+            className={selected === i ? 'haptic-tap' : ''}
+            style={{
+              width: 60,
+              height: 50,
+              borderRadius: 14,
+              border: selected === i ? `1.5px solid ${T.gold}` : `1px solid ${T.borderLight}`,
+              background: selected === i ? T.bgCard : T.bgSurface,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            <span style={{ fontSize: 18 }}>{m.symbol}</span>
+            <span style={{ fontFamily: T.sans, fontSize: 7, color: selected === i ? T.gold : T.textMuted }}>{m.label}</span>
+          </button>
+        ))}
+      </div>
+      {selected !== null && (
+        <div style={{ fontFamily: T.sans, fontSize: 8, color: T.gold, marginTop: 2 }}>
+          Sent to Journal
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- SCREEN 3: AUDIOBOOK CONTROLS ---
+const AudiobookControls = () => {
+  const [playing, setPlaying] = useState(false);
+  const progress = 42;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 6 }}>
+      {/* Progress arc */}
+      <div style={{ position: 'relative' }}>
+        <ProgressRing radius={44} stroke={4} progress={progress} />
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <div style={{ fontFamily: T.sans, fontSize: 8, color: T.textMuted }}>Ch. 7</div>
+          <div style={{ fontFamily: T.serif, fontSize: 11, color: T.textMain, lineHeight: 1.1, maxWidth: 54, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            The Stillness
+          </div>
+        </div>
+      </div>
+      {/* Controls */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <button
+          onClick={() => setPlaying(!playing)}
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            border: 'none',
+            background: T.gold,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          {playing ? <Pause size={16} color={T.bgBase} /> : <Play size={16} color={T.bgBase} style={{ marginLeft: 2 }} />}
+        </button>
+        <button
+          style={{
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
+            border: `1px solid ${T.borderLight}`,
+            background: 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <SkipForward size={12} color={T.textMuted} />
+        </button>
+      </div>
+      <div style={{ fontFamily: T.sans, fontSize: 7, color: T.textDim }}>+30s</div>
+    </div>
+  );
+};
+
+// --- SCREEN 4: BREATHING EXERCISE ---
+const BreathingExercise = () => {
+  const [active, setActive] = useState(false);
+  const [phase, setPhase] = useState('inhale');
+  const [elapsed, setElapsed] = useState(0);
+  const cycleDuration = 8000; // 4s in, 4s out
+  const totalDuration = 60;
+
+  useEffect(() => {
+    if (!active) return;
+    const start = Date.now();
+    const id = setInterval(() => {
+      const now = Date.now();
+      const diff = now - start;
+      const secs = Math.floor(diff / 1000);
+      setElapsed(secs);
+      const cyclePos = diff % cycleDuration;
+      setPhase(cyclePos < cycleDuration / 2 ? 'inhale' : 'exhale');
+      if (secs >= totalDuration) {
+        setActive(false);
+        setElapsed(0);
+        clearInterval(id);
+      }
+    }, 100);
+    return () => clearInterval(id);
+  }, [active]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 8 }}>
+      <div style={{ fontFamily: T.sans, fontSize: 10, color: T.textMuted, fontWeight: 500 }}>
+        Breathe
+      </div>
+      <div
+        onClick={() => !active && setActive(true)}
+        style={{
+          width: 72,
+          height: 72,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${T.green600} 0%, ${T.bgCard} 100%)`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: active ? 'default' : 'pointer',
+          animation: active ? `breatheCircle ${cycleDuration}ms ease-in-out infinite` : 'none',
+          transition: 'transform 0.3s',
+          boxShadow: active ? `0 0 24px ${T.green600}` : 'none',
+        }}
+      >
+        <div style={{
+          width: 28,
+          height: 28,
+          borderRadius: '50%',
+          background: T.gold,
+          opacity: 0.6,
+        }} />
+      </div>
+      <div style={{ fontFamily: T.serif, fontSize: 14, color: T.textMain, fontStyle: 'italic' }}>
+        {active ? phase : 'Tap to begin'}
+      </div>
+      {active && (
+        <div style={{ fontFamily: T.sans, fontSize: 8, color: T.textDim }}>
+          {totalDuration - elapsed}s remaining
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- SCREEN 5: READING PROGRESS ---
+const ReadingProgress = () => {
+  const progress = 68;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 6 }}>
+      <div style={{ position: 'relative' }}>
+        <ProgressRing radius={40} stroke={5} progress={progress} color={T.green200} />
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
+          <div style={{ fontFamily: T.serif, fontSize: 20, fontWeight: 600, color: T.textMain }}>{progress}%</div>
+        </div>
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontFamily: T.serif, fontSize: 12, color: T.textMain, lineHeight: 1.2 }}>Meditations</div>
+        <div style={{ fontFamily: T.sans, fontSize: 8, color: T.textMuted }}>Marcus Aurelius</div>
+      </div>
+      <button
+        style={{
+          fontFamily: T.sans,
+          fontSize: 8,
+          color: T.gold,
+          background: 'transparent',
+          border: `1px solid ${T.gold}`,
+          borderRadius: 10,
+          padding: '4px 10px',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 3,
+        }}
+      >
+        <Smartphone size={8} color={T.gold} />
+        Continue on Phone
+      </button>
+    </div>
+  );
+};
+
+// --- SCREEN 6: DAILY WISDOM ---
+const DailyWisdom = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 14px', gap: 8 }}>
+    {/* Sage avatar */}
+    <div style={{
+      width: 32,
+      height: 32,
+      borderRadius: '50%',
+      background: `linear-gradient(135deg, ${T.green700}, ${T.green600})`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxShadow: `0 0 12px ${T.green700}`,
+    }}>
+      <span style={{ fontSize: 16 }}>&#x1F9D8;</span>
+    </div>
+    <div style={{
+      fontFamily: T.serif,
+      fontSize: 12,
+      color: T.textMain,
+      textAlign: 'center',
+      lineHeight: 1.35,
+      fontStyle: 'italic',
+    }}>
+      "The quieter you become, the more you can hear."
+    </div>
+    <div style={{ fontFamily: T.sans, fontSize: 8, color: T.gold, letterSpacing: 0.5 }}>
+      Sage Coach
+    </div>
+  </div>
+);
+
+// --- SCREEN 7: QUICK TASK ---
+const QuickTask = () => {
+  const [completed, setCompleted] = useState(false);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 8 }}>
+      <div style={{ fontFamily: T.sans, fontSize: 9, color: T.textDim, fontWeight: 500, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+        Next Task
+      </div>
+      <div style={{
+        fontFamily: T.serif,
+        fontSize: 14,
+        color: T.textMain,
+        textAlign: 'center',
+        lineHeight: 1.3,
+        textDecoration: completed ? 'line-through' : 'none',
+        opacity: completed ? 0.5 : 1,
+        transition: 'all 0.3s',
+      }}>
+        Evening Journal
+      </div>
+      <div style={{ fontFamily: T.sans, fontSize: 8, color: T.textMuted }}>Daily Flow &middot; 8:00 PM</div>
+      <button
+        onClick={() => setCompleted(true)}
+        className={completed ? 'haptic-tap' : ''}
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: '50%',
+          border: completed ? 'none' : `2px solid ${T.green600}`,
+          background: completed ? T.gold : 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          transition: 'all 0.3s',
+          marginTop: 4,
+        }}
+      >
+        <Check size={18} color={completed ? T.bgBase : T.green200} strokeWidth={2.5} />
+      </button>
+      {completed && (
+        <div style={{ fontFamily: T.sans, fontSize: 8, color: T.gold }}>Done!</div>
+      )}
+    </div>
+  );
+};
+
+// --- SCREEN 8: VITALS GLANCE ---
+const VitalsGlance = () => (
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 8 }}>
+    <div style={{ fontFamily: T.sans, fontSize: 9, color: T.textDim, fontWeight: 500, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+      Vitals
+    </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '78%' }}>
+      {/* Heart rate */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: T.bgCard, borderRadius: 12, padding: '6px 10px' }}>
+        <Heart size={14} color="#E85D5D" style={{ animation: 'heartPulse 1s ease-in-out infinite' }} />
+        <div>
+          <div style={{ fontFamily: T.serif, fontSize: 18, color: T.textMain, lineHeight: 1 }}>67</div>
+          <div style={{ fontFamily: T.sans, fontSize: 7, color: T.textMuted }}>BPM</div>
+        </div>
+      </div>
+      {/* Steps */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: T.bgCard, borderRadius: 12, padding: '6px 10px' }}>
+        <Footprints size={14} color={T.gold} />
+        <div>
+          <div style={{ fontFamily: T.serif, fontSize: 18, color: T.textMain, lineHeight: 1 }}>8,241</div>
+          <div style={{ fontFamily: T.sans, fontSize: 7, color: T.textMuted }}>Steps</div>
+        </div>
+      </div>
+      {/* Sleep */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: T.bgCard, borderRadius: 12, padding: '6px 10px' }}>
+        <Moon size={14} color="#A89CDB" />
+        <div>
+          <div style={{ fontFamily: T.serif, fontSize: 18, color: T.textMain, lineHeight: 1 }}>87</div>
+          <div style={{ fontFamily: T.sans, fontSize: 7, color: T.textMuted }}>Sleep Score</div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// --- SCREEN LABELS ---
+const SCREENS = [
+  { id: 'face', component: WatchFace },
+  { id: 'mood', component: QuickMood },
+  { id: 'audio', component: AudiobookControls },
+  { id: 'breathe', component: BreathingExercise },
+  { id: 'reading', component: ReadingProgress },
+  { id: 'wisdom', component: DailyWisdom },
+  { id: 'task', component: QuickTask },
+  { id: 'vitals', component: VitalsGlance },
+];
+
+// --- MAIN COMPONENT ---
+const ResonanceWatch = () => {
+  const [currentScreen, setCurrentScreen] = useState(0);
+  const [animKey, setAnimKey] = useState(0);
+
+  const goTo = useCallback((idx) => {
+    if (idx < 0 || idx >= SCREENS.length || idx === currentScreen) return;
+    setCurrentScreen(idx);
+    setAnimKey(k => k + 1);
+  }, [currentScreen]);
+
+  const ActiveScreen = SCREENS[currentScreen].component;
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#0D0D0D',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: T.sans,
+      gap: 20,
+    }}>
+      <WatchStyles />
+
+      {/* Title */}
+      <div style={{ fontFamily: T.serif, fontSize: 18, color: T.textMuted, letterSpacing: 3, textTransform: 'uppercase' }}>
+        Resonance Watch
+      </div>
+
+      {/* Watch body */}
+      <div style={{ position: 'relative' }}>
+        {/* Watch frame */}
+        <div style={{
+          width: 198,
+          height: 242,
+          borderRadius: 48,
+          border: '8px solid #1a1a1a',
+          background: T.bgBase,
+          overflow: 'hidden',
+          position: 'relative',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)',
+        }}>
+          {/* Screen content */}
+          <div
+            key={animKey}
+            className="watch-screen-enter"
+            style={{ width: '100%', height: '100%' }}
+          >
+            <ActiveScreen />
+          </div>
+        </div>
+
+        {/* Digital crown */}
+        <div style={{
+          position: 'absolute',
+          right: -14,
+          top: '38%',
+          width: 6,
+          height: 24,
+          borderRadius: 3,
+          background: '#2a2a2a',
+          border: '1px solid #333',
+          boxShadow: '1px 0 4px rgba(0,0,0,0.4)',
+        }} />
+        {/* Side button */}
+        <div style={{
+          position: 'absolute',
+          right: -12,
+          top: '56%',
+          width: 4,
+          height: 14,
+          borderRadius: 2,
+          background: '#252525',
+          border: '1px solid #333',
+        }} />
+      </div>
+
+      {/* Dot navigation */}
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+        {SCREENS.map((s, i) => (
+          <button
+            key={s.id}
+            onClick={() => goTo(i)}
+            style={{
+              width: i === currentScreen ? 14 : 6,
+              height: 6,
+              borderRadius: 3,
+              border: 'none',
+              background: i === currentScreen ? T.gold : T.textDim,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              padding: 0,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Swipe buttons */}
+      <div style={{ display: 'flex', gap: 12 }}>
+        <button
+          onClick={() => goTo(currentScreen - 1)}
+          disabled={currentScreen === 0}
+          style={{
+            fontFamily: T.sans,
+            fontSize: 10,
+            color: currentScreen === 0 ? T.textDim : T.textMuted,
+            background: 'transparent',
+            border: `1px solid ${currentScreen === 0 ? '#222' : T.borderLight}`,
+            borderRadius: 8,
+            padding: '5px 14px',
+            cursor: currentScreen === 0 ? 'default' : 'pointer',
+            transition: 'all 0.2s',
+          }}
+        >
+          &larr; Prev
+        </button>
+        <button
+          onClick={() => goTo(currentScreen + 1)}
+          disabled={currentScreen === SCREENS.length - 1}
+          style={{
+            fontFamily: T.sans,
+            fontSize: 10,
+            color: currentScreen === SCREENS.length - 1 ? T.textDim : T.textMuted,
+            background: 'transparent',
+            border: `1px solid ${currentScreen === SCREENS.length - 1 ? '#222' : T.borderLight}`,
+            borderRadius: 8,
+            padding: '5px 14px',
+            cursor: currentScreen === SCREENS.length - 1 ? 'default' : 'pointer',
+            transition: 'all 0.2s',
+          }}
+        >
+          Next &rarr;
+        </button>
+      </div>
+
+      {/* Screen label */}
+      <div style={{ fontFamily: T.sans, fontSize: 9, color: T.textDim, letterSpacing: 1 }}>
+        {currentScreen + 1} / {SCREENS.length} &middot; {SCREENS[currentScreen].id.toUpperCase()}
+      </div>
+    </div>
+  );
+};
+
+export default ResonanceWatch;
