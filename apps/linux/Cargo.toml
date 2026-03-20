@@ -1,0 +1,17 @@
+[package]
+name = "resonance-linux"
+version = "0.1.0"
+edition = "2021"
+authors = ["Resonance UX Team"]
+description = "Resonance - Luminous Attachment companion for Linux (GTK4/Libadwaita)"
+license = "MIT"
+
+[dependencies]
+gtk4 = "0.8"
+libadwaita = "0.6"
+gstreamer = "0.22"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
