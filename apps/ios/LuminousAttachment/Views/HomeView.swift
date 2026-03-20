@@ -1,139 +1,127 @@
 // HomeView.swift
 // Luminous Attachment — Resonance UX
-// Daily insight, mood check-in, breathing widget, stats, and sharing
+// Daily insight card, mood check-in, breathing widget, stats, sharing
 
 import SwiftUI
 
 struct HomeView: View {
-    @Environment(UserProfile.self) private var userProfile
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(ThemeManager.self) private var theme
+    @Environment(UserProfile.self) private var profile
+
     @State private var selectedMood: MoodLevel? = nil
-    @State private var showMoodConfirmation = false
-    @State private var showShareSheet = false
+    @State private var moodNote: String = ""
+    @State private var showMoodDetail = false
     @State private var breathingActive = false
-    @State private var greetingOpacity: Double = 0
-    @State private var cardsOffset: CGFloat = 30
+    @State private var breathPhase: BreathPhase = .idle
+    @State private var breathProgress: CGFloat = 0
+    @State private var breathCycleCount = 0
+    @State private var currentExercise: BreathingExercise = .grounding
+    @State private var showShareSheet = false
+    @State private var dailyInsight: DailyInsight = InsightsProvider.insightOfTheDay()
 
-    private var insight: DailyInsight {
-        InsightsProvider.insightOfTheDay()
-    }
-
-    private var greeting: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-        switch hour {
-        case 0..<6: return "Rest well"
-        case 6..<12: return "Good morning"
-        case 12..<17: return "Good afternoon"
-        case 17..<21: return "Good evening"
-        default: return "Good night"
-        }
-    }
+    private let breathTimer = Timer.publish(every: 0.05, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 24) {
-                headerSection
-                dailyInsightCard
-                moodCheckInCard
-                breathingWidgetCard
-                statsRow
-                shareSection
+        let scheme = theme.effectiveScheme
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 20) {
+                headerSection(scheme: scheme)
+                dailyInsightCard(scheme: scheme)
+                moodCheckInSection(scheme: scheme)
+                breathingWidget(scheme: scheme)
+                statsRow(scheme: scheme)
+                shareButton(scheme: scheme)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 20)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 30)
         }
-        .background(ResonanceColors.background(for: colorScheme).ignoresSafeArea())
+        .background(theme.background(for: scheme).ignoresSafeArea())
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Text("Luminous")
-                    .font(.title2.weight(.bold))
-                    .foregroundStyle(ResonanceColors.goldPrimary)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    // Settings
-                } label: {
-                    Image(systemName: "gearshape")
-                        .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
-                }
-            }
-        }
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.8)) {
-                greetingOpacity = 1
-            }
-            withAnimation(.easeOut(duration: 0.6).delay(0.2)) {
-                cardsOffset = 0
-            }
+        .sheet(isPresented: $showMoodDetail) {
+            moodDetailSheet(scheme: scheme)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showShareSheet) {
-            ActivityViewControllerRepresentable(
+            ActivityViewController(
                 activityItems: [
-                    "\"\(insight.text)\" \u{2014} \(insight.author)\n\nFrom Luminous Attachment by Resonance UX"
+                    "\"\(dailyInsight.text)\" — \(dailyInsight.author)\n\nFrom Luminous Attachment by Resonance UX"
                 ]
             )
-            .presentationDetents([.medium])
         }
     }
 
     // MARK: - Header
 
-    private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("\(greeting), \(userProfile.name.isEmpty ? "Explorer" : userProfile.name)")
-                .font(.title.weight(.semibold))
-                .foregroundStyle(ResonanceColors.text(for: colorScheme))
-
-            if userProfile.streakDays > 0 {
-                HStack(spacing: 6) {
-                    Image(systemName: "flame.fill")
-                        .foregroundStyle(ResonanceColors.goldPrimary)
-                    Text("\(userProfile.streakDays)-day streak")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(ResonanceColors.goldPrimary)
-                }
+    @ViewBuilder
+    private func headerSection(scheme: ColorScheme) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(greeting)
+                .font(.title2.weight(.medium))
+                .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
+            Text(profile.name.isEmpty ? "Welcome back" : profile.name)
+                .font(.largeTitle.weight(.bold))
+                .foregroundStyle(ResonanceColors.text(for: scheme))
+            HStack(spacing: 6) {
+                Image(systemName: "flame.fill")
+                    .foregroundStyle(ResonanceColors.goldPrimary)
+                Text("\(profile.currentStreak) day streak")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(ResonanceColors.goldPrimary)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .opacity(greetingOpacity)
-        .padding(.top, 8)
+        .padding(.top, 16)
+    }
+
+    private var greeting: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 0..<12: return "Good morning"
+        case 12..<17: return "Good afternoon"
+        default: return "Good evening"
+        }
     }
 
     // MARK: - Daily Insight Card
 
-    private var dailyInsightCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+    @ViewBuilder
+    private func dailyInsightCard(scheme: ColorScheme) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Label("Daily Insight", systemImage: "sparkles")
+                Image(systemName: "sparkles")
+                    .foregroundStyle(ResonanceColors.goldPrimary)
+                Text("Daily Insight")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(ResonanceColors.goldPrimary)
+                    .textCase(.uppercase)
+                    .tracking(1.2)
                 Spacer()
-                Text(insight.category.uppercased())
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(ResonanceColors.goldLight)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background {
-                        Capsule().fill(ResonanceColors.goldPrimary.opacity(0.15))
-                    }
+                Text(dailyInsight.category)
+                    .font(.caption2)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule()
+                            .fill(ResonanceColors.goldPrimary.opacity(0.15))
+                    )
+                    .foregroundStyle(ResonanceColors.goldPrimary)
             }
 
-            Text("\"\(insight.text)\"")
-                .font(.body.weight(.medium))
-                .foregroundStyle(ResonanceColors.text(for: colorScheme))
-                .lineSpacing(4)
-                .italic()
+            Text(dailyInsight.text)
+                .font(.body.weight(.medium).leading(.loose))
+                .foregroundStyle(scheme == .dark ? .white : ResonanceColors.green900)
+                .fixedSize(horizontal: false, vertical: true)
 
-            if !insight.author.isEmpty && insight.author != "Luminous Attachment" {
-                Text("-- \(insight.author)")
-                    .font(.caption)
-                    .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
+            if dailyInsight.author != "Luminous Attachment" {
+                Text("— \(dailyInsight.author)")
+                    .font(.caption.italic())
+                    .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
             }
-
-            Divider().overlay(ResonanceColors.goldPrimary.opacity(0.2))
 
             HStack {
+                Spacer()
                 Button {
                     showShareSheet = true
                 } label: {
@@ -141,244 +129,166 @@ struct HomeView: View {
                         .font(.caption.weight(.medium))
                         .foregroundStyle(ResonanceColors.goldPrimary)
                 }
-
-                Spacer()
-
-                Button {
-                    // Bookmark insight
-                } label: {
-                    Image(systemName: "bookmark")
-                        .font(.caption)
-                        .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
-                }
             }
         }
         .padding(20)
-        .background {
-            RoundedRectangle(cornerRadius: 24)
-                .fill(.ultraThinMaterial)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    ResonanceColors.goldPrimary.opacity(0.3),
-                                    ResonanceColors.goldPrimary.opacity(0.05)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
+        .background(
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                ResonanceColors.goldPrimary.opacity(0.08),
+                                ResonanceColors.green800.opacity(0.05)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
                         )
-                }
-        }
-        .shadow(color: ResonanceColors.goldPrimary.opacity(0.08), radius: 20, y: 10)
-        .offset(y: cardsOffset)
+                    )
+                RoundedRectangle(cornerRadius: 20)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                ResonanceColors.goldPrimary.opacity(0.3),
+                                ResonanceColors.goldPrimary.opacity(0.05)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            }
+        )
     }
 
     // MARK: - Mood Check-In
 
-    private var moodCheckInCard: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Text("How are you rooting today?")
-                    .font(.headline)
-                    .foregroundStyle(ResonanceColors.text(for: colorScheme))
-                Spacer()
-            }
+    @ViewBuilder
+    private func moodCheckInSection(scheme: ColorScheme) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("How are you feeling?")
+                .font(.headline)
+                .foregroundStyle(ResonanceColors.text(for: scheme))
 
-            HStack(spacing: 12) {
+            HStack(spacing: 0) {
                 ForEach(MoodLevel.allCases) { mood in
-                    moodButton(mood)
+                    Button {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+                            selectedMood = mood
+                        }
+                        showMoodDetail = true
+                    } label: {
+                        VStack(spacing: 6) {
+                            ZStack {
+                                Circle()
+                                    .fill(
+                                        selectedMood == mood
+                                            ? mood.color.opacity(0.2)
+                                            : Color.clear
+                                    )
+                                    .frame(width: 52, height: 52)
+                                Image(systemName: mood.icon)
+                                    .font(.system(size: 24))
+                                    .foregroundStyle(
+                                        selectedMood == mood
+                                            ? mood.color
+                                            : ResonanceColors.textSecondary(for: scheme)
+                                    )
+                                    .scaleEffect(selectedMood == mood ? 1.15 : 1.0)
+                            }
+                            Text(mood.name)
+                                .font(.caption2)
+                                .foregroundStyle(
+                                    selectedMood == mood
+                                        ? mood.color
+                                        : ResonanceColors.textSecondary(for: scheme)
+                                )
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.plain)
+                    .sensoryFeedback(.selection, trigger: selectedMood)
                 }
-            }
-
-            if showMoodConfirmation, let mood = selectedMood {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                    Text("Feeling like a \(mood.name.lowercased()) today. That is beautiful.")
-                        .font(.caption)
-                        .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .padding(20)
-        .background {
-            RoundedRectangle(cornerRadius: 24)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
                 .fill(.ultraThinMaterial)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(ResonanceColors.goldPrimary.opacity(0.1), lineWidth: 0.5)
-                }
-        }
-        .offset(y: cardsOffset)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(ResonanceColors.surface(for: scheme).opacity(0.5))
+                )
+        )
     }
 
-    private func moodButton(_ mood: MoodLevel) -> some View {
-        let isSelected = selectedMood == mood
+    // MARK: - Mood Detail Sheet
 
-        return Button {
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                selectedMood = mood
-                showMoodConfirmation = true
-                let entry = MoodEntry(level: mood)
-                userProfile.moodHistory.append(entry)
-            }
-        } label: {
-            VStack(spacing: 6) {
-                ZStack {
-                    Circle()
-                        .fill(isSelected ? mood.color.opacity(0.2) : Color.clear)
-                        .frame(width: 52, height: 52)
-
+    @ViewBuilder
+    private func moodDetailSheet(scheme: ColorScheme) -> some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                if let mood = selectedMood {
                     Image(systemName: mood.icon)
-                        .font(.title2)
-                        .foregroundStyle(isSelected ? mood.color : ResonanceColors.textSecondary(for: colorScheme))
-                        .symbolEffect(.bounce, value: isSelected)
+                        .font(.system(size: 48))
+                        .foregroundStyle(mood.color)
+                    Text(mood.description)
+                        .font(.title3.weight(.medium))
+                        .foregroundStyle(ResonanceColors.text(for: scheme))
+                    TextField("Add a note about how you feel...", text: $moodNote, axis: .vertical)
+                        .lineLimit(3...6)
+                        .textFieldStyle(.roundedBorder)
+                        .padding(.horizontal)
                 }
-
-                Text(mood.name)
-                    .font(.caption2.weight(isSelected ? .bold : .regular))
-                    .foregroundStyle(
-                        isSelected ? mood.color : ResonanceColors.textSecondary(for: colorScheme)
-                    )
+                Spacer()
             }
-            .frame(maxWidth: .infinity)
+            .padding(.top, 30)
+            .navigationTitle("Mood Check-In")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        if let mood = selectedMood {
+                            let entry = MoodEntry(
+                                level: mood,
+                                note: moodNote.isEmpty ? nil : moodNote
+                            )
+                            profile.moodHistory.append(entry)
+                        }
+                        moodNote = ""
+                        showMoodDetail = false
+                    }
+                    .tint(ResonanceColors.goldPrimary)
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        showMoodDetail = false
+                    }
+                }
+            }
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("\(mood.name): \(mood.description)")
     }
 
     // MARK: - Breathing Widget
 
-    private var breathingWidgetCard: some View {
-        BreathingWidgetView(isActive: $breathingActive)
-            .offset(y: cardsOffset)
-    }
-
-    // MARK: - Stats Row
-
-    private var statsRow: some View {
-        HStack(spacing: 16) {
-            miniStat(
-                icon: "pencil.and.scribble",
-                value: "\(userProfile.totalJournalEntries)",
-                label: "Journal"
-            )
-            miniStat(
-                icon: "bubble.left.and.text.bubble.right",
-                value: "\(userProfile.totalCoachSessions)",
-                label: "Sessions"
-            )
-            miniStat(
-                icon: "wind",
-                value: String(format: "%.0f", userProfile.totalMeditationMinutes),
-                label: "Minutes"
-            )
-            miniStat(
-                icon: "book.closed",
-                value: "\(userProfile.completedChapters.count)",
-                label: "Chapters"
-            )
-        }
-        .offset(y: cardsOffset)
-    }
-
-    private func miniStat(icon: String, value: String, label: String) -> some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundStyle(ResonanceColors.goldPrimary)
-
-            Text(value)
-                .font(.title3.weight(.bold))
-                .foregroundStyle(ResonanceColors.text(for: colorScheme))
-
-            Text(label)
-                .font(.caption2)
-                .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(ResonanceColors.goldPrimary.opacity(0.08), lineWidth: 0.5)
-                }
-        }
-    }
-
-    // MARK: - Share Section
-
-    private var shareSection: some View {
-        Button {
-            showShareSheet = true
-        } label: {
-            HStack(spacing: 12) {
-                Image(systemName: "square.and.arrow.up.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(ResonanceColors.goldPrimary)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Share Today's Insight")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(ResonanceColors.text(for: colorScheme))
-                    Text("Inspire someone on their journey")
-                        .font(.caption)
-                        .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundStyle(ResonanceColors.goldPrimary)
-            }
-            .padding(16)
-            .background {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(ResonanceColors.surface(for: colorScheme))
-            }
-        }
-        .buttonStyle(.plain)
-        .offset(y: cardsOffset)
-    }
-}
-
-// MARK: - Breathing Widget View
-
-struct BreathingWidgetView: View {
-    @Binding var isActive: Bool
-    @Environment(\.colorScheme) private var colorScheme
-
-    @State private var breathPhase: BreathPhase = .idle
-    @State private var circleScale: CGFloat = 0.6
-    @State private var phaseTimer: Timer?
-    @State private var currentCycle = 0
-    @State private var totalCycles = 4
-    @State private var exercise = BreathingExercise.grounding
-
-    enum BreathPhase: String {
-        case idle = "Tap to begin"
-        case inhale = "Breathe in..."
-        case hold = "Hold gently..."
-        case exhale = "Release slowly..."
-        case complete = "Well done"
-    }
-
-    var body: some View {
-        VStack(spacing: 20) {
+    @ViewBuilder
+    private func breathingWidget(scheme: ColorScheme) -> some View {
+        VStack(spacing: 16) {
             HStack {
-                Text("Grounding Breath")
-                    .font(.headline)
-                    .foregroundStyle(ResonanceColors.text(for: colorScheme))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(currentExercise.name)
+                        .font(.headline)
+                        .foregroundStyle(ResonanceColors.text(for: scheme))
+                    Text(breathingActive ? breathPhase.instruction : currentExercise.description)
+                        .font(.caption)
+                        .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
+                        .lineLimit(2)
+                }
                 Spacer()
-                if isActive {
-                    Text("Cycle \(currentCycle)/\(totalCycles)")
+                if breathingActive {
+                    Text("Cycle \(breathCycleCount + 1)/\(currentExercise.cycles)")
                         .font(.caption.weight(.medium))
                         .foregroundStyle(ResonanceColors.goldPrimary)
                 }
@@ -388,147 +298,321 @@ struct BreathingWidgetView: View {
             ZStack {
                 // Outer ring
                 Circle()
-                    .stroke(ResonanceColors.goldPrimary.opacity(0.15), lineWidth: 2)
-                    .frame(width: 160, height: 160)
+                    .strokeBorder(
+                        ResonanceColors.goldPrimary.opacity(0.15),
+                        lineWidth: 3
+                    )
+                    .frame(width: 140, height: 140)
 
-                // Animated fill
+                // Progress ring
+                Circle()
+                    .trim(from: 0, to: breathProgress)
+                    .stroke(
+                        AngularGradient(
+                            colors: [
+                                ResonanceColors.goldPrimary.opacity(0.3),
+                                ResonanceColors.goldPrimary,
+                                ResonanceColors.goldLight
+                            ],
+                            center: .center,
+                            startAngle: .degrees(0),
+                            endAngle: .degrees(360)
+                        ),
+                        style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                    )
+                    .frame(width: 140, height: 140)
+                    .rotationEffect(.degrees(-90))
+
+                // Inner breathing circle
                 Circle()
                     .fill(
                         RadialGradient(
                             colors: [
-                                ResonanceColors.goldPrimary.opacity(0.3),
+                                ResonanceColors.goldPrimary.opacity(breathingActive ? 0.3 : 0.1),
                                 ResonanceColors.goldPrimary.opacity(0.05)
                             ],
                             center: .center,
                             startRadius: 0,
-                            endRadius: 80
+                            endRadius: 55
                         )
                     )
-                    .frame(width: 160, height: 160)
-                    .scaleEffect(circleScale)
+                    .frame(
+                        width: breathingActive ? breathCircleSize : 80,
+                        height: breathingActive ? breathCircleSize : 80
+                    )
+                    .animation(.easeInOut(duration: currentPhaseDuration), value: breathPhase)
 
-                // Inner glow
-                Circle()
-                    .fill(ResonanceColors.goldPrimary.opacity(0.15))
-                    .frame(width: 60, height: 60)
-                    .scaleEffect(circleScale)
-
-                // Phase label
-                VStack(spacing: 4) {
-                    Image(systemName: phaseIcon)
-                        .font(.title2)
+                // Center label
+                VStack(spacing: 2) {
+                    Image(systemName: breathPhase.icon)
+                        .font(.system(size: 20))
                         .foregroundStyle(ResonanceColors.goldPrimary)
-                        .symbolEffect(.pulse, isActive: isActive)
-
-                    Text(breathPhase.rawValue)
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(ResonanceColors.text(for: colorScheme))
+                    Text(breathingActive ? breathPhase.label : "Start")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(ResonanceColors.goldPrimary)
                 }
             }
-            .contentShape(Circle())
             .onTapGesture {
-                if isActive {
-                    stopBreathing()
-                } else {
-                    startBreathing()
-                }
+                toggleBreathing()
+            }
+            .onReceive(breathTimer) { _ in
+                updateBreathCycle()
             }
 
-            Text(exercise.description)
-                .font(.caption)
-                .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
-                .multilineTextAlignment(.center)
-                .lineSpacing(2)
-        }
-        .padding(24)
-        .background {
-            RoundedRectangle(cornerRadius: 24)
-                .fill(.ultraThinMaterial)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(ResonanceColors.goldPrimary.opacity(0.1), lineWidth: 0.5)
+            // Exercise picker
+            if !breathingActive {
+                HStack(spacing: 12) {
+                    ForEach([BreathingExercise.grounding, .heartOpening, .releaseAndLetGo], id: \.name) { exercise in
+                        Button {
+                            currentExercise = exercise
+                        } label: {
+                            Text(exercise.name.split(separator: " ").first ?? "")
+                                .font(.caption2.weight(.medium))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(
+                                    Capsule()
+                                        .fill(
+                                            currentExercise.name == exercise.name
+                                                ? ResonanceColors.goldPrimary.opacity(0.2)
+                                                : ResonanceColors.surfaceSecondary(for: scheme)
+                                        )
+                                )
+                                .foregroundStyle(
+                                    currentExercise.name == exercise.name
+                                        ? ResonanceColors.goldPrimary
+                                        : ResonanceColors.textSecondary(for: scheme)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(ResonanceColors.surface(for: scheme).opacity(0.5))
+                )
+        )
+    }
+
+    private var breathCircleSize: CGFloat {
+        switch breathPhase {
+        case .inhale: return 110
+        case .hold: return 110
+        case .exhale: return 60
+        case .idle: return 80
         }
     }
 
-    private var phaseIcon: String {
+    private var currentPhaseDuration: Double {
         switch breathPhase {
+        case .inhale: return currentExercise.inhaleSeconds
+        case .hold: return currentExercise.holdSeconds
+        case .exhale: return currentExercise.exhaleSeconds
+        case .idle: return 0.5
+        }
+    }
+
+    @State private var breathElapsed: TimeInterval = 0
+    @State private var phaseStart: Date = .now
+
+    private func toggleBreathing() {
+        if breathingActive {
+            breathingActive = false
+            breathPhase = .idle
+            breathProgress = 0
+            breathCycleCount = 0
+        } else {
+            breathingActive = true
+            breathPhase = .inhale
+            phaseStart = .now
+            breathCycleCount = 0
+            breathProgress = 0
+        }
+    }
+
+    private func updateBreathCycle() {
+        guard breathingActive else { return }
+        let elapsed = Date().timeIntervalSince(phaseStart)
+        let phaseDuration: Double
+        switch breathPhase {
+        case .inhale: phaseDuration = currentExercise.inhaleSeconds
+        case .hold: phaseDuration = currentExercise.holdSeconds
+        case .exhale: phaseDuration = currentExercise.exhaleSeconds
+        case .idle: return
+        }
+
+        let cycleTotalDuration = currentExercise.inhaleSeconds + currentExercise.holdSeconds + currentExercise.exhaleSeconds
+        var accumulatedInCycle: Double = 0
+        switch breathPhase {
+        case .inhale: accumulatedInCycle = elapsed
+        case .hold: accumulatedInCycle = currentExercise.inhaleSeconds + elapsed
+        case .exhale: accumulatedInCycle = currentExercise.inhaleSeconds + currentExercise.holdSeconds + elapsed
+        case .idle: break
+        }
+        breathProgress = min(CGFloat(accumulatedInCycle / cycleTotalDuration), 1.0)
+
+        if elapsed >= phaseDuration {
+            phaseStart = .now
+            switch breathPhase {
+            case .inhale:
+                if currentExercise.holdSeconds > 0 {
+                    breathPhase = .hold
+                } else {
+                    breathPhase = .exhale
+                }
+            case .hold:
+                breathPhase = .exhale
+            case .exhale:
+                breathCycleCount += 1
+                if breathCycleCount >= currentExercise.cycles {
+                    breathingActive = false
+                    breathPhase = .idle
+                    breathProgress = 0
+                    breathCycleCount = 0
+                    profile.totalMeditationMinutes += currentExercise.totalDurationMinutes
+                } else {
+                    breathPhase = .inhale
+                    breathProgress = 0
+                }
+            case .idle:
+                break
+            }
+        }
+    }
+
+    // MARK: - Stats Row
+
+    @ViewBuilder
+    private func statsRow(scheme: ColorScheme) -> some View {
+        HStack(spacing: 12) {
+            statsCard(
+                icon: "book.fill",
+                value: "\(profile.completedChapters.count)/12",
+                label: "Chapters",
+                scheme: scheme
+            )
+            statsCard(
+                icon: "pencil.and.scribble",
+                value: "\(profile.totalJournalEntries)",
+                label: "Entries",
+                scheme: scheme
+            )
+            statsCard(
+                icon: "wind",
+                value: String(format: "%.0f", profile.totalMeditationMinutes),
+                label: "Minutes",
+                scheme: scheme
+            )
+            statsCard(
+                icon: "bubble.left.fill",
+                value: "\(profile.totalCoachSessions)",
+                label: "Sessions",
+                scheme: scheme
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func statsCard(icon: String, value: String, label: String, scheme: ColorScheme) -> some View {
+        VStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundStyle(ResonanceColors.goldPrimary)
+            Text(value)
+                .font(.title3.weight(.bold).monospacedDigit())
+                .foregroundStyle(ResonanceColors.text(for: scheme))
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(ResonanceColors.surface(for: scheme).opacity(0.5))
+                )
+        )
+    }
+
+    // MARK: - Share Button
+
+    @ViewBuilder
+    private func shareButton(scheme: ColorScheme) -> some View {
+        Button {
+            showShareSheet = true
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.body.weight(.medium))
+                Text("Share Today's Insight")
+                    .font(.body.weight(.semibold))
+            }
+            .foregroundStyle(ResonanceColors.green900)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(
+                        LinearGradient(
+                            colors: [ResonanceColors.goldPrimary, ResonanceColors.goldLight],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Breath Phase
+
+enum BreathPhase: String {
+    case idle
+    case inhale
+    case hold
+    case exhale
+
+    var label: String {
+        switch self {
+        case .idle: return "Tap to start"
+        case .inhale: return "Breathe in"
+        case .hold: return "Hold"
+        case .exhale: return "Breathe out"
+        }
+    }
+
+    var instruction: String {
+        switch self {
+        case .idle: return "Tap the circle to begin"
+        case .inhale: return "Slowly breathe in through your nose"
+        case .hold: return "Gently hold your breath"
+        case .exhale: return "Slowly release through your mouth"
+        }
+    }
+
+    var icon: String {
+        switch self {
         case .idle: return "wind"
         case .inhale: return "arrow.down.to.line"
-        case .hold: return "pause.circle"
+        case .hold: return "pause"
         case .exhale: return "arrow.up.to.line"
-        case .complete: return "checkmark.circle"
         }
-    }
-
-    private func startBreathing() {
-        isActive = true
-        currentCycle = 1
-        runCycle()
-    }
-
-    private func runCycle() {
-        guard currentCycle <= totalCycles else {
-            completeBreathing()
-            return
-        }
-
-        // Inhale
-        breathPhase = .inhale
-        withAnimation(.easeInOut(duration: exercise.inhaleSeconds)) {
-            circleScale = 1.0
-        }
-
-        // Hold after inhale
-        DispatchQueue.main.asyncAfter(deadline: .now() + exercise.inhaleSeconds) {
-            guard isActive else { return }
-            if exercise.holdSeconds > 0 {
-                breathPhase = .hold
-
-                // Exhale after hold
-                DispatchQueue.main.asyncAfter(deadline: .now() + exercise.holdSeconds) {
-                    guard isActive else { return }
-                    startExhale()
-                }
-            } else {
-                startExhale()
-            }
-        }
-    }
-
-    private func startExhale() {
-        breathPhase = .exhale
-        withAnimation(.easeInOut(duration: exercise.exhaleSeconds)) {
-            circleScale = 0.6
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + exercise.exhaleSeconds) {
-            guard isActive else { return }
-            currentCycle += 1
-            runCycle()
-        }
-    }
-
-    private func completeBreathing() {
-        breathPhase = .complete
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            stopBreathing()
-        }
-    }
-
-    private func stopBreathing() {
-        isActive = false
-        breathPhase = .idle
-        withAnimation(.easeInOut(duration: 0.5)) {
-            circleScale = 0.6
-        }
-        currentCycle = 0
     }
 }
 
 // MARK: - Activity View Controller
 
-struct ActivityViewControllerRepresentable: UIViewControllerRepresentable {
+struct ActivityViewController: UIViewControllerRepresentable {
     let activityItems: [Any]
     var applicationActivities: [UIActivity]? = nil
 
@@ -548,6 +632,6 @@ struct ActivityViewControllerRepresentable: UIViewControllerRepresentable {
     NavigationStack {
         HomeView()
     }
-    .environment(UserProfile())
     .environment(ThemeManager())
+    .environment(UserProfile())
 }

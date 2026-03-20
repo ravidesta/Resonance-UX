@@ -1,6 +1,6 @@
 // LuminousAttachmentApp.swift
 // Luminous Attachment — Resonance UX
-// Main application entry point with custom tab bar and theme management
+// Main app entry point with custom Resonance-themed tab navigation
 
 import SwiftUI
 
@@ -9,20 +9,18 @@ import SwiftUI
 @Observable
 final class ThemeManager {
     var colorScheme: ColorScheme? = nil
-    var useSystemAppearance: Bool = true
-    var accentHue: Double = 0.12 // gold hue
+    var accentHue: Double = 0.12
 
-    var effectiveColorScheme: ColorScheme? {
-        useSystemAppearance ? nil : colorScheme
+    var effectiveScheme: ColorScheme {
+        colorScheme ?? .dark
     }
 
-    // Resonance palette shortcuts
-    static let green900 = Color(hex: "0A1C14")
-    static let green800 = Color(hex: "122E21")
-    static let goldPrimary = Color(hex: "C5A059")
-    static let goldLight = Color(hex: "E6D0A1")
-    static let bgLight = Color(hex: "FAFAF8")
-    static let bgDark = Color(hex: "05100B")
+    var bgLight: Color { Color(hex: "FAFAF8") }
+    var bgDark: Color { Color(hex: "05100B") }
+
+    func background(for scheme: ColorScheme) -> Color {
+        scheme == .dark ? bgDark : bgLight
+    }
 }
 
 // MARK: - App Entry
@@ -32,29 +30,32 @@ struct LuminousAttachmentApp: App {
     @State private var theme = ThemeManager()
     @State private var selectedTab: AppTab = .home
     @State private var userProfile = UserProfile()
-    @State private var audiobookPlayer = AudiobookPlayer()
+    @State private var showOnboarding = false
 
     var body: some Scene {
         WindowGroup {
             ZStack(alignment: .bottom) {
-                // Main content
+                // Background
+                theme.background(for: theme.effectiveScheme)
+                    .ignoresSafeArea()
+
+                // Tab Content
                 TabContentView(
                     selectedTab: $selectedTab,
                     userProfile: userProfile,
-                    audiobookPlayer: audiobookPlayer,
                     theme: theme
                 )
+                .padding(.bottom, 80)
 
-                // Custom tab bar
+                // Custom Tab Bar
                 ResonanceTabBar(
                     selectedTab: $selectedTab,
                     theme: theme
                 )
             }
+            .preferredColorScheme(theme.colorScheme)
             .environment(theme)
             .environment(userProfile)
-            .environment(audiobookPlayer)
-            .preferredColorScheme(theme.effectiveColorScheme)
             .onAppear {
                 userProfile.updateStreak()
             }
@@ -67,215 +68,185 @@ struct LuminousAttachmentApp: App {
 struct TabContentView: View {
     @Binding var selectedTab: AppTab
     let userProfile: UserProfile
-    let audiobookPlayer: AudiobookPlayer
     let theme: ThemeManager
-    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ZStack {
-            // Full-screen background
-            backgroundColor.ignoresSafeArea()
-
-            Group {
-                switch selectedTab {
-                case .home:
-                    NavigationStack {
-                        HomeView()
-                    }
-                case .learn:
-                    NavigationStack {
-                        LearnView()
-                    }
-                case .journal:
-                    NavigationStack {
-                        JournalView()
-                    }
-                case .coach:
-                    NavigationStack {
-                        CoachView()
-                    }
-                case .library:
-                    NavigationStack {
-                        LibraryView()
-                    }
-                case .share:
-                    NavigationStack {
-                        SocialShareView()
-                    }
+            switch selectedTab {
+            case .home:
+                NavigationStack {
+                    HomeView()
                 }
-            }
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 80) // Space for custom tab bar
+                .transition(.opacity)
+            case .learn:
+                NavigationStack {
+                    LearnView()
+                }
+                .transition(.opacity)
+            case .journal:
+                NavigationStack {
+                    JournalView()
+                }
+                .transition(.opacity)
+            case .coach:
+                NavigationStack {
+                    CoachView()
+                }
+                .transition(.opacity)
+            case .library:
+                NavigationStack {
+                    LibraryPlaceholderView()
+                }
+                .transition(.opacity)
+            case .share:
+                NavigationStack {
+                    SocialShareView()
+                }
+                .transition(.opacity)
             }
         }
         .animation(.easeInOut(duration: 0.2), value: selectedTab)
     }
-
-    private var backgroundColor: Color {
-        colorScheme == .dark ? ThemeManager.bgDark : ThemeManager.bgLight
-    }
 }
 
-// MARK: - Library Placeholder (combines Learn + EBook)
+// MARK: - Library Placeholder
 
-struct LibraryView: View {
-    @Environment(\.colorScheme) private var colorScheme
+struct LibraryPlaceholderView: View {
+    @Environment(ThemeManager.self) private var theme
+    @Environment(UserProfile.self) private var profile
 
     var body: some View {
+        let scheme = theme.effectiveScheme
         ScrollView {
             VStack(spacing: 24) {
                 // Header
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(spacing: 8) {
+                    Image(systemName: "books.vertical.fill")
+                        .font(.system(size: 48))
+                        .foregroundStyle(ResonanceColors.goldPrimary)
                     Text("Your Library")
-                        .font(.largeTitle.weight(.bold))
-                        .foregroundStyle(ResonanceColors.text(for: colorScheme))
-
-                    Text("Everything you need for your healing journey")
+                        .font(.largeTitle.weight(.semibold))
+                        .foregroundStyle(ResonanceColors.text(for: scheme))
+                    Text("Bookmarks, highlights, and saved content")
                         .font(.subheadline)
-                        .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
+                        .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
+                .padding(.top, 40)
 
-                // Bookmarks section
-                VStack(alignment: .leading, spacing: 12) {
-                    Label("Bookmarks", systemImage: "bookmark.fill")
-                        .font(.headline)
-                        .foregroundStyle(ResonanceColors.goldPrimary)
-                        .padding(.horizontal)
-
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
-                            ForEach(0..<4) { i in
-                                BookmarkCardView(chapterNumber: i + 1)
+                // Bookmarks Section
+                if !profile.bookmarks.isEmpty {
+                    SectionCard(title: "Bookmarks", icon: "bookmark.fill", scheme: scheme) {
+                        ForEach(profile.bookmarks) { bookmark in
+                            HStack {
+                                Image(systemName: "bookmark.fill")
+                                    .foregroundStyle(ResonanceColors.goldPrimary)
+                                VStack(alignment: .leading) {
+                                    Text("Chapter \(bookmark.chapterId)")
+                                        .font(.headline)
+                                        .foregroundStyle(ResonanceColors.text(for: scheme))
+                                    if let note = bookmark.note {
+                                        Text(note)
+                                            .font(.caption)
+                                            .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
+                                    }
+                                }
+                                Spacer()
+                                Text(bookmark.date, style: .date)
+                                    .font(.caption2)
+                                    .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
                             }
+                            .padding(.vertical, 4)
                         }
-                        .padding(.horizontal)
                     }
                 }
 
-                // Highlights section
-                VStack(alignment: .leading, spacing: 12) {
-                    Label("Highlights", systemImage: "highlighter")
-                        .font(.headline)
-                        .foregroundStyle(ResonanceColors.goldPrimary)
-                        .padding(.horizontal)
-
-                    VStack(spacing: 12) {
-                        HighlightRow(text: "Your attachment style is not your destiny.", chapter: 1)
-                        HighlightRow(text: "The body remembers what the mind forgets.", chapter: 3)
-                        HighlightRow(text: "Repair is the heartbeat of secure love.", chapter: 9)
+                // Highlights Section
+                if !profile.highlights.isEmpty {
+                    SectionCard(title: "Highlights", icon: "highlighter", scheme: scheme) {
+                        ForEach(profile.highlights) { highlight in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("\"\(highlight.text)\"")
+                                    .font(.body)
+                                    .italic()
+                                    .foregroundStyle(ResonanceColors.text(for: scheme))
+                                Text("Chapter \(highlight.chapterId)")
+                                    .font(.caption)
+                                    .foregroundStyle(ResonanceColors.goldPrimary)
+                            }
+                            .padding(.vertical, 4)
+                        }
                     }
-                    .padding(.horizontal)
                 }
 
-                // Reading stats
-                VStack(spacing: 16) {
-                    Text("Reading Progress")
-                        .font(.headline)
-                        .foregroundStyle(ResonanceColors.text(for: colorScheme))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                // Empty State
+                if profile.bookmarks.isEmpty && profile.highlights.isEmpty {
+                    VStack(spacing: 16) {
+                        Image(systemName: "text.book.closed")
+                            .font(.system(size: 64))
+                            .foregroundStyle(ResonanceColors.textSecondary(for: scheme).opacity(0.4))
+                        Text("Your library is waiting")
+                            .font(.title3.weight(.medium))
+                            .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
+                        Text("Bookmark passages and highlight text as you read to build your personal collection of wisdom.")
+                            .font(.subheadline)
+                            .foregroundStyle(ResonanceColors.textSecondary(for: scheme).opacity(0.7))
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(40)
+                }
 
+                // Stats Card
+                SectionCard(title: "Reading Stats", icon: "chart.bar.fill", scheme: scheme) {
                     HStack(spacing: 20) {
-                        StatBadge(value: "3", label: "Chapters\nRead", icon: "book.closed.fill")
-                        StatBadge(value: "12", label: "Bookmarks\nSaved", icon: "bookmark.fill")
-                        StatBadge(value: "28", label: "Highlights\nMade", icon: "highlighter")
+                        StatPill(value: "\(profile.completedChapters.count)", label: "Chapters", scheme: scheme)
+                        StatPill(value: "\(profile.bookmarks.count)", label: "Bookmarks", scheme: scheme)
+                        StatPill(value: "\(profile.highlights.count)", label: "Highlights", scheme: scheme)
                     }
                 }
-                .padding()
-                .background {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(ResonanceColors.surface(for: colorScheme))
-                        .shadow(color: .black.opacity(0.05), radius: 10)
-                }
-                .padding(.horizontal)
             }
-            .padding(.vertical)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
         }
-        .navigationBarTitleDisplayMode(.inline)
+        .background(theme.background(for: scheme).ignoresSafeArea())
     }
 }
 
-struct BookmarkCardView: View {
-    let chapterNumber: Int
-    @Environment(\.colorScheme) private var colorScheme
+struct SectionCard<Content: View>: View {
+    let title: String
+    let icon: String
+    let scheme: ColorScheme
+    @ViewBuilder let content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Image(systemName: "bookmark.fill")
-                .font(.title2)
+        VStack(alignment: .leading, spacing: 12) {
+            Label(title, systemImage: icon)
+                .font(.headline)
                 .foregroundStyle(ResonanceColors.goldPrimary)
-
-            Text("Chapter \(chapterNumber)")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(ResonanceColors.text(for: colorScheme))
-
-            Text("Page \(chapterNumber * 12 + 3)")
-                .font(.caption2)
-                .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
+            content
         }
-        .padding()
-        .frame(width: 120, height: 120)
-        .background {
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(ResonanceColors.surface(for: colorScheme))
-                .shadow(color: .black.opacity(0.05), radius: 8)
-        }
+                .fill(ResonanceColors.surface(for: scheme))
+                .shadow(color: .black.opacity(0.08), radius: 8, y: 4)
+        )
     }
 }
 
-struct HighlightRow: View {
-    let text: String
-    let chapter: Int
-    @Environment(\.colorScheme) private var colorScheme
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Rectangle()
-                .fill(ResonanceColors.goldPrimary)
-                .frame(width: 3)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("\"\(text)\"")
-                    .font(.subheadline)
-                    .italic()
-                    .foregroundStyle(ResonanceColors.text(for: colorScheme))
-
-                Text("Chapter \(chapter)")
-                    .font(.caption)
-                    .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
-            }
-
-            Spacer()
-        }
-        .padding()
-        .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(ResonanceColors.surface(for: colorScheme))
-        }
-    }
-}
-
-struct StatBadge: View {
+struct StatPill: View {
     let value: String
     let label: String
-    let icon: String
-    @Environment(\.colorScheme) private var colorScheme
+    let scheme: ColorScheme
 
     var body: some View {
-        VStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundStyle(ResonanceColors.goldPrimary)
-
+        VStack(spacing: 4) {
             Text(value)
                 .font(.title2.weight(.bold))
-                .foregroundStyle(ResonanceColors.text(for: colorScheme))
-
+                .foregroundStyle(ResonanceColors.goldPrimary)
             Text(label)
-                .font(.caption2)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(ResonanceColors.textSecondary(for: colorScheme))
+                .font(.caption)
+                .foregroundStyle(ResonanceColors.textSecondary(for: scheme))
         }
         .frame(maxWidth: .infinity)
     }
@@ -286,26 +257,31 @@ struct StatBadge: View {
 struct ResonanceTabBar: View {
     @Binding var selectedTab: AppTab
     let theme: ThemeManager
-    @Environment(\.colorScheme) private var colorScheme
-
-    private let tabs = AppTab.allCases
 
     var body: some View {
+        let scheme = theme.effectiveScheme
         HStack(spacing: 0) {
-            ForEach(tabs) { tab in
-                tabButton(for: tab)
+            ForEach(AppTab.allCases) { tab in
+                TabBarButton(
+                    tab: tab,
+                    isSelected: selectedTab == tab,
+                    scheme: scheme
+                ) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        selectedTab = tab
+                    }
+                }
             }
         }
         .padding(.horizontal, 8)
-        .padding(.top, 12)
-        .padding(.bottom, 8)
-        .background {
+        .padding(.top, 8)
+        .padding(.bottom, 2)
+        .background(
             ZStack {
-                // Blur background
+                // Frosted glass background
                 Rectangle()
                     .fill(.ultraThinMaterial)
-
-                // Subtle top border
+                // Subtle gold top border
                 VStack {
                     Rectangle()
                         .fill(
@@ -318,38 +294,36 @@ struct ResonanceTabBar: View {
                                 endPoint: .bottom
                             )
                         )
-                        .frame(height: 0.5)
+                        .frame(height: 1)
                     Spacer()
                 }
             }
             .ignoresSafeArea()
-        }
+        )
     }
+}
 
-    @ViewBuilder
-    private func tabButton(for tab: AppTab) -> some View {
-        let isSelected = selectedTab == tab
+struct TabBarButton: View {
+    let tab: AppTab
+    let isSelected: Bool
+    let scheme: ColorScheme
+    let action: () -> Void
 
-        Button {
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
-                selectedTab = tab
-            }
-        } label: {
+    var body: some View {
+        Button(action: action) {
             VStack(spacing: 4) {
                 ZStack {
                     if isSelected {
                         Circle()
                             .fill(ResonanceColors.goldPrimary.opacity(0.15))
                             .frame(width: 40, height: 40)
-                            .transition(.scale.combined(with: .opacity))
                     }
-
                     Image(systemName: isSelected ? tab.selectedIcon : tab.icon)
                         .font(.system(size: 18, weight: isSelected ? .semibold : .regular))
                         .foregroundStyle(
                             isSelected
                                 ? ResonanceColors.goldPrimary
-                                : ResonanceColors.textSecondary(for: colorScheme)
+                                : ResonanceColors.textSecondary(for: scheme)
                         )
                         .symbolEffect(.bounce, value: isSelected)
                 }
@@ -360,7 +334,7 @@ struct ResonanceTabBar: View {
                     .foregroundStyle(
                         isSelected
                             ? ResonanceColors.goldPrimary
-                            : ResonanceColors.textSecondary(for: colorScheme)
+                            : ResonanceColors.textSecondary(for: scheme)
                     )
             }
             .frame(maxWidth: .infinity)
@@ -370,23 +344,8 @@ struct ResonanceTabBar: View {
     }
 }
 
-// MARK: - Previews
+// MARK: - Preview
 
-#Preview("App") {
-    let theme = ThemeManager()
-    let user = UserProfile()
-    let player = AudiobookPlayer()
-
-    ZStack(alignment: .bottom) {
-        TabContentView(
-            selectedTab: .constant(.home),
-            userProfile: user,
-            audiobookPlayer: player,
-            theme: theme
-        )
-        ResonanceTabBar(selectedTab: .constant(.home), theme: theme)
-    }
-    .environment(theme)
-    .environment(user)
-    .environment(player)
+#Preview {
+    LuminousAttachmentApp.main()
 }
