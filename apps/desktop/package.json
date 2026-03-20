@@ -1,0 +1,102 @@
+{
+  "name": "luminous-attachment-desktop",
+  "version": "1.0.0",
+  "description": "Luminous Attachment by Resonance UX - Desktop App",
+  "author": "Resonance UX",
+  "license": "MIT",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "concurrently \"tsc -w\" \"wait-on dist/main.js && electron .\"",
+    "build": "tsc && electron-builder",
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:linux": "electron-builder --linux",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "lint": "eslint src/ --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "electron-updater": "^6.1.7",
+    "electron-store": "^8.1.0",
+    "electron-log": "^5.1.1",
+    "@electron/remote": "^2.1.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "electron": "^28.1.3",
+    "electron-builder": "^24.9.1",
+    "typescript": "^5.3.3",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@types/uuid": "^9.0.7",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0"
+  },
+  "build": {
+    "appId": "com.resonanceux.luminous-attachment",
+    "productName": "Luminous Attachment",
+    "copyright": "Copyright (c) 2024 Resonance UX",
+    "directories": {
+      "output": "release",
+      "buildResources": "resources"
+    },
+    "files": [
+      "dist/**/*",
+      "resources/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.lifestyle",
+      "target": ["dmg", "zip"],
+      "icon": "resources/icon.icns",
+      "darkModeSupport": true,
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "resources/entitlements.mac.plist",
+      "entitlementsInherit": "resources/entitlements.mac.plist",
+      "type": "distribution"
+    },
+    "win": {
+      "target": ["nsis", "portable"],
+      "icon": "resources/icon.ico",
+      "publisherName": "Resonance UX"
+    },
+    "linux": {
+      "target": ["AppImage", "deb", "rpm", "snap"],
+      "icon": "resources/icons",
+      "category": "Education",
+      "desktop": {
+        "Name": "Luminous Attachment",
+        "Comment": "Your guided journey toward secure, confident relationships",
+        "Terminal": "false",
+        "Type": "Application",
+        "Categories": "Education;PersonalDevelopment;"
+      }
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "protocols": [
+      {
+        "name": "Luminous Attachment",
+        "schemes": ["luminous-attachment"]
+      }
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "resonance-ux",
+        "repo": "luminous-attachment"
+      }
+    ]
+  }
+}

@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- ════════════════════════════════════════════════════════════════
+	     Luminous Attachment by Resonance UX
+	     Illuminate Your Path to Secure Connection
+	     ════════════════════════════════════════════════════════════════ -->
+
+	<!-- App Identity -->
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>Luminous Attachment</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+
+	<!-- Supported Orientations -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<!-- Launch & Appearance -->
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<key>UIRequiresFullScreen</key>
+	<false/>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     URL Schemes — Deep Linking & Social Sharing
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<!-- Primary deep link scheme -->
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.resonance-ux.luminous-attachment</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>luminous</string>
+				<string>luminousattachment</string>
+			</array>
+		</dict>
+		<!-- Facebook sharing callback -->
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.resonance-ux.luminous-attachment.facebook</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb$(FACEBOOK_APP_ID)</string>
+			</array>
+		</dict>
+		<!-- Twitter/X sharing callback -->
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.resonance-ux.luminous-attachment.twitter</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>twitterkit-$(TWITTER_CONSUMER_KEY)</string>
+			</array>
+		</dict>
+		<!-- Instagram Stories sharing -->
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.resonance-ux.luminous-attachment.instagram</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>instagram-stories</string>
+			</array>
+		</dict>
+		<!-- Google Sign-In callback -->
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.resonance-ux.luminous-attachment.google</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.$(GOOGLE_CLIENT_ID)</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Queried URL Schemes (canOpenURL) -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>instagram</string>
+		<string>instagram-stories</string>
+		<string>fb</string>
+		<string>fbapi</string>
+		<string>fb-messenger</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+		<string>twitter</string>
+		<string>tweetbot</string>
+		<string>whatsapp</string>
+		<string>tg</string>
+		<string>telegram</string>
+		<string>pinterest</string>
+		<string>linkedin</string>
+		<string>snapchat</string>
+		<string>threads</string>
+		<string>mastodon</string>
+		<string>bluesky</string>
+		<string>signal</string>
+		<string>viber</string>
+		<string>line</string>
+		<string>wechat</string>
+		<string>weixin</string>
+		<string>mailto</string>
+		<string>sms</string>
+		<string>imessage</string>
+		<string>itms-apps</string>
+		<string>itms-appss</string>
+	</array>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     Universal Links — Associated Domains
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:luminousattachment.com</string>
+		<string>applinks:www.luminousattachment.com</string>
+		<string>applinks:app.luminousattachment.com</string>
+		<string>applinks:share.luminousattachment.com</string>
+		<string>webcredentials:luminousattachment.com</string>
+		<string>activitycontinuation:luminousattachment.com</string>
+	</array>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     Background Modes
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<!-- Audiobook playback in background -->
+		<string>audio</string>
+		<!-- Background fetch for journal sync -->
+		<string>fetch</string>
+		<!-- Push notifications -->
+		<string>remote-notification</string>
+		<!-- Background processing for content sync -->
+		<string>processing</string>
+	</array>
+
+	<!-- Background Task Identifiers -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.resonance-ux.luminous-attachment.journal-sync</string>
+		<string>com.resonance-ux.luminous-attachment.content-refresh</string>
+		<string>com.resonance-ux.luminous-attachment.analytics-upload</string>
+		<string>com.resonance-ux.luminous-attachment.widget-refresh</string>
+	</array>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     Privacy Descriptions — Required for App Store Review
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Luminous Attachment uses the microphone to record voice journal entries and personal reflections on your attachment journey.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Luminous Attachment uses the camera to capture moments for your visual journal and to personalize your sharing cards.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Luminous Attachment accesses your photo library to add images to journal entries and create beautiful shareable cards.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Luminous Attachment saves generated insight cards and journal exports to your photo library.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Luminous Attachment uses Face ID to protect your private journal entries and personal attachment data.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Luminous Attachment uses tracking to understand which features help you most on your journey to secure attachment.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Luminous Attachment uses the local network for AirPlay audiobook playback and content sharing.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Luminous Attachment can add guided practice sessions and reflection reminders to your calendar.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Luminous Attachment uses contacts to help you share insight cards with your trusted circle.</string>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     PencilKit — Drawing & Journaling
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>PencilKitEnabled</key>
+	<true/>
+	<key>UISupportsApplePencil</key>
+	<true/>
+	<key>UIPencilInteractionEnabled</key>
+	<true/>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     WidgetKit — Home Screen & Lock Screen Widgets
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>NSWidgetWantsLocation</key>
+	<false/>
+	<key>NSExtension</key>
+	<dict>
+		<key>NSExtensionPointIdentifier</key>
+		<string>com.apple.widgetkit-extension</string>
+	</dict>
+
+	<!-- Widget Supported Families -->
+	<key>WidgetSupportedFamilies</key>
+	<array>
+		<string>systemSmall</string>
+		<string>systemMedium</string>
+		<string>systemLarge</string>
+		<string>systemExtraLarge</string>
+		<string>accessoryCircular</string>
+		<string>accessoryRectangular</string>
+		<string>accessoryInline</string>
+	</array>
+
+	<!-- App Group for Widget Data Sharing -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.com.resonance-ux.luminous-attachment</string>
+	</array>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     Audio Session — Audiobook Player
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>AVAudioSessionCategory</key>
+	<string>AVAudioSessionCategoryPlayback</string>
+	<key>AVAudioSessionMode</key>
+	<string>AVAudioSessionModeSpokenAudio</string>
+	<key>MPNowPlayingInfoPropertyMediaType</key>
+	<integer>3</integer>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     Share Extension
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>NSExtensionActivationRule</key>
+	<dict>
+		<key>NSExtensionActivationSupportsImageWithMaxCount</key>
+		<integer>10</integer>
+		<key>NSExtensionActivationSupportsText</key>
+		<true/>
+		<key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
+		<integer>1</integer>
+		<key>NSExtensionActivationSupportsFileWithMaxCount</key>
+		<integer>5</integer>
+	</dict>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     Document Types — Import/Export
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Luminous Attachment Journal</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.resonance-ux.luminous-attachment.journal</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Luminous Attachment eBook</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.resonance-ux.luminous-attachment.ebook</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>PDF Document</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.adobe.pdf</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>EPUB Document</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>org.idpf.epub-container</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Exported Type Declarations -->
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Luminous Attachment Journal Entry</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.resonance-ux.luminous-attachment.journal</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>laj</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>application/vnd.resonance-ux.luminous-attachment.journal</string>
+			</dict>
+		</dict>
+	</array>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     App Transport Security
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>luminousattachment.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<true/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.3</string>
+			</dict>
+			<key>resonance-ux.com</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<true/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.3</string>
+			</dict>
+		</dict>
+	</dict>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     Capabilities & Entitlements
+	     ════════════════════════════════════════════════════════════════ -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+
+	<!-- Handoff -->
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.resonance-ux.luminous-attachment.reading</string>
+		<string>com.resonance-ux.luminous-attachment.journaling</string>
+		<string>com.resonance-ux.luminous-attachment.listening</string>
+		<string>com.resonance-ux.luminous-attachment.coaching</string>
+	</array>
+
+	<!-- Siri Shortcuts -->
+	<key>INIntentsSupported</key>
+	<array>
+		<string>OpenJournalIntent</string>
+		<string>PlayAudiobookIntent</string>
+		<string>DailyReflectionIntent</string>
+		<string>AttachmentCheckInIntent</string>
+	</array>
+	<key>INIntentsRestrictedWhileLocked</key>
+	<array>
+		<string>OpenJournalIntent</string>
+	</array>
+</dict>
+</plist>

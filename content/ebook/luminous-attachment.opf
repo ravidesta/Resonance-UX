@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" xml:lang="en">
+
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    <!-- Primary Identifiers -->
+    <dc:identifier id="book-id">urn:uuid:e7a3f1c2-9d4b-4e8f-a6c7-2b5d8f1e3a9c</dc:identifier>
+    <meta refines="#book-id" property="identifier-type" scheme="onix:codelist5">15</meta>
+    <dc:identifier id="isbn">978-1-940000-12-7</dc:identifier>
+    <meta refines="#isbn" property="identifier-type" scheme="onix:codelist5">15</meta>
+
+    <!-- Title -->
+    <dc:title id="main-title">Luminous Attachment</dc:title>
+    <meta refines="#main-title" property="title-type">main</meta>
+    <dc:title id="subtitle">A Therapeutic Guide to Understanding and Healing Your Attachment Patterns</dc:title>
+    <meta refines="#subtitle" property="title-type">subtitle</meta>
+
+    <!-- Creator -->
+    <dc:creator id="author">Resonance UX</dc:creator>
+    <meta refines="#author" property="role" scheme="marc:relators">aut</meta>
+    <meta refines="#author" property="file-as">Resonance UX</meta>
+
+    <!-- Contributors -->
+    <dc:contributor id="editor">Resonance Editorial Team</dc:contributor>
+    <meta refines="#editor" property="role" scheme="marc:relators">edt</meta>
+    <dc:contributor id="designer">Resonance Design Studio</dc:contributor>
+    <meta refines="#designer" property="role" scheme="marc:relators">bkd</meta>
+
+    <!-- Publisher -->
+    <dc:publisher>Resonance UX Press</dc:publisher>
+
+    <!-- Dates -->
+    <dc:date>2026-03-20</dc:date>
+    <meta property="dcterms:modified">2026-03-20T00:00:00Z</meta>
+
+    <!-- Language & Rights -->
+    <dc:language>en</dc:language>
+    <dc:rights>Copyright 2026 Resonance UX. All rights reserved.</dc:rights>
+
+    <!-- Subject & Description -->
+    <dc:subject>Attachment Theory</dc:subject>
+    <dc:subject>Psychology</dc:subject>
+    <dc:subject>Self-Help</dc:subject>
+    <dc:subject>Relationships</dc:subject>
+    <dc:subject>Therapy</dc:subject>
+    <dc:subject>Mental Health</dc:subject>
+    <dc:subject>Emotional Healing</dc:subject>
+    <dc:subject>Neuroscience</dc:subject>
+
+    <dc:description>Luminous Attachment is a compassionate, scientifically grounded guide to understanding your attachment style and cultivating earned secure attachment. Drawing on the foundational work of Bowlby and Ainsworth, modern neuroscience, and somatic-based therapies, this book illuminates the invisible threads that shape how we love, connect, and heal. Through twelve chapters of rich therapeutic content, guided reflections, and practical exercises, readers journey from understanding their earliest relational blueprints to becoming their own secure base. Whether you identify as anxiously attached, avoidantly attached, or disorganized in your relational patterns, this book meets you with warmth, scientific rigor, and the unwavering belief that security can be earned at any age.</dc:description>
+
+    <!-- EPUB3 Meta -->
+    <meta property="schema:accessMode">textual</meta>
+    <meta property="schema:accessModeSufficient">textual</meta>
+    <meta property="schema:accessibilityFeature">structuralNavigation</meta>
+    <meta property="schema:accessibilityFeature">readingOrder</meta>
+    <meta property="schema:accessibilityHazard">none</meta>
+    <meta property="schema:accessibilitySummary">This publication conforms to WCAG 2.1 Level AA.</meta>
+
+    <!-- Cover Meta -->
+    <meta name="cover" content="cover-image" />
+  </metadata>
+
+  <manifest>
+    <!-- Stylesheet -->
+    <item id="css-style" href="styles.css" media-type="text/css" />
+
+    <!-- Chapters -->
+    <item id="chapter-01" href="chapters/chapter-01-roots-of-connection.html" media-type="application/xhtml+xml" />
+    <item id="chapter-02" href="chapters/chapter-02-your-attachment-story.html" media-type="application/xhtml+xml" />
+    <item id="chapter-03" href="chapters/chapter-03-anxious-heart.html" media-type="application/xhtml+xml" />
+    <item id="chapter-04" href="chapters/chapter-04-distant-shore.html" media-type="application/xhtml+xml" />
+    <item id="chapter-05" href="chapters/chapter-05-storm-within.html" media-type="application/xhtml+xml" />
+    <item id="chapter-06" href="chapters/chapter-06-earned-security.html" media-type="application/xhtml+xml" />
+    <item id="chapter-07" href="chapters/chapter-07-rewiring-response.html" media-type="application/xhtml+xml" />
+    <item id="chapter-08" href="chapters/chapter-08-language-of-needs.html" media-type="application/xhtml+xml" />
+    <item id="chapter-09" href="chapters/chapter-09-boundaries-as-love.html" media-type="application/xhtml+xml" />
+    <item id="chapter-10" href="chapters/chapter-10-rupture-and-repair.html" media-type="application/xhtml+xml" />
+    <item id="chapter-11" href="chapters/chapter-11-luminous-thread.html" media-type="application/xhtml+xml" />
+    <item id="chapter-12" href="chapters/chapter-12-becoming-home.html" media-type="application/xhtml+xml" />
+
+    <!-- Back Matter -->
+    <item id="glossary" href="glossary.html" media-type="application/xhtml+xml" />
+
+    <!-- Navigation -->
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav" />
+  </manifest>
+
+  <spine>
+    <itemref idref="nav" linear="no" />
+    <itemref idref="chapter-01" />
+    <itemref idref="chapter-02" />
+    <itemref idref="chapter-03" />
+    <itemref idref="chapter-04" />
+    <itemref idref="chapter-05" />
+    <itemref idref="chapter-06" />
+    <itemref idref="chapter-07" />
+    <itemref idref="chapter-08" />
+    <itemref idref="chapter-09" />
+    <itemref idref="chapter-10" />
+    <itemref idref="chapter-11" />
+    <itemref idref="chapter-12" />
+    <itemref idref="glossary" />
+  </spine>
+
+  <guide>
+    <reference type="toc" title="Table of Contents" href="nav.xhtml" />
+    <reference type="text" title="Chapter 1" href="chapters/chapter-01-roots-of-connection.html" />
+    <reference type="glossary" title="Glossary" href="glossary.html" />
+  </guide>
+
+</package>

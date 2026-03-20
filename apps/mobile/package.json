@@ -1,0 +1,126 @@
+{
+  "name": "@resonance-ux/luminous-attachment-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Luminous Attachment mobile app — React Native. A Resonance UX experience.",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "lint": "eslint . --ext .ts,.tsx",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "pod-install": "cd ios && pod install && cd ..",
+    "clean": "react-native-clean-project",
+    "bundle:ios": "react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios",
+    "bundle:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-native": "^0.75.4",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native-stack": "^6.11.0",
+    "@react-navigation/bottom-tabs": "^6.6.1",
+    "react-native-screens": "^3.34.0",
+    "react-native-safe-area-context": "^4.11.0",
+    "react-native-gesture-handler": "^2.20.0",
+    "react-native-reanimated": "^3.16.1",
+    "react-native-svg": "^15.8.0",
+
+    "react-native-share": "^11.0.4",
+    "react-native-view-shot": "^4.0.0",
+
+    "react-native-canvas": "^0.1.39",
+    "@shopify/react-native-skia": "^1.5.0",
+    "react-native-drawing": "^0.3.0",
+
+    "react-native-track-player": "^4.1.1",
+    "react-native-audio-api": "^0.5.0",
+    "react-native-audio-recorder-player": "^3.6.7",
+
+    "react-native-pencilkit": "^0.2.1",
+    "react-native-apple-pencil": "^1.0.3",
+
+    "@react-native-community/push-notification-ios": "^1.11.0",
+    "react-native-push-notification": "^8.1.1",
+
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "react-native-mmkv": "^3.1.0",
+    "react-native-encrypted-storage": "^4.0.3",
+
+    "react-native-fs": "^2.20.0",
+    "react-native-document-picker": "^9.3.1",
+    "react-native-image-picker": "^7.1.2",
+
+    "react-native-webview": "^13.12.3",
+    "react-native-in-app-browser": "^1.2.0",
+
+    "@react-native-firebase/app": "^21.1.0",
+    "@react-native-firebase/analytics": "^21.1.0",
+    "@react-native-firebase/auth": "^21.1.0",
+    "@react-native-firebase/firestore": "^21.1.0",
+    "@react-native-firebase/storage": "^21.1.0",
+
+    "react-native-haptic-feedback": "^2.3.3",
+    "react-native-device-info": "^13.0.0",
+    "react-native-linear-gradient": "^2.8.3",
+    "react-native-blur": "^4.4.1",
+    "@gorhom/bottom-sheet": "^4.6.4",
+    "react-native-fast-image": "^8.6.3",
+    "react-native-lottie": "^1.0.1",
+
+    "zustand": "^5.0.0",
+    "@tanstack/react-query": "^5.59.0",
+    "date-fns": "^4.1.0",
+    "zod": "^3.23.8",
+
+    "react-native-widgetkit": "^1.0.4",
+
+    "react-native-iap": "^12.15.4",
+
+    "react-native-keychain": "^9.2.0",
+    "react-native-biometrics": "^3.0.1",
+
+    "react-native-clipboard": "^1.15.0",
+    "react-native-url-polyfill": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.11",
+    "@types/react-native": "^0.73.0",
+    "typescript": "^5.6.3",
+    "@babel/core": "^7.25.8",
+    "@babel/preset-env": "^7.25.8",
+    "@babel/runtime": "^7.25.7",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "metro-react-native-babel-preset": "^0.77.0",
+    "react-native-clean-project": "^4.0.3",
+    "eslint": "^9.12.0",
+    "@react-native/eslint-config": "^0.75.4",
+    "jest": "^29.7.0",
+    "@testing-library/react-native": "^12.7.2",
+    "react-test-renderer": "^18.3.1",
+    "detox": "^20.27.3",
+    "react-native-flipper": "^0.212.0",
+    "reactotron-react-native": "^5.1.8"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(react-native|@react-native|@react-navigation|react-native-share|react-native-canvas|react-native-track-player|react-native-reanimated|react-native-gesture-handler|react-native-screens|react-native-safe-area-context)/)"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ════════════════════════════════════════════════════════════════
+    Luminous Attachment by Resonance UX
+    Illuminate Your Path to Secure Connection
+    ════════════════════════════════════════════════════════════════
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.resonanceux.luminousattachment">
+
+    <!-- ════════════════════════════════════════════════════════════
+         Permissions
+         ════════════════════════════════════════════════════════════ -->
+
+    <!-- Internet & Network -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- Audio — Audiobook playback & voice journaling -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+
+    <!-- Storage — Journal exports, eBook files, share cards -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
+    <!-- Camera — Journal photo entries -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Notifications — Reminders, coach nudges -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+
+    <!-- Biometric — Journal privacy -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
+    <!-- Widgets -->
+    <uses-permission android:name="android.permission.BIND_APPWIDGET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <!-- Sharing — Social platforms -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <!-- Stylus / Drawing support -->
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.hardware.faketouch.multitouch.jazzhand" android:required="false" />
+    <uses-feature android:name="android.hardware.stylus" android:required="false" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
+
+    <!-- ════════════════════════════════════════════════════════════
+         Queries — For checking installed apps before sharing
+         ════════════════════════════════════════════════════════════ -->
+    <queries>
+        <!-- Social sharing targets -->
+        <package android:name="com.instagram.android" />
+        <package android:name="com.facebook.katana" />
+        <package android:name="com.facebook.orca" />
+        <package android:name="com.twitter.android" />
+        <package android:name="com.whatsapp" />
+        <package android:name="org.telegram.messenger" />
+        <package android:name="com.pinterest" />
+        <package android:name="com.linkedin.android" />
+        <package android:name="com.snapchat.android" />
+        <package android:name="com.Slack" />
+        <package android:name="us.zoom.videomeetings" />
+        <package android:name="com.discord" />
+        <package android:name="com.reddit.frontpage" />
+        <package android:name="org.thoughtcrime.securesms" />
+        <package android:name="com.tumblr" />
+        <package android:name="com.zhiliaoapp.musically" />
+        <package android:name="app.bluesky.android" />
+        <package android:name="org.joinmastodon.android" />
+        <package android:name="com.threads.android" />
+
+        <!-- Implicit intents -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="image/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="text/plain" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+        </intent>
+    </queries>
+
+    <!-- ════════════════════════════════════════════════════════════
+         Application
+         ════════════════════════════════════════════════════════════ -->
+    <application
+        android:name=".LuminousAttachmentApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.LuminousAttachment"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:localeConfig="@xml/locales_config"
+        android:enableOnBackInvokedCallback="true"
+        android:hardwareAccelerated="true"
+        android:largeHeap="true"
+        tools:targetApi="34">
+
+        <!-- ════════════════════════════════════════════════════════
+             Main Activity
+             ════════════════════════════════════════════════════════ -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.LuminousAttachment.SplashScreen">
+
+            <!-- App launcher -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep link: luminous:// scheme -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="luminous" />
+                <data android:scheme="luminousattachment" />
+            </intent-filter>
+
+            <!-- Universal links / App Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="luminousattachment.com" />
+                <data android:scheme="https"
+                    android:host="www.luminousattachment.com" />
+                <data android:scheme="https"
+                    android:host="app.luminousattachment.com" />
+                <data android:scheme="https"
+                    android:host="share.luminousattachment.com" />
+            </intent-filter>
+
+            <!-- Receive shared text -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <!-- Receive shared images -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+            <!-- Receive multiple shared images -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+            <!-- Open journal files -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/vnd.resonance-ux.luminous-attachment.journal" />
+            </intent-filter>
+
+            <!-- Open PDF / EPUB for eBook reader -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/pdf" />
+                <data android:mimeType="application/epub+zip" />
+            </intent-filter>
+
+            <!-- Media playback from search (Google Assistant) -->
+            <intent-filter>
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- ════════════════════════════════════════════════════════
+             Audiobook Media Service — Background Playback
+             ════════════════════════════════════════════════════════ -->
+        <service
+            android:name=".services.AudiobookPlaybackService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </service>
+
+        <!-- Media Button Receiver -->
+        <receiver
+            android:name="androidx.media.session.MediaButtonReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- ════════════════════════════════════════════════════════
+             Drawing / Canvas Service — Journal Sketching
+             ════════════════════════════════════════════════════════ -->
+        <service
+            android:name=".services.DrawingRenderService"
+            android:exported="false"
+            android:process=":drawing" />
+
+        <!-- ════════════════════════════════════════════════════════
+             Widgets — Home Screen & Lock Screen
+             ════════════════════════════════════════════════════════ -->
+
+        <!-- Daily Insight Widget (Small) -->
+        <receiver
+            android:name=".widgets.DailyInsightWidget"
+            android:exported="true"
+            android:label="@string/widget_daily_insight_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_daily_insight_info" />
+        </receiver>
+
+        <!-- Attachment Check-In Widget (Medium) -->
+        <receiver
+            android:name=".widgets.AttachmentCheckInWidget"
+            android:exported="true"
+            android:label="@string/widget_attachment_checkin_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_attachment_checkin_info" />
+        </receiver>
+
+        <!-- Journal Quick-Entry Widget (Medium) -->
+        <receiver
+            android:name=".widgets.JournalQuickEntryWidget"
+            android:exported="true"
+            android:label="@string/widget_journal_quick_entry_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_journal_quick_entry_info" />
+        </receiver>
+
+        <!-- Audiobook Player Widget (Large) -->
+        <receiver
+            android:name=".widgets.AudiobookPlayerWidget"
+            android:exported="true"
+            android:label="@string/widget_audiobook_player_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_audiobook_player_info" />
+        </receiver>
+
+        <!-- Growth Tracker Widget (Small) -->
+        <receiver
+            android:name=".widgets.GrowthTrackerWidget"
+            android:exported="true"
+            android:label="@string/widget_growth_tracker_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_growth_tracker_info" />
+        </receiver>
+
+        <!-- ════════════════════════════════════════════════════════
+             Share Target — Direct Share Shortcuts
+             ════════════════════════════════════════════════════════ -->
+        <meta-data
+            android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
+
+        <!-- ════════════════════════════════════════════════════════
+             Content Provider — Share Card Generation
+             ════════════════════════════════════════════════════════ -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- ════════════════════════════════════════════════════════
+             Notification Channels
+             ════════════════════════════════════════════════════════ -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="luminous_daily_reflection" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/gold_primary" />
+
+        <!-- Firebase Cloud Messaging -->
+        <service
+            android:name=".services.LuminousFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- ════════════════════════════════════════════════════════
+             Boot Receiver — Reschedule Reminders
+             ════════════════════════════════════════════════════════ -->
+        <receiver
+            android:name=".receivers.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- ════════════════════════════════════════════════════════
+             Reminder Alarm Receiver
+             ════════════════════════════════════════════════════════ -->
+        <receiver
+            android:name=".receivers.ReminderAlarmReceiver"
+            android:exported="false" />
+
+        <!-- ════════════════════════════════════════════════════════
+             Work Manager — Background Sync
+             ════════════════════════════════════════════════════════ -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <!-- ════════════════════════════════════════════════════════
+             Google Play Billing
+             ════════════════════════════════════════════════════════ -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+    </application>
+</manifest>
