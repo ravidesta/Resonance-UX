@@ -1,0 +1,118 @@
+{
+  "name": "Resonance",
+  "short_name": "Resonance",
+  "description": "Calm, intentional digital experiences. Your daily flow, focus, letters, and creative canvas — unified.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0A1C14",
+  "background_color": "#FAFAF8",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["productivity", "lifestyle", "health"],
+  "icons": [
+    {
+      "src": "/resonance-icon-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/resonance-icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/resonance-icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/resonance-icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/resonance-icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/resonance-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/resonance-icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/resonance-icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/resonance-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Resonance desktop — Daily Flow view"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Resonance mobile — Daily Flow view"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Daily Flow",
+      "url": "/flow",
+      "description": "View your daily rhythm and spaciousness"
+    },
+    {
+      "name": "Focus",
+      "url": "/focus",
+      "description": "Manage tasks by energy level"
+    },
+    {
+      "name": "Letters",
+      "url": "/letters",
+      "description": "Intentional messaging"
+    },
+    {
+      "name": "Canvas",
+      "url": "/canvas",
+      "description": "Writing workspace"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.resonance.ux"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/resonance-ux/id0000000000"
+    }
+  ]
+}
