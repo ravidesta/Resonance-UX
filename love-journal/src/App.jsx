@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useJournalStore } from './hooks/useJournalStore'
 import { BottomNav, TopBar } from './components/Navigation'
+import { LandingPage } from './pages/LandingPage'
 import { Home } from './pages/Home'
 import { Gateway } from './pages/Gateway'
 import { ChapterList, ChapterDetail } from './pages/Chapters'
@@ -15,7 +16,10 @@ const viewTitles = {
 
 function App() {
   const store = useJournalStore()
-  const [view, setView] = useState('home')
+  const [view, setView] = useState(() => {
+    const hasEntries = Object.keys(store.data).length > 0
+    return hasEntries ? 'home' : 'landing'
+  })
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('love-journal-dark')
@@ -42,9 +46,16 @@ function App() {
     }
   }
 
+  const handleEnterJournal = () => {
+    setView('home')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const topTitle = view === 'chapter-detail'
     ? `Chapter ${selectedChapter}`
     : viewTitles[view] || 'Love Journal'
+
+  const isLanding = view === 'landing'
 
   return (
     <div className={`min-h-dvh paper-texture transition-colors duration-800 ${isDark ? 'theme-deep' : ''}`}>
@@ -72,28 +83,42 @@ function App() {
         />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 max-w-2xl mx-auto min-h-dvh">
-        <TopBar
-          title={topTitle}
-          isDark={isDark}
-          setIsDark={setIsDark}
-          onBack={view === 'chapter-detail' ? handleBack : null}
-          store={store}
-        />
+      {/* Landing Page */}
+      {isLanding && (
+        <div className="relative z-10">
+          <LandingPage
+            onEnterJournal={handleEnterJournal}
+            isDark={isDark}
+            setIsDark={setIsDark}
+          />
+        </div>
+      )}
 
-        <main className="pb-4">
-          {view === 'home' && <Home setView={setView} store={store} />}
-          {view === 'gateway' && <Gateway store={store} />}
-          {view === 'chapters' && <ChapterList onSelect={handleSelectChapter} store={store} />}
-          {view === 'chapter-detail' && (
-            <ChapterDetail chapterId={selectedChapter} store={store} onBack={handleBack} />
-          )}
-          {view === 'integration' && <Integration store={store} />}
-        </main>
+      {/* Journal App */}
+      {!isLanding && (
+        <div className="relative z-10 max-w-2xl mx-auto min-h-dvh">
+          <TopBar
+            title={topTitle}
+            isDark={isDark}
+            setIsDark={setIsDark}
+            onBack={view === 'chapter-detail' ? handleBack : null}
+            store={store}
+            onLanding={() => setView('landing')}
+          />
 
-        <BottomNav view={view === 'chapter-detail' ? 'chapters' : view} setView={setView} />
-      </div>
+          <main className="pb-4">
+            {view === 'home' && <Home setView={setView} store={store} />}
+            {view === 'gateway' && <Gateway store={store} />}
+            {view === 'chapters' && <ChapterList onSelect={handleSelectChapter} store={store} />}
+            {view === 'chapter-detail' && (
+              <ChapterDetail chapterId={selectedChapter} store={store} onBack={handleBack} />
+            )}
+            {view === 'integration' && <Integration store={store} />}
+          </main>
+
+          <BottomNav view={view === 'chapter-detail' ? 'chapters' : view} setView={setView} />
+        </div>
+      )}
     </div>
   )
 }

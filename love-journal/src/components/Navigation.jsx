@@ -1,4 +1,4 @@
-import { Heart, BookOpen, Layers, Compass, Moon, Sun, Download, Upload, ChevronLeft } from 'lucide-react'
+import { Heart, BookOpen, Layers, Compass, Moon, Sun, Download, Upload, ChevronLeft, Globe } from 'lucide-react'
 
 const navItems = [
   { id: 'home', label: 'Home', icon: Heart },
@@ -32,7 +32,7 @@ export function BottomNav({ view, setView }) {
   )
 }
 
-export function TopBar({ title, isDark, setIsDark, onBack, store }) {
+export function TopBar({ title, isDark, setIsDark, onBack, store, onLanding }) {
   return (
     <header className="sticky top-0 z-40 safe-top">
       <div className="glass px-4 py-3 flex items-center justify-between">
@@ -50,6 +50,15 @@ export function TopBar({ title, isDark, setIsDark, onBack, store }) {
           </h1>
         </div>
         <div className="flex items-center gap-1">
+          {onLanding && (
+            <button
+              onClick={onLanding}
+              className="p-2 rounded-lg hover:bg-gold/10 transition-colors text-text-muted"
+              title="Landing page"
+            >
+              <Globe size={16} />
+            </button>
+          )}
           {store && (
             <>
               <button
