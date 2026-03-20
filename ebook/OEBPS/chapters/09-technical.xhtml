@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Chapter 9: Technical Architecture</title>
+  <link rel="stylesheet" type="text/css" href="../styles/resonance.css"/>
+</head>
+<body>
+
+  <div class="chapter-opening">
+    <span class="chapter-number">Chapter Nine</span>
+    <h1 class="chapter-title">Technical Architecture</h1>
+    <p class="chapter-subtitle">Backend services, the Luminize AI engine, notification philosophy, and the infrastructure of calm</p>
+  </div>
+
+  <h2 id="architecture-overview">Architecture Overview</h2>
+
+  <p>The Resonance technical architecture is designed to serve a single overarching goal: the infrastructure should be as calm as the interface. This means that the backend services must be reliable enough that users never encounter server errors, fast enough that latency never creates waiting anxiety, and resilient enough that partial failures degrade gracefully rather than catastrophically. It also means that the architecture must support the offline-first, privacy-preserving, cross-platform requirements of the Resonance ecosystem without imposing complexity on the client applications.</p>
+
+  <p>The backend is organized as a set of microservices, each responsible for a bounded domain: authentication and user management, task and flow state management, messaging and presence, document storage and retrieval, wellness data management, sync coordination, notification delivery, and AI processing. These services communicate through a combination of synchronous REST APIs for client-facing operations and asynchronous message queues for inter-service coordination. Each service maintains its own data store, and no service directly accesses another service's database, ensuring loose coupling and independent scalability.</p>
+
+  <p>The API surface exposed to client applications follows a consistent design language. All endpoints return responses wrapped in a standard envelope that includes a success flag, the response data, and optional metadata for pagination. Error responses use structured error objects with machine-readable codes and human-readable messages. The API versioning strategy uses URL path versioning, ensuring that older client versions continue to work even as the API evolves. Rate limiting is applied per-user and per-endpoint, with generous limits that accommodate normal usage patterns and tighter limits for operations that are computationally expensive or security-sensitive.</p>
+
+  <div class="callout technical">
+    <div class="callout-title">API Response Format</div>
+    <p>Every API response follows the same structure: a <code>success</code> boolean, a <code>data</code> field containing the response payload, and an optional <code>meta</code> object with pagination details including <code>page</code>, <code>limit</code>, <code>total</code>, and <code>hasMore</code>. Error responses replace the <code>data</code> field with an <code>error</code> object containing a <code>code</code>, <code>message</code>, and optional <code>details</code> map. This consistency eliminates parsing ambiguity across all client platforms.</p>
+  </div>
+
+  <h2 id="luminize-ai">The Luminize AI Engine</h2>
+
+  <p>Luminize is the AI subsystem that powers intelligent features across the Resonance ecosystem. It is not a single model but a collection of specialized capabilities, each designed to augment human capacity without replacing human judgment. The name "Luminize" reflects the design intent: the AI should illuminate, making existing content clearer and more visible, rather than generate, creating content that displaces the human author.</p>
+
+  <p>The Luminize Prose engine, described in the Writer chapter, is the most visible expression of the AI subsystem. But Luminize also powers less visible features throughout the ecosystem. In Daily Flow, it analyzes patterns in task completion, energy levels, and phase timing to suggest adjustments to the user's daily rhythm. It might notice that a user consistently defers tasks scheduled for the afternoon and suggest extending the midday rest phase. In Inner Circle, it powers voice message transcription and optional conversation summaries for group chats. In the Wellness Holarchy, it identifies patterns in biomarker data that might warrant discussion with a healthcare provider.</p>
+
+  <p>All Luminize operations share three design constraints. First, <strong>transparency</strong>: every AI-generated suggestion includes an explanation of why it was made. A task rescheduling suggestion does not simply say "Move this to tomorrow" but "You have deferred this task three times during afternoon phases. Your completion rate for high-energy tasks is 85% in the morning. Consider scheduling this for tomorrow's Morning Focus phase." Second, <strong>consent</strong>: no AI action is taken automatically. Every suggestion requires explicit user approval before it takes effect. Third, <strong>privacy</strong>: Luminize processes user data only when explicitly invoked, does not retain conversation history for model training, and runs all health-related analysis locally on the device rather than sending sensitive data to cloud servers.</p>
+
+  <p>The technical implementation uses a tiered processing model. Lightweight operations like text classification and keyword extraction run on-device using optimized models that consume minimal battery and memory. Medium-weight operations like prose refinement and voice transcription use cloud-based inference with the encrypted request-response pattern described in the previous chapter. Heavy operations like long-range pattern analysis in biomarker data are performed during overnight sync windows when the device is charging and on Wi-Fi, ensuring that AI processing never competes with the user's active tasks for device resources.</p>
+
+  <h2 id="notification-system">The Notification System: Silence as a Feature</h2>
+
+  <p>The Resonance notification system is perhaps the most philosophically charged component of the entire technical architecture. Notifications are the primary mechanism by which applications compete for human attention, and the design of the notification system embodies, more than any other component, the Resonance commitment to consent over capture.</p>
+
+  <p>Every notification in the Resonance system carries an <strong>urgency level</strong> drawn from a five-level scale: Critical, High, Normal, Low, and Silent. Critical notifications are delivered immediately regardless of the user's phase or status. They are reserved for genuine emergencies: a security alert, a critical health reading, a message from an inner circle contact marked as urgent. High notifications are delivered at the next natural transition point, typically the end of a focus interval or the beginning of a new phase. Normal notifications are batched and delivered in periodic summaries. Low notifications are stored and available for review but never actively delivered. Silent notifications update data in the background without any user-visible indication.</p>
+
+  <p>The default urgency for most events is Normal or Low. A new message from a non-inner-circle contact is Normal. A task approaching its due date is Low. A document receiving a Luminize suggestion is Silent. The user can adjust these defaults, but the system's out-of-the-box configuration errs aggressively toward silence. This is a deliberate inversion of the industry standard, where default notification settings are maximally aggressive and the user must actively configure quiet. In Resonance, quiet is the default, and noise must be explicitly invited.</p>
+
+  <p>The technical implementation uses each platform's native notification infrastructure: APNs for iOS, FCM for Android, WNS for Windows, and the Notification API for the web. A central notification routing service evaluates each notification against the user's current phase, intentional status, and urgency preferences before deciding whether, when, and how to deliver it. This server-side evaluation means that the decision to suppress a notification is made before it reaches the device, not after. The user's phone does not vibrate and then hide the notification; it simply never vibrates at all. The absence of stimulation is total, not cosmetic.</p>
+
+  <blockquote>
+    <p>"The most important notification is the one we decided not to send."</p>
+    <cite>Resonance Engineering Principle #3</cite>
+  </blockquote>
+
+  <h2 id="websocket-layer">The Real-Time Layer</h2>
+
+  <p>While the sync system handles the bulk of data coordination, certain features require lower-latency communication than the sync interval provides. Messaging, status updates, and active collaboration sessions use a WebSocket connection that maintains a persistent channel between the client and the server.</p>
+
+  <p>The WebSocket protocol defines a typed message system with categories for connection management, status updates, messaging, sync coordination, notifications, and voice and video calls. Each message carries a type identifier, a unique message ID for deduplication, a timestamp, and a payload specific to the message type. The connection is authenticated using the same JWT tokens as the REST API, with a dedicated authentication handshake that occurs immediately after the WebSocket connection is established.</p>
+
+  <p>The WebSocket connection is managed with care for device resources. On mobile platforms, the connection is maintained only when the application is in the foreground or when the user has an active conversation. In the background, push notifications replace the WebSocket for message delivery. On desktop platforms, the connection persists as long as the application is running, with an exponential backoff reconnection strategy that handles network interruptions gracefully. The connection includes a heartbeat mechanism, a ping-pong exchange every thirty seconds, that serves the dual purpose of keeping the connection alive through NAT timeouts and providing the server with a lightweight signal that the client is still active.</p>
+
+  <p>For voice and video calls, the WebSocket serves as the signaling channel for WebRTC peer-to-peer connections. Call initiation, acceptance, decline, and termination messages flow through the WebSocket, while the actual media streams are exchanged directly between devices using WebRTC's ICE framework. This architecture ensures that voice and video data never passes through Resonance servers, maintaining the privacy commitment even for real-time communication.</p>
+
+  <h2 id="backend-services">Service Architecture</h2>
+
+  <p>Each backend service is designed to be independently deployable, horizontally scalable, and fault-tolerant. The authentication service uses bcrypt for password hashing, issues short-lived JWTs for session management, and supports refresh token rotation to limit the blast radius of token theft. The task service maintains the canonical state of all tasks and flow configurations, supporting the complex query patterns needed by the Daily Flow interface, including filtering by status, priority, domain, energy level, scheduled date, and phase. The messaging service handles message storage, delivery confirmation, and conversation management, with separate storage paths for encrypted message content and unencrypted metadata.</p>
+
+  <p>The wellness service has the strictest security posture of any service in the architecture. It stores all biomarker data in an encrypted partition that is accessible only through the service's own API, never through direct database access. Access control is enforced at the record level: a patient can access only their own data, and a provider can access only the data of patients who have explicitly granted them access. Audit logging captures every access to wellness data, creating a complete record of who viewed what and when. This level of security rigor reflects the sensitivity of health data and the trust that users place in the system when they enter their most personal medical information.</p>
+
+  <p>The AI service, Luminize, is architecturally isolated from the other services and communicates only through the message queue. It receives encrypted payloads, processes them, and returns encrypted results. It does not have access to user identity information, does not maintain session state between requests, and does not log the content of requests or responses. This stateless, anonymous processing model ensures that even if the AI service were compromised, no user data could be extracted in a form that could be linked to an individual.</p>
+
+  <div class="ornament">&#x2726; &#x2726; &#x2726;</div>
+
+</body>
+</html>

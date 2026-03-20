@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Chapter 7: Cross-Platform Harmony</title>
+  <link rel="stylesheet" type="text/css" href="../styles/resonance.css"/>
+</head>
+<body>
+
+  <div class="chapter-opening">
+    <span class="chapter-number">Chapter Seven</span>
+    <h1 class="chapter-title">Cross-Platform Harmony</h1>
+    <p class="chapter-subtitle">Eight platforms, one philosophy, and the art of being native everywhere</p>
+  </div>
+
+  <h2 id="the-platform-challenge">The Multi-Platform Challenge</h2>
+
+  <p>Resonance exists on eight platforms: iOS, Android, macOS, Windows, Linux, the web, watchOS, and tvOS. Each platform has its own design language, its own interaction paradigms, its own user expectations, and its own technical constraints. A user who picks up an iPhone after using a Windows laptop expects certain things to be different: the navigation gestures, the system font, the location of the back button. But they also expect something to remain the same: the feeling of the application, the sense that they are in the same place, interacting with the same system, continuing the same work.</p>
+
+  <p>This is the cross-platform challenge, and most applications solve it in one of two ways. The first approach is to build a single codebase that runs identically on every platform, typically using a cross-platform framework like React Native or Flutter. This approach maximizes code reuse but produces applications that feel foreign on every platform, because they follow none of the platform-specific conventions that users have internalized. The second approach is to build entirely separate native applications for each platform, producing applications that feel perfectly native but that may diverge in behavior, features, and design language over time.</p>
+
+  <p>Resonance takes a third path. We build platform-native applications using each platform's preferred technology stack: SwiftUI for iOS and macOS, Jetpack Compose for Android, WinUI 3 for Windows, GTK4 with Rust for Linux, and React for the web. Each application is designed to feel native to its platform, following that platform's conventions for navigation, typography, and system integration. But all applications share the same design tokens, the same philosophy, and the same backend services, ensuring that the experience is coherent even when it is not identical.</p>
+
+  <h2 id="ios-android">iOS and Android: The Pocket Companions</h2>
+
+  <p>The mobile platforms are where most Resonance users spend the majority of their time, and the design of the iOS and Android applications reflects the intimacy of the smartphone form factor. These are devices that live in pockets and on nightstands, that are the first thing touched in the morning and the last thing put down at night. The Resonance mobile experience is designed with this intimacy in mind.</p>
+
+  <p>On iOS, Resonance uses SwiftUI's native navigation stack, sheet presentations, and haptic feedback system. The navigation follows iOS conventions: a tab bar at the bottom provides access to the four primary applications, and a settings gear in the navigation bar provides access to preferences. Haptic feedback is used sparingly but meaningfully: a gentle tap when a task is completed, a subtle pulse when a voice message is received from an inner circle contact, and a warm vibration when the phase system transitions to a new phase. The haptic language is deliberately minimal, because overuse of haptics creates the same numbing effect as overuse of visual notifications.</p>
+
+  <p>On Android, Resonance uses Jetpack Compose with Material Design 3 components that are customized to match the Resonance design language. Navigation follows the Material pattern of a bottom navigation bar with a floating action button for the most common action in each context. The application supports Android's predictive back gesture, adaptive layouts for foldable devices, and deep integration with Android's notification channels, allowing users to configure notification behavior at the system level as well as within the application.</p>
+
+  <p>Both mobile applications share a commitment to respecting the device's battery and network resources. Background sync is performed at intervals calibrated to balance freshness with power consumption. Push notifications use the platform's native push infrastructure rather than maintaining a persistent connection. The applications are designed to launch quickly, with a target cold-start time of under one second, because every moment spent waiting for an application to load is a moment in which the nervous system is suspended in low-grade anticipation.</p>
+
+  <h2 id="desktop-platforms">macOS, Windows, and Linux: The Workspaces</h2>
+
+  <p>The desktop platforms are where Resonance's full capability is most apparent. The larger screen real estate, physical keyboard, and mouse or trackpad input of desktop environments allow for richer layouts, more complex interactions, and the kind of sustained, focused work that the mobile platforms support but cannot fully facilitate.</p>
+
+  <p>On <strong>macOS</strong>, Resonance is built with SwiftUI and AppKit, fully embracing the macOS design language. The application uses the native menu bar, supports multiple windows, integrates with Spotlight for search, and offers a menu bar applet that displays the current phase, spaciousness level, and intentional status. The writing environment supports split-view multitasking, and the application is fully compatible with Stage Manager for managing multiple workspaces. The macOS version also supports Continuity features, allowing users to start a writing session on their Mac and continue it on their iPad or iPhone without explicit sync actions.</p>
+
+  <p>On <strong>Windows</strong>, Resonance is built with WinUI 3 and follows the Windows 11 design language, including Mica material backgrounds that blend the application's surface with the desktop wallpaper, creating a sense of environmental integration. The application supports snap layouts for split-screen productivity, integrates with Windows notifications and the taskbar jump list, and respects the system's dark mode and accent color settings while maintaining the Resonance design identity. The WinUI implementation pays particular attention to high-DPI scaling, ensuring that the generous typography and spacing of the Resonance design system look correct on displays ranging from 96 DPI to 288 DPI.</p>
+
+  <p>On <strong>Linux</strong>, Resonance is built with GTK4 and Rust, a combination chosen for its performance, safety, and integration with the GNOME desktop environment. The Linux version is also available as a Flatpak for distribution-agnostic installation. It follows GNOME's Human Interface Guidelines where appropriate, using the header bar pattern and responsive layout system, while adapting the Resonance design tokens to GTK4's CSS-based styling system. The Linux version has a special significance within the Resonance project: it represents a commitment to the open-source community and to the principle that calm technology should be available to everyone, not only to users of proprietary operating systems.</p>
+
+  <h2 id="watch-tv">Watch and TV: The Peripheral Presences</h2>
+
+  <p>The Apple Watch and tvOS platforms represent the extremes of the Resonance platform spectrum: the smallest and largest screens, the most constrained and most expansive interaction models. Designing for these platforms required thinking carefully about which aspects of the Resonance experience are essential at each scale.</p>
+
+  <p>On <strong>watchOS</strong>, Resonance is distilled to its most fundamental elements. The watch application shows the current phase and its color, the spaciousness percentage, and the next scheduled task. It supports complications that display phase and spaciousness on the watch face, providing ambient awareness without requiring the user to open the application. Incoming messages from inner circle contacts appear as gentle haptic notifications with a brief preview, and the user can respond with a quick voice message recorded directly from the wrist. The watch application does not attempt to replicate the full functionality of the phone or desktop; it provides a peripheral awareness of the Resonance state, a glance at the wrist that answers "How is my day going?" without pulling the user into a screen.</p>
+
+  <p>On <strong>tvOS</strong>, Resonance becomes an ambient presence in the living room. The primary use case is the Wellness Holarchy's guided meditation and breathing exercises, displayed on a large screen with the beautiful, slowly shifting color gradients of the Resonance palette. The TV application also supports a "digital hearth" mode, a slowly evolving visual display accompanied by generative ambient sound that creates an atmosphere of calm in the room without demanding any interaction. The Daily Flow summary can be displayed on the TV as a morning briefing, read aloud by a natural voice synthesis that uses the same warm, unhurried cadence that characterizes the Resonance design philosophy.</p>
+
+  <div class="callout principle">
+    <div class="callout-title">Platform-Native, Philosophy-Universal</div>
+    <p>The design tokens are the same on every platform. The philosophy is the same on every platform. But the implementation respects each platform's conventions and capabilities. A Resonance user should never feel like they are using a ported application. They should feel like they are using an application that was built specifically for the device in their hands.</p>
+  </div>
+
+  <h2 id="web-platform">The Web: The Universal Fallback</h2>
+
+  <p>The web application is built with React and serves as both a standalone experience and a progressive web application that can be installed on any device with a modern browser. It is the universal fallback, the platform that ensures no one is excluded from the Resonance ecosystem regardless of the device or operating system they use.</p>
+
+  <p>The web application is architecturally designed as an offline-first progressive web app. Service workers cache the application shell and recent data, allowing users to access their tasks, read their messages, and write in their documents even without network connectivity. Changes made offline are queued and synchronized when connectivity returns, using the same conflict resolution system described in the next chapter. The web application supports responsive layouts that adapt from phone-sized viewports to ultrawide monitors, using the same breakpoint system defined in the design tokens.</p>
+
+  <p>Performance is a first-class concern. The web application achieves a Lighthouse performance score above 95, with a first contentful paint under 1.2 seconds and a time to interactive under 2.5 seconds on a mid-range mobile device on a 3G connection. This performance target is not arbitrary; it reflects research showing that perceived application speed directly affects user stress levels. A slow application is not merely inconvenient; it is a source of micro-frustration that accumulates over a day of use and contributes to the technostress that Resonance exists to alleviate.</p>
+
+  <p>The web platform also serves as the home for Resonance's published writing, where Writer documents marked as published are accessible to anyone with the URL. These pages are server-rendered for fast loading and SEO, styled with the Resonance typography system, and completely free of tracking, analytics, advertising, or social media integration. They are, in a sense, the purest expression of the Resonance web presence: beautiful, fast, calm, and entirely focused on the content.</p>
+
+  <div class="ornament">&#x2726; &#x2726; &#x2726;</div>
+
+</body>
+</html>
