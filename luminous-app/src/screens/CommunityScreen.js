@@ -9,6 +9,8 @@ import OrganicBackground from '../components/OrganicBackground';
 import GlassCard from '../components/GlassCard';
 import ResonanceText from '../components/ResonanceText';
 import ResonanceButton from '../components/ResonanceButton';
+import ShareButton from '../components/ShareButton';
+import { shareContent } from '../utils/SocialShare';
 
 const circles = [
   {
@@ -120,7 +122,14 @@ export default function CommunityScreen({ navigation }) {
                         Next: {circle.nextSession}
                       </ResonanceText>
                     </View>
-                    <ResonanceButton title="Join Circle" variant="secondary" size="sm" style={{ marginTop: 12 }} />
+                    <View style={{ flexDirection: 'row', gap: 10, marginTop: 12, alignItems: 'center' }}>
+                      <ResonanceButton title="Join Circle" variant="secondary" size="sm" />
+                      <ShareButton
+                        content={shareContent.communityCircle(circle)}
+                        variant="pill"
+                        label="Invite"
+                      />
+                    </View>
                   </GlassCard>
                 </TouchableOpacity>
               ))}
@@ -150,7 +159,14 @@ export default function CommunityScreen({ navigation }) {
                         <ResonanceText variant="caption" color="gold">{event.type.toUpperCase()}</ResonanceText>
                       </View>
                     </View>
-                    <ResonanceButton title="RSVP" variant="gold" size="sm" />
+                    <View style={{ alignItems: 'flex-end', gap: 6 }}>
+                      <ResonanceButton title="RSVP" variant="gold" size="sm" />
+                      <ShareButton
+                        content={shareContent.communityEvent(event)}
+                        variant="mini"
+                        style={{ padding: 4 }}
+                      />
+                    </View>
                   </View>
                 </GlassCard>
               ))}
@@ -173,11 +189,16 @@ export default function CommunityScreen({ navigation }) {
                       <ResonanceText style={{ fontSize: 22 }}>{d.emoji}</ResonanceText>
                       <View style={{ flex: 1, marginLeft: 12 }}>
                         <ResonanceText variant="subtitle">{d.topic}</ResonanceText>
-                        <View style={{ flexDirection: 'row', marginTop: 6 }}>
+                        <View style={{ flexDirection: 'row', marginTop: 6, alignItems: 'center' }}>
                           <ResonanceText variant="caption" color="light">{d.author}</ResonanceText>
                           <ResonanceText variant="caption" color="light" style={{ marginLeft: 12 }}>
                             💬 {d.replies} replies
                           </ResonanceText>
+                          <ShareButton
+                            content={shareContent.discussionThread(d)}
+                            variant="mini"
+                            style={{ marginLeft: 'auto', padding: 4 }}
+                          />
                         </View>
                       </View>
                     </View>
@@ -197,7 +218,14 @@ export default function CommunityScreen({ navigation }) {
               Together, you turn lead into gold. Together, you see in each other
               what you cannot yet see in yourselves.
             </ResonanceText>
-            <ResonanceButton title="Get Matched" variant="gold" size="lg" style={{ marginTop: 16, alignSelf: 'center' }} />
+            <View style={{ flexDirection: 'row', gap: 12, justifyContent: 'center', marginTop: 16 }}>
+              <ResonanceButton title="Get Matched" variant="gold" size="lg" />
+              <ShareButton
+                content={shareContent.quantumPartner()}
+                variant="pill"
+                label="Share"
+              />
+            </View>
           </GlassCard>
 
           <View style={{ height: 100 }} />

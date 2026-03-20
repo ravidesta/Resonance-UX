@@ -9,6 +9,8 @@ import OrganicBackground from '../components/OrganicBackground';
 import GlassCard from '../components/GlassCard';
 import ResonanceText from '../components/ResonanceText';
 import ResonanceButton from '../components/ResonanceButton';
+import ShareButton from '../components/ShareButton';
+import { shareContent } from '../utils/SocialShare';
 
 const journalPrompts = [
   'Write about a time your body surprised you with its wisdom, strength, or resilience.',
@@ -128,14 +130,22 @@ export default function JournalScreen({ navigation }) {
         </ResonanceText>
         <View style={styles.promptList}>
           {journalPrompts.slice(0, 5).map((prompt, i) => (
-            <TouchableOpacity
+            <View
               key={i}
               style={[styles.promptItem, { borderBottomColor: colors.borderLight }]}
-              onPress={() => { setCurrentPrompt(i); setView('prompt'); }}
             >
-              <ResonanceText variant="bodySmall" color="muted" style={{ flex: 1 }}>{prompt}</ResonanceText>
-              <ResonanceText color="gold" style={{ marginLeft: 8 }}>→</ResonanceText>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={{ flex: 1 }}
+                onPress={() => { setCurrentPrompt(i); setView('prompt'); }}
+              >
+                <ResonanceText variant="bodySmall" color="muted">{prompt}</ResonanceText>
+              </TouchableOpacity>
+              <ShareButton
+                content={shareContent.journalPrompt(prompt)}
+                variant="mini"
+                style={{ marginLeft: 8, padding: 4 }}
+              />
+            </View>
           ))}
         </View>
         <ResonanceButton title="See All 30" variant="ghost" size="sm" style={{ marginTop: 8 }} />
@@ -212,18 +222,27 @@ export default function JournalScreen({ navigation }) {
             ))}
           </View>
 
-          <ResonanceButton
-            title={checkinStep < 2 ? 'Continue' : 'Complete ✓'}
-            variant="gold"
-            size="lg"
-            onPress={() => {
-              if (checkinStep < 2) {
-                setCheckinStep(s => s + 1);
-              } else {
-                setView('main');
-              }
-            }}
-          />
+          <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            {checkinStep === 2 && (
+              <ShareButton
+                content={shareContent.dailyCheckin(checkinWords, gratitude)}
+                variant="pill"
+                label="Share"
+              />
+            )}
+            <ResonanceButton
+              title={checkinStep < 2 ? 'Continue' : 'Complete ✓'}
+              variant="gold"
+              size="lg"
+              onPress={() => {
+                if (checkinStep < 2) {
+                  setCheckinStep(s => s + 1);
+                } else {
+                  setView('main');
+                }
+              }}
+            />
+          </View>
         </View>
       </Animated.View>
     );
@@ -273,11 +292,16 @@ export default function JournalScreen({ navigation }) {
         multiline
         textAlignVertical="top"
       />
-      <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
+      <View style={{ flexDirection: 'row', gap: 12, marginTop: 16, flexWrap: 'wrap' }}>
         <ResonanceButton
           title="New Prompt"
           variant="ghost"
           onPress={() => setCurrentPrompt(Math.floor(Math.random() * journalPrompts.length))}
+        />
+        <ShareButton
+          content={shareContent.journalPrompt(journalPrompts[currentPrompt])}
+          variant="pill"
+          label="Share Prompt"
         />
         <ResonanceButton title="Save Entry" variant="gold" />
       </View>

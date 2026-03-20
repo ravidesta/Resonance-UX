@@ -10,6 +10,8 @@ import GlassCard from '../components/GlassCard';
 import ResonanceText from '../components/ResonanceText';
 import ResonanceButton from '../components/ResonanceButton';
 import LifewheelVisualization from '../components/LifewheelVisualization';
+import ShareButton from '../components/ShareButton';
+import { shareContent } from '../utils/SocialShare';
 
 const { width } = Dimensions.get('window');
 const isTablet = width > 768;
@@ -118,6 +120,11 @@ export default function HomeScreen({ navigation }) {
                 size="md"
                 onPress={() => navigation?.navigate?.('Assessment')}
               />
+              <ShareButton
+                content={shareContent.lifewheelResults(scores)}
+                variant="pill"
+                label="Share"
+              />
               <ResonanceButton
                 title="View History"
                 variant="ghost"
@@ -163,6 +170,12 @@ export default function HomeScreen({ navigation }) {
             <ResonanceText variant="bodySmall" color="muted" style={{ textAlign: 'center', marginTop: 8 }}>
               The Luminous Lifewheel
             </ResonanceText>
+            <ShareButton
+              content={shareContent.quote('You are already luminous. Not luminous someday — luminous now.')}
+              variant="pill"
+              label="Share This"
+              style={{ alignSelf: 'center', marginTop: 12 }}
+            />
           </GlassCard>
 
           {/* Ecosystem */}
@@ -207,6 +220,13 @@ export default function HomeScreen({ navigation }) {
               onPress={() => navigation?.navigate?.('CoachDashboard')}
             />
           </GlassCard>
+
+          {/* Share the App */}
+          <ShareButton
+            content={shareContent.appInvite()}
+            variant="card"
+            style={{ marginTop: 12, marginBottom: 12 }}
+          />
 
           {/* Spacer */}
           <View style={{ height: 100 }} />

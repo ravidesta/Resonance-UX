@@ -9,6 +9,8 @@ import OrganicBackground from '../components/OrganicBackground';
 import GlassCard from '../components/GlassCard';
 import ResonanceText from '../components/ResonanceText';
 import ResonanceButton from '../components/ResonanceButton';
+import ShareButton from '../components/ShareButton';
+import { shareContent } from '../utils/SocialShare';
 
 const { width } = Dimensions.get('window');
 
@@ -95,6 +97,12 @@ export default function DailyFlowScreen({ navigation }) {
             <ResonanceText variant="bodySmall" color="muted" style={{ textAlign: 'center', marginTop: 8 }}>
               Seeds planted today
             </ResonanceText>
+            <ShareButton
+              content={shareContent.dailyFlowProgress(completedCount, totalTasks, currentPhase)}
+              variant="pill"
+              label="Share Progress"
+              style={{ marginTop: 12 }}
+            />
           </GlassCard>
 
           {/* Phase Selector */}
@@ -136,6 +144,11 @@ export default function DailyFlowScreen({ navigation }) {
                     <ResonanceText variant="caption" color="gold">NOW</ResonanceText>
                   </View>
                 )}
+                <ShareButton
+                  content={shareContent.phaseWisdom(phase)}
+                  variant="mini"
+                  style={{ marginLeft: 8, padding: 4 }}
+                />
               </View>
 
               <ResonanceText variant="bodySmall" color="muted" style={{ marginTop: 4, marginBottom: 12, fontStyle: 'italic' }}>

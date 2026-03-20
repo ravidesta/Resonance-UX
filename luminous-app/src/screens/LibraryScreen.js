@@ -9,6 +9,8 @@ import OrganicBackground from '../components/OrganicBackground';
 import GlassCard from '../components/GlassCard';
 import ResonanceText from '../components/ResonanceText';
 import ResonanceButton from '../components/ResonanceButton';
+import ShareButton from '../components/ShareButton';
+import { shareContent } from '../utils/SocialShare';
 
 const { width } = Dimensions.get('window');
 
@@ -168,9 +170,14 @@ export default function LibraryScreen({ navigation }) {
         </ResonanceText>
       </View>
 
-      <View style={{ flexDirection: 'row', gap: 12, justifyContent: 'center', marginTop: 20 }}>
+      <View style={{ flexDirection: 'row', gap: 12, justifyContent: 'center', marginTop: 20, flexWrap: 'wrap' }}>
         <ResonanceButton title="Read Now" variant="gold" size="lg" />
         <ResonanceButton title="Download" variant="secondary" size="lg" />
+        <ShareButton
+          content={shareContent.bookRecommendation(book)}
+          variant="pill"
+          label="Recommend"
+        />
       </View>
 
       <GlassCard style={{ marginTop: 24 }}>
@@ -262,6 +269,13 @@ export default function LibraryScreen({ navigation }) {
             </TouchableOpacity>
           ))}
         </View>
+
+        <ShareButton
+          content={shareContent.bookRecommendation({ ...audio, format: 'audiobook' })}
+          variant="pill"
+          label="Share Audiobook"
+          style={{ marginTop: 16 }}
+        />
       </GlassCard>
 
       {/* Chapter list */}
@@ -364,6 +378,11 @@ export default function LibraryScreen({ navigation }) {
                   {book.chapters} chapters
                 </ResonanceText>
               </View>
+              <ShareButton
+                content={shareContent.bookRecommendation(book)}
+                variant="mini"
+                style={{ marginRight: 8, padding: 4 }}
+              />
               <ResonanceText color="gold">→</ResonanceText>
             </View>
           </GlassCard>
@@ -389,6 +408,11 @@ export default function LibraryScreen({ navigation }) {
                   {audio.duration} · {audio.narrator}
                 </ResonanceText>
               </View>
+              <ShareButton
+                content={shareContent.bookRecommendation({ ...audio, format: 'audiobook' })}
+                variant="mini"
+                style={{ marginRight: 8, padding: 4 }}
+              />
               <ResonanceText color="gold">▶</ResonanceText>
             </View>
           </GlassCard>

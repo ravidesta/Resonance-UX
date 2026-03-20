@@ -11,6 +11,8 @@ import ResonanceText from '../components/ResonanceText';
 import ResonanceButton from '../components/ResonanceButton';
 import DimensionSlider from '../components/DimensionSlider';
 import LifewheelVisualization from '../components/LifewheelVisualization';
+import ShareButton from '../components/ShareButton';
+import { shareContent } from '../utils/SocialShare';
 
 const { width } = Dimensions.get('window');
 
@@ -280,6 +282,11 @@ export default function AssessmentScreen({ navigation }) {
                     {score}
                   </ResonanceText>
                 </View>
+                <ShareButton
+                  content={shareContent.dimensionScore(dim, score)}
+                  variant="mini"
+                  style={{ marginLeft: 8, padding: 4 }}
+                />
               </View>
             );
           })}
@@ -320,6 +327,13 @@ export default function AssessmentScreen({ navigation }) {
             ))
           }
         </GlassCard>
+
+        {/* Share Results */}
+        <ShareButton
+          content={shareContent.lifewheelResults(scores)}
+          variant="card"
+          style={{ marginTop: 16 }}
+        />
 
         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 12, marginTop: 24 }}>
           <ResonanceButton
