@@ -116,7 +116,6 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: ResonanceSpacing.md) {
             sectionHeader("Storage Backend", subtitle: "Where backups are stored")
 
-            // Backend picker would go here
             Text("Current: \(viewModel.kopiaConfig.storageBackend.displayName)")
                 .font(ResonanceTypography.bodySystem)
 
@@ -135,6 +134,75 @@ struct SettingsView: View {
                     TextField("", value: $viewModel.kopiaConfig.upload.maxParallelFileReads, format: .number)
                         .frame(width: 60)
                         .textFieldStyle(.roundedBorder)
+                }
+            }
+
+            settingsGroup("Azure Blob Storage") {
+                Toggle("Upload repos to Azure Blob after cloning", isOn: $viewModel.uploadToAzure)
+
+                if viewModel.uploadToAzure {
+                    HStack {
+                        Text("Storage Account")
+                        Spacer()
+                        TextField("mystorageaccount", text: $viewModel.azureAccount)
+                            .frame(width: 200)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    HStack {
+                        Text("Container")
+                        Spacer()
+                        TextField("github-backups", text: $viewModel.azureContainer)
+                            .frame(width: 200)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    HStack {
+                        Text("Account Key")
+                        Spacer()
+                        SecureField("Account key or SAS token", text: $viewModel.azureKey)
+                            .frame(width: 200)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    Text("Repos upload via azcopy (or az cli fallback). Each repo gets its own folder in the container.")
+                        .font(ResonanceTypography.captionSystem)
+                        .foregroundColor(ResonanceColors.textLight)
+
+                    if !viewModel.portfolios.isEmpty {
+                        Button(action: {
+                            Task {
+                                await MainActor.run { viewModel.isLoading = true }
+                                await viewModel.uploadAllToAzure()
+                                await MainActor.run { viewModel.isLoading = false }
+                            }
+                        }) {
+                            HStack(spacing: 8) {
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                } else {
+                                    Image(systemName: "icloud.and.arrow.up")
+                                }
+                                Text(viewModel.isLoading ? "Uploading..." : "Upload All to Azure")
+                                    .font(ResonanceTypography.bodySystem)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(ResonanceColors.strategicBlue.opacity(0.15))
+                            .foregroundColor(ResonanceColors.strategicBlue)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(ResonanceColors.strategicBlue.opacity(0.4), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(viewModel.azureAccount.isEmpty || viewModel.azureContainer.isEmpty || viewModel.azureKey.isEmpty || viewModel.isLoading)
+                    }
+
+                    if !viewModel.azureProgress.isEmpty {
+                        Text(viewModel.azureProgress)
+                            .font(ResonanceTypography.captionSystem)
+                            .foregroundColor(ResonanceColors.strategicBlue)
+                    }
                 }
             }
         }

@@ -202,6 +202,36 @@ class GitHubBackupService: ObservableObject {
         FileManager.default.fileExists(atPath: path + "/HEAD")
     }
 
+    // MARK: - Azure Blob Storage
+
+    /// Upload a repo directory to Azure Blob Storage using azcopy.
+    func uploadToAzureBlob(repoPath: String, repoName: String,
+                           account: String, container: String, key: String) async -> CommandResult {
+        // Build the destination URL with SAS-style auth
+        let destURL = "https://\(account).blob.core.windows.net/\(container)/\(repoName)"
+
+        // Try azcopy first (fastest for bulk upload)
+        let azcopyResult = await executeCommand("azcopy", arguments: [
+            "copy", repoPath, destURL,
+            "--recursive",
+            "--account-name", account,
+            "--account-key", key
+        ])
+
+        if azcopyResult.isSuccess { return azcopyResult }
+
+        // Fallback: use az cli
+        return await executeCommand("az", arguments: [
+            "storage", "blob", "upload-batch",
+            "--destination", container,
+            "--source", repoPath,
+            "--destination-path", repoName,
+            "--account-name", account,
+            "--account-key", key,
+            "--overwrite", "true"
+        ])
+    }
+
     func getRepositoryInfo(repoPath: String) async -> CommandResult {
         return await executeCommand("git", arguments: [
             "-C", repoPath, "log", "--oneline", "-20"

@@ -18,6 +18,11 @@ class BackupViewModel: ObservableObject {
     @Published var githubToken: String = ""
     @Published var backupPath: String = "~/ResonanceBackups"
     @Published var cloneProgress: String = ""
+    @Published var azureAccount: String = ""
+    @Published var azureContainer: String = ""
+    @Published var azureKey: String = ""
+    @Published var uploadToAzure: Bool = false
+    @Published var azureProgress: String = ""
 
     // Services
     let backupService = GitHubBackupService()
@@ -122,10 +127,53 @@ class BackupViewModel: ObservableObject {
             }
         }
 
+        // Upload to Azure if enabled
+        if uploadToAzure && !azureAccount.isEmpty && !azureContainer.isEmpty && !azureKey.isEmpty {
+            await uploadAllToAzure()
+        }
+
         await MainActor.run {
             isLoading = false
             let succeeded = portfolios.filter { $0.backupStatus == .synced }.count
             cloneProgress = "Done — \(succeeded)/\(portfolios.count) repos cloned to \(backupPath)"
+        }
+    }
+
+    // MARK: - Azure Upload
+
+    func uploadAllToAzure() async {
+        let dest = resolvedBackupPath
+
+        for (i, portfolio) in portfolios.enumerated() {
+            let repoDir = "\(dest)/\(portfolio.repositoryName).git"
+            guard portfolio.backupStatus == .synced else { continue }
+
+            await MainActor.run {
+                azureProgress = "Uploading [\(i + 1)/\(portfolios.count)] \(portfolio.repositoryName) to Azure..."
+            }
+
+            let result = await backupService.uploadToAzureBlob(
+                repoPath: repoDir,
+                repoName: portfolio.repositoryName,
+                account: azureAccount,
+                container: azureContainer,
+                key: azureKey
+            )
+
+            await MainActor.run {
+                logChange(
+                    portfolioID: portfolio.id,
+                    action: .backup,
+                    description: result.isSuccess
+                        ? "Uploaded to Azure Blob (\(azureContainer))"
+                        : "Azure upload failed: \(result.output)"
+                )
+            }
+        }
+
+        let uploaded = portfolios.filter { $0.backupStatus == .synced }.count
+        await MainActor.run {
+            azureProgress = "Azure upload done — \(uploaded) repos → \(azureAccount)/\(azureContainer)"
         }
     }
 
