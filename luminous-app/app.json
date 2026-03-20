@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Luminous Lifewheel",
+    "slug": "luminous-lifewheel",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#FAFAF8",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.luminous.lifewheel",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "UISupportsMultipleScenes": true
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FAFAF8"
+      },
+      "package": "com.luminous.lifewheel"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "platforms": ["ios", "android", "web"],
+    "plugins": [
+      "expo-haptics"
+    ],
+    "extra": {
+      "supportsVisionOS": true,
+      "supportsWindows": true
+    }
+  }
+}
