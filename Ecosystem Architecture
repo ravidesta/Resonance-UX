@@ -1,0 +1,688 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Smartphone, Monitor, Watch, Tablet, Laptop,
+  BookOpen, Headphones, GraduationCap, Brain, PenTool,
+  BookMarked, Share2, MessageCircle, Heart, Wifi,
+  Cloud, Shield, Zap, Layers, ArrowRight,
+  Sun, Moon, Sparkles, Wind, Globe,
+  Apple, Chrome, Layout, Users, Bell,
+  RefreshCw, Database, Lock, Eye, Feather
+} from 'lucide-react';
+
+// ═══════════════════════════════════════════════════════════════
+// RESONANCE ECOSYSTEM — Cross-Platform Architecture
+// ═══════════════════════════════════════════════════════════════
+// Platforms: macOS, Windows, Android, iOS, iPadOS, Apple Watch
+// Products: eReader, Audiobook, Courses, Coach, Journal,
+//           Writer, Glossary, Social Hub, Health, Flow
+// ═══════════════════════════════════════════════════════════════
+
+// ─── DESIGN TOKENS ───────────────────────────────────────────
+const tokens = {
+  colors: {
+    light: {
+      bgBase: '#FAFAF8',
+      bgSurface: '#FFFFFF',
+      bgGlass: 'rgba(255, 255, 255, 0.72)',
+      bgGlassHover: 'rgba(255, 255, 255, 0.88)',
+      green900: '#0A1C14',
+      green800: '#122E21',
+      green700: '#1B402E',
+      green600: '#2D5A43',
+      green200: '#D1E0D7',
+      green100: '#E8F0EA',
+      green50: '#F2F7F4',
+      gold: '#C5A059',
+      goldLight: '#E6D0A1',
+      goldDark: '#9A7A3A',
+      goldGlow: 'rgba(197, 160, 89, 0.15)',
+      textMain: '#122E21',
+      textMuted: '#5C7065',
+      textLight: '#8A9C91',
+      borderLight: '#E5EBE7',
+      borderFocus: '#C5A059',
+      shadow: 'rgba(18, 46, 33, 0.06)',
+      shadowDeep: 'rgba(18, 46, 33, 0.12)',
+    },
+    dark: {
+      bgBase: '#05100B',
+      bgSurface: '#0C1F16',
+      bgGlass: 'rgba(12, 31, 22, 0.78)',
+      bgGlassHover: 'rgba(18, 46, 33, 0.88)',
+      green900: '#E8F0EA',
+      green800: '#D1E0D7',
+      green700: '#A8C4B4',
+      green600: '#7FA391',
+      green200: '#1B402E',
+      green100: '#122E21',
+      green50: '#0C1F16',
+      gold: '#D4B06A',
+      goldLight: '#E6D0A1',
+      goldDark: '#C5A059',
+      goldGlow: 'rgba(212, 176, 106, 0.12)',
+      textMain: '#E8F0EA',
+      textMuted: '#8A9C91',
+      textLight: '#5C7065',
+      borderLight: 'rgba(168, 196, 180, 0.12)',
+      borderFocus: '#D4B06A',
+      shadow: 'rgba(0, 0, 0, 0.2)',
+      shadowDeep: 'rgba(0, 0, 0, 0.4)',
+    }
+  },
+  typography: {
+    serif: "'Cormorant Garamond', serif",
+    sans: "'Manrope', sans-serif",
+    sizes: {
+      xs: '11px', sm: '12px', base: '14px',
+      lg: '16px', xl: '20px', '2xl': '28px',
+      '3xl': '36px', '4xl': '48px'
+    }
+  },
+  spacing: { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, '2xl': 32, '3xl': 48 },
+  radius: { sm: 8, md: 12, lg: 16, xl: 20, '2xl': 28, full: 9999 },
+  motion: {
+    breathe: '15s ease-in-out infinite',
+    gentle: '0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    smooth: '0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+    slow: '0.8s cubic-bezier(0.4, 0, 0.2, 1)',
+  }
+};
+
+// ─── ECOSYSTEM DATA ──────────────────────────────────────────
+const platforms = [
+  { id: 'ios', name: 'iPhone', icon: Smartphone, os: 'iOS 18+', features: 'Full suite, haptics, widgets' },
+  { id: 'android', name: 'Android', icon: Smartphone, os: 'Android 14+', features: 'Full suite, Material You, widgets' },
+  { id: 'ipad', name: 'iPad', icon: Tablet, os: 'iPadOS 18+', features: 'Split view, pencil, stage manager' },
+  { id: 'mac', name: 'Mac', icon: Laptop, os: 'macOS 15+', features: 'Native app, menu bar, shortcuts' },
+  { id: 'windows', name: 'Windows', icon: Monitor, os: 'Windows 11+', features: 'Native app, taskbar, snap layouts' },
+  { id: 'watch', name: 'Apple Watch', icon: Watch, os: 'watchOS 11+', features: 'Glances, complications, haptics' },
+  { id: 'web', name: 'Web', icon: Globe, os: 'All browsers', features: 'PWA, offline, responsive' },
+];
+
+const products = [
+  { id: 'reader', name: 'Resonance Reader', icon: BookOpen, tagline: 'Reading as sanctuary',
+    color: '#2D5A43', desc: 'Immersive eReader with adaptive typography, ambient themes, built-in glossary, and marginalia' },
+  { id: 'listen', name: 'Resonance Listen', icon: Headphones, tagline: 'Stories that breathe',
+    color: '#7A5C2E', desc: 'Audiobook player with ambient soundscapes, chapter art, sleep timer, and variable narration' },
+  { id: 'learn', name: 'Resonance Learn', icon: GraduationCap, tagline: 'Growth at your pace',
+    color: '#3D6B8E', desc: 'Interactive courses with virtual teacher, adaptive difficulty, practice labs, and certifications' },
+  { id: 'coach', name: 'Resonance Coach', icon: Brain, tagline: 'Your reflective companion',
+    color: '#8B6B9E', desc: 'AI virtual teacher and life coach — mood-aware guidance, goal tracking, daily wisdom' },
+  { id: 'journal', name: 'Resonance Journal', icon: PenTool, tagline: 'Thoughts find their form',
+    color: '#6B4C3B', desc: 'Reflective journaling with prompts, mood tracking, photo entries, and yearly reviews' },
+  { id: 'writer', name: 'Sanctuary Writer', icon: Feather, tagline: 'Words in their element',
+    color: '#4A6B5C', desc: 'Distraction-free writing with focus mode, Luminize AI prose enhancement, and publishing' },
+  { id: 'glossary', name: 'Resonance Glossary', icon: BookMarked, tagline: 'Knowledge crystallized',
+    color: '#5C6B4A', desc: 'Personal knowledge base — definitions, connections, flashcards, cross-app lookups' },
+  { id: 'social', name: 'Resonance Social', icon: Share2, tagline: 'Intentional connection',
+    color: '#6B5C7A', desc: 'Unified social hub — all platforms, mindful sharing, reading clubs, content curation' },
+  { id: 'flow', name: 'Daily Flow', icon: Wind, tagline: 'Rhythm over hustle',
+    color: '#3B5C4A', desc: 'Task management with energy awareness, daily rhythms, domains, and deep rest mode' },
+  { id: 'vitals', name: 'Resonance Vitals', icon: Heart, tagline: 'Wholeness, measured gently',
+    color: '#7A4A4A', desc: 'Health tracking — vitals, symptoms, medications, labs, wellness recommendations' },
+];
+
+const services = [
+  { name: 'Resonance Cloud', icon: Cloud, desc: 'Seamless sync across all devices with end-to-end encryption' },
+  { name: 'Resonance AI', icon: Sparkles, desc: 'Virtual teacher, coach, writing assistant, and smart recommendations' },
+  { name: 'Privacy Shield', icon: Shield, desc: 'Zero-knowledge encryption, local-first data, GDPR compliant' },
+  { name: 'Deep Sync', icon: RefreshCw, desc: 'Real-time state sync — bookmarks, progress, notes across apps' },
+  { name: 'Knowledge Graph', icon: Database, desc: 'Cross-app connections — glossary terms linked to highlights, notes, courses' },
+  { name: 'Resonance API', icon: Zap, desc: 'Developer platform for third-party integrations and extensions' },
+];
+
+const socialIntegrations = [
+  'Instagram', 'Twitter/X', 'Threads', 'Bluesky', 'Mastodon',
+  'TikTok', 'YouTube', 'LinkedIn', 'Facebook', 'Pinterest',
+  'Reddit', 'Discord', 'Slack', 'Telegram', 'WhatsApp',
+  'Goodreads', 'Spotify', 'Apple Music', 'Notion', 'Obsidian'
+];
+
+// ─── MAIN ECOSYSTEM COMPONENT ────────────────────────────────
+const EcosystemArchitecture = () => {
+  const [deepRest, setDeepRest] = useState(false);
+  const [activeSection, setActiveSection] = useState('overview');
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [hoveredPlatform, setHoveredPlatform] = useState(null);
+
+  const c = deepRest ? tokens.colors.dark : tokens.colors.light;
+
+  const sections = [
+    { id: 'overview', label: 'Ecosystem' },
+    { id: 'products', label: 'Products' },
+    { id: 'platforms', label: 'Platforms' },
+    { id: 'services', label: 'Services' },
+    { id: 'integrations', label: 'Connect' },
+  ];
+
+  return (
+    <div style={{
+      width: '100%',
+      minHeight: '100vh',
+      background: c.bgBase,
+      fontFamily: tokens.typography.sans,
+      color: c.textMain,
+      transition: tokens.motion.slow,
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Organic Background Blobs */}
+      <div style={{
+        position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0,
+      }}>
+        <div style={{
+          position: 'absolute', width: 600, height: 600, borderRadius: '50%',
+          background: `radial-gradient(circle, ${c.gold}15, transparent 70%)`,
+          top: '-10%', right: '-10%',
+          animation: 'breathe 20s ease-in-out infinite',
+          opacity: deepRest ? 0.1 : 0.4,
+        }} />
+        <div style={{
+          position: 'absolute', width: 500, height: 500, borderRadius: '50%',
+          background: `radial-gradient(circle, ${c.green600}12, transparent 70%)`,
+          bottom: '-5%', left: '-5%',
+          animation: 'breathe 18s ease-in-out infinite reverse',
+          opacity: deepRest ? 0.08 : 0.3,
+        }} />
+      </div>
+
+      {/* Header */}
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 50,
+        background: c.bgGlass,
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: `1px solid ${c.borderLight}`,
+        padding: '16px 32px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: `linear-gradient(135deg, ${c.green700}, ${c.gold})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Layers size={18} color="#fff" />
+          </div>
+          <div>
+            <h1 style={{
+              fontFamily: tokens.typography.serif,
+              fontSize: tokens.typography.sizes.xl,
+              fontWeight: 600, margin: 0, letterSpacing: '-0.02em',
+            }}>Resonance</h1>
+            <span style={{ fontSize: tokens.typography.sizes.xs, color: c.textMuted }}>
+              Ecosystem Architecture
+            </span>
+          </div>
+        </div>
+
+        <nav style={{ display: 'flex', gap: 4 }}>
+          {sections.map(s => (
+            <button key={s.id} onClick={() => setActiveSection(s.id)} style={{
+              padding: '8px 16px', borderRadius: tokens.radius.lg,
+              border: 'none', cursor: 'pointer',
+              fontFamily: tokens.typography.sans,
+              fontSize: tokens.typography.sizes.sm,
+              fontWeight: activeSection === s.id ? 600 : 400,
+              background: activeSection === s.id ? c.goldGlow : 'transparent',
+              color: activeSection === s.id ? c.gold : c.textMuted,
+              transition: tokens.motion.gentle,
+            }}>{s.label}</button>
+          ))}
+        </nav>
+
+        <button onClick={() => setDeepRest(!deepRest)} style={{
+          width: 40, height: 40, borderRadius: tokens.radius.full,
+          border: `1px solid ${c.borderLight}`,
+          background: c.bgGlass, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: tokens.motion.gentle,
+        }}>
+          {deepRest ? <Sun size={16} color={c.gold} /> : <Moon size={16} color={c.textMuted} />}
+        </button>
+      </header>
+
+      <main style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', padding: '32px 32px 100px' }}>
+
+        {/* ── OVERVIEW SECTION ── */}
+        {activeSection === 'overview' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            {/* Hero */}
+            <div style={{ textAlign: 'center', padding: '60px 0 48px' }}>
+              <h2 style={{
+                fontFamily: tokens.typography.serif,
+                fontSize: tokens.typography.sizes['4xl'],
+                fontWeight: 300, margin: '0 0 16px',
+                letterSpacing: '-0.03em',
+                lineHeight: 1.1,
+              }}>
+                Technology that breathes<br />
+                <span style={{ color: c.gold }}>with you</span>
+              </h2>
+              <p style={{
+                fontSize: tokens.typography.sizes.lg,
+                color: c.textMuted,
+                maxWidth: 560,
+                margin: '0 auto',
+                lineHeight: 1.6,
+              }}>
+                Ten products. Seven platforms. One seamless experience.
+                Resonance is an ecosystem designed around human rhythm,
+                not algorithmic urgency.
+              </p>
+            </div>
+
+            {/* Product Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+              gap: 16, marginBottom: 48,
+            }}>
+              {products.map(p => {
+                const Icon = p.icon;
+                return (
+                  <div key={p.id} onClick={() => { setSelectedProduct(p); setActiveSection('products'); }}
+                    style={{
+                      padding: 20, borderRadius: tokens.radius.xl,
+                      background: c.bgGlass,
+                      backdropFilter: 'blur(12px)',
+                      border: `1px solid ${c.borderLight}`,
+                      cursor: 'pointer',
+                      transition: tokens.motion.gentle,
+                    }}>
+                    <div style={{
+                      width: 40, height: 40, borderRadius: tokens.radius.md,
+                      background: `${p.color}18`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      marginBottom: 12,
+                    }}>
+                      <Icon size={20} color={p.color} />
+                    </div>
+                    <h3 style={{
+                      fontSize: tokens.typography.sizes.base,
+                      fontWeight: 600, margin: '0 0 4px',
+                    }}>{p.name}</h3>
+                    <p style={{
+                      fontSize: tokens.typography.sizes.xs,
+                      color: c.gold,
+                      fontStyle: 'italic',
+                      margin: '0 0 8px',
+                      fontFamily: tokens.typography.serif,
+                    }}>{p.tagline}</p>
+                    <p style={{
+                      fontSize: tokens.typography.sizes.xs,
+                      color: c.textMuted,
+                      margin: 0, lineHeight: 1.5,
+                    }}>{p.desc}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Platform Bar */}
+            <div style={{
+              padding: 24, borderRadius: tokens.radius.xl,
+              background: c.bgGlass,
+              backdropFilter: 'blur(12px)',
+              border: `1px solid ${c.borderLight}`,
+              marginBottom: 48,
+            }}>
+              <h3 style={{
+                fontSize: tokens.typography.sizes.sm,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                color: c.textMuted,
+                margin: '0 0 20px',
+              }}>Available on every platform</h3>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                {platforms.map(p => {
+                  const Icon = p.icon;
+                  return (
+                    <div key={p.id}
+                      onMouseEnter={() => setHoveredPlatform(p.id)}
+                      onMouseLeave={() => setHoveredPlatform(null)}
+                      style={{
+                        flex: '1 1 120px',
+                        padding: 16, borderRadius: tokens.radius.lg,
+                        background: hoveredPlatform === p.id ? c.goldGlow : 'transparent',
+                        border: `1px solid ${hoveredPlatform === p.id ? c.gold + '30' : 'transparent'}`,
+                        textAlign: 'center',
+                        transition: tokens.motion.gentle,
+                        cursor: 'pointer',
+                      }}>
+                      <Icon size={24} color={hoveredPlatform === p.id ? c.gold : c.textMuted}
+                        style={{ transition: tokens.motion.gentle }} />
+                      <div style={{
+                        fontSize: tokens.typography.sizes.sm,
+                        fontWeight: 600, marginTop: 8,
+                      }}>{p.name}</div>
+                      <div style={{
+                        fontSize: tokens.typography.sizes.xs,
+                        color: c.textMuted, marginTop: 2,
+                      }}>{p.os}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Services */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: 16,
+            }}>
+              {services.map(s => {
+                const Icon = s.icon;
+                return (
+                  <div key={s.name} style={{
+                    padding: 20, borderRadius: tokens.radius.xl,
+                    background: c.bgGlass,
+                    backdropFilter: 'blur(12px)',
+                    border: `1px solid ${c.borderLight}`,
+                    display: 'flex', gap: 16, alignItems: 'flex-start',
+                  }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: tokens.radius.sm,
+                      background: c.goldGlow,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0,
+                    }}>
+                      <Icon size={18} color={c.gold} />
+                    </div>
+                    <div>
+                      <h4 style={{ fontSize: tokens.typography.sizes.base, fontWeight: 600, margin: '0 0 4px' }}>
+                        {s.name}
+                      </h4>
+                      <p style={{ fontSize: tokens.typography.sizes.sm, color: c.textMuted, margin: 0, lineHeight: 1.5 }}>
+                        {s.desc}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── PRODUCTS SECTION ── */}
+        {activeSection === 'products' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <h2 style={{
+              fontFamily: tokens.typography.serif,
+              fontSize: tokens.typography.sizes['3xl'],
+              fontWeight: 300, margin: '0 0 8px',
+            }}>The Suite</h2>
+            <p style={{ color: c.textMuted, margin: '0 0 32px', fontSize: tokens.typography.sizes.base }}>
+              Each product is complete on its own. Together, they create something greater.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {products.map(p => {
+                const Icon = p.icon;
+                const isSelected = selectedProduct?.id === p.id;
+                return (
+                  <div key={p.id} onClick={() => setSelectedProduct(isSelected ? null : p)}
+                    style={{
+                      padding: 24, borderRadius: tokens.radius.xl,
+                      background: isSelected ? c.bgSurface : c.bgGlass,
+                      backdropFilter: 'blur(12px)',
+                      border: `1px solid ${isSelected ? c.gold + '40' : c.borderLight}`,
+                      cursor: 'pointer',
+                      transition: tokens.motion.gentle,
+                      boxShadow: isSelected ? `0 8px 32px ${c.shadow}` : 'none',
+                    }}>
+                    <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+                      <div style={{
+                        width: 48, height: 48, borderRadius: tokens.radius.lg,
+                        background: `${p.color}15`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                      }}>
+                        <Icon size={24} color={p.color} />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h3 style={{ fontSize: tokens.typography.sizes.lg, fontWeight: 600, margin: '0 0 2px' }}>
+                          {p.name}
+                        </h3>
+                        <span style={{
+                          fontSize: tokens.typography.sizes.sm,
+                          color: c.gold,
+                          fontFamily: tokens.typography.serif,
+                          fontStyle: 'italic',
+                        }}>{p.tagline}</span>
+                      </div>
+                      <ArrowRight size={16} color={c.textLight}
+                        style={{ transform: isSelected ? 'rotate(90deg)' : 'none', transition: tokens.motion.gentle }} />
+                    </div>
+
+                    {isSelected && (
+                      <div style={{ marginTop: 20, paddingTop: 20, borderTop: `1px solid ${c.borderLight}` }}>
+                        <p style={{ fontSize: tokens.typography.sizes.base, color: c.textMuted, margin: '0 0 16px', lineHeight: 1.6 }}>
+                          {p.desc}
+                        </p>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                          {platforms.map(pl => (
+                            <span key={pl.id} style={{
+                              padding: '4px 12px',
+                              borderRadius: tokens.radius.full,
+                              background: c.green50,
+                              fontSize: tokens.typography.sizes.xs,
+                              color: c.textMuted,
+                              border: `1px solid ${c.borderLight}`,
+                            }}>{pl.name}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── PLATFORMS SECTION ── */}
+        {activeSection === 'platforms' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <h2 style={{
+              fontFamily: tokens.typography.serif,
+              fontSize: tokens.typography.sizes['3xl'],
+              fontWeight: 300, margin: '0 0 8px',
+            }}>Every Screen, One Experience</h2>
+            <p style={{ color: c.textMuted, margin: '0 0 32px' }}>
+              Native on each platform. Seamlessly synced across all.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
+              {platforms.map(p => {
+                const Icon = p.icon;
+                return (
+                  <div key={p.id} style={{
+                    padding: 24, borderRadius: tokens.radius.xl,
+                    background: c.bgGlass,
+                    backdropFilter: 'blur(12px)',
+                    border: `1px solid ${c.borderLight}`,
+                  }}>
+                    <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 16 }}>
+                      <div style={{
+                        width: 48, height: 48, borderRadius: tokens.radius.lg,
+                        background: c.goldGlow,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Icon size={24} color={c.gold} />
+                      </div>
+                      <div>
+                        <h3 style={{ fontSize: tokens.typography.sizes.lg, fontWeight: 600, margin: 0 }}>{p.name}</h3>
+                        <span style={{ fontSize: tokens.typography.sizes.xs, color: c.textMuted }}>{p.os}</span>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: tokens.typography.sizes.sm, color: c.textMuted, margin: '0 0 16px', lineHeight: 1.5 }}>
+                      {p.features}
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {products.slice(0, 6).map(pr => {
+                        const PIcon = pr.icon;
+                        return (
+                          <div key={pr.id} style={{
+                            width: 28, height: 28, borderRadius: tokens.radius.sm,
+                            background: `${pr.color}12`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          }} title={pr.name}>
+                            <PIcon size={14} color={pr.color} />
+                          </div>
+                        );
+                      })}
+                      <div style={{
+                        width: 28, height: 28, borderRadius: tokens.radius.sm,
+                        background: c.green50,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: tokens.typography.sizes.xs, color: c.textMuted,
+                      }}>+{products.length - 6}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── SERVICES SECTION ── */}
+        {activeSection === 'services' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <h2 style={{
+              fontFamily: tokens.typography.serif,
+              fontSize: tokens.typography.sizes['3xl'],
+              fontWeight: 300, margin: '0 0 8px',
+            }}>The Invisible Infrastructure</h2>
+            <p style={{ color: c.textMuted, margin: '0 0 32px' }}>
+              Services that power the ecosystem — always working, never in the way.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
+              {services.map(s => {
+                const Icon = s.icon;
+                return (
+                  <div key={s.name} style={{
+                    padding: 28, borderRadius: tokens.radius.xl,
+                    background: c.bgGlass,
+                    backdropFilter: 'blur(12px)',
+                    border: `1px solid ${c.borderLight}`,
+                  }}>
+                    <div style={{
+                      width: 48, height: 48, borderRadius: tokens.radius.lg,
+                      background: c.goldGlow,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      marginBottom: 16,
+                    }}>
+                      <Icon size={24} color={c.gold} />
+                    </div>
+                    <h3 style={{ fontSize: tokens.typography.sizes.lg, fontWeight: 600, margin: '0 0 8px' }}>
+                      {s.name}
+                    </h3>
+                    <p style={{ fontSize: tokens.typography.sizes.base, color: c.textMuted, margin: 0, lineHeight: 1.6 }}>
+                      {s.desc}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── INTEGRATIONS SECTION ── */}
+        {activeSection === 'integrations' && (
+          <div style={{ animation: 'fadeIn 0.5s ease' }}>
+            <h2 style={{
+              fontFamily: tokens.typography.serif,
+              fontSize: tokens.typography.sizes['3xl'],
+              fontWeight: 300, margin: '0 0 8px',
+            }}>Connected, Not Captive</h2>
+            <p style={{ color: c.textMuted, margin: '0 0 32px' }}>
+              Resonance integrates with every major platform — share mindfully, connect intentionally.
+            </p>
+
+            <div style={{
+              padding: 28, borderRadius: tokens.radius.xl,
+              background: c.bgGlass,
+              backdropFilter: 'blur(12px)',
+              border: `1px solid ${c.borderLight}`,
+              marginBottom: 24,
+            }}>
+              <h3 style={{ fontSize: tokens.typography.sizes.base, fontWeight: 600, margin: '0 0 20px' }}>
+                Social & Content Platforms
+              </h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                {socialIntegrations.map(name => (
+                  <span key={name} style={{
+                    padding: '8px 16px',
+                    borderRadius: tokens.radius.full,
+                    background: c.bgSurface,
+                    border: `1px solid ${c.borderLight}`,
+                    fontSize: tokens.typography.sizes.sm,
+                    color: c.textMain,
+                    fontWeight: 500,
+                  }}>{name}</span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div style={{
+                padding: 24, borderRadius: tokens.radius.xl,
+                background: c.bgGlass,
+                backdropFilter: 'blur(12px)',
+                border: `1px solid ${c.borderLight}`,
+              }}>
+                <Lock size={20} color={c.gold} style={{ marginBottom: 12 }} />
+                <h4 style={{ fontSize: tokens.typography.sizes.base, fontWeight: 600, margin: '0 0 8px' }}>
+                  Privacy-First Sharing
+                </h4>
+                <p style={{ fontSize: tokens.typography.sizes.sm, color: c.textMuted, margin: 0, lineHeight: 1.5 }}>
+                  Review before posting. No background data harvesting.
+                  You choose what goes where, always.
+                </p>
+              </div>
+              <div style={{
+                padding: 24, borderRadius: tokens.radius.xl,
+                background: c.bgGlass,
+                backdropFilter: 'blur(12px)',
+                border: `1px solid ${c.borderLight}`,
+              }}>
+                <Eye size={20} color={c.gold} style={{ marginBottom: 12 }} />
+                <h4 style={{ fontSize: tokens.typography.sizes.base, fontWeight: 600, margin: '0 0 8px' }}>
+                  Mindful Consumption
+                </h4>
+                <p style={{ fontSize: tokens.typography.sizes.sm, color: c.textMuted, margin: 0, lineHeight: 1.5 }}>
+                  Curated feeds, reading time awareness, and gentle nudges
+                  when screen time exceeds your intentions.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* Global Styles */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        @keyframes breathe {
+          0%, 100% { transform: scale(1) translate(0, 0); }
+          50% { transform: scale(1.08) translate(10px, -10px); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: ${c.borderLight}; border-radius: 3px; }
+      `}} />
+    </div>
+  );
+};
+
+export default EcosystemArchitecture;
