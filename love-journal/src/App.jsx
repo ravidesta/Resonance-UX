@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useJournalStore } from './hooks/useJournalStore'
+import { ThemeContext } from './hooks/useTheme'
 import { BottomNav, TopBar } from './components/Navigation'
 import { LandingPage } from './pages/LandingPage'
 import { Home } from './pages/Home'
@@ -58,6 +59,7 @@ function App() {
   const isLanding = view === 'landing'
 
   return (
+    <ThemeContext.Provider value={isDark}>
     <div className={`min-h-dvh paper-texture transition-colors duration-800 ${isDark ? 'theme-deep' : ''}`}>
       {/* Background breathing blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -120,6 +122,7 @@ function App() {
         </div>
       )}
     </div>
+    </ThemeContext.Provider>
   )
 }
 

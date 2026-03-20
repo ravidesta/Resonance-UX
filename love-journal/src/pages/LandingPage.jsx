@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import {
   Heart, Sparkles, BookOpen, Shield, Smartphone, Monitor,
   Moon, Sun, Download, ArrowRight, ChevronDown, Feather,
-  Compass, Layers, Star, Leaf, Waves, Eye, Palette, Zap
+  Compass, Layers, Star, Leaf, Waves, Eye, Palette, Zap, Share2
 } from 'lucide-react'
+import { ShareButton, shareableQuotes } from '../components/ShareButton'
 
 const features = [
   {
@@ -104,6 +105,20 @@ export function LandingPage({ onEnterJournal, isDark, setIsDark }) {
             <span className="font-serif text-lg font-semibold text-text-main">Love Journal</span>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                const text = 'Discovering the Universal Law of Love — a radically calm wisdom journal companion for transformation and connection.\n\n#LoveJournal #UniversalLawOfLove #Manifestation #Resonance'
+                if (navigator.share) {
+                  navigator.share({ text }).catch(() => {})
+                } else {
+                  navigator.clipboard.writeText(text).then(() => alert('Copied!'))
+                }
+              }}
+              className="p-2 rounded-xl hover:bg-gold/10 transition-colors text-text-muted"
+              title="Share"
+            >
+              <Share2 size={16} />
+            </button>
             <button
               onClick={() => setIsDark(!isDark)}
               className="p-2 rounded-xl hover:bg-gold/10 transition-colors text-text-muted"
@@ -210,6 +225,14 @@ export function LandingPage({ onEnterJournal, isDark, setIsDark }) {
                 "This journal is not here to judge how 'good' you are at manifestation. It is here to notice how deeply loved you already are, and to help you practice partnering with that love in ways that feel kind, grounded, and real."
               </blockquote>
               <div className="w-10 h-px bg-gold mx-auto mt-6" />
+              <div className="mt-4 flex justify-center">
+                <ShareButton
+                  text='This journal is not here to judge how "good" you are at manifestation. It is here to notice how deeply loved you already are, and to help you practice partnering with that love in ways that feel kind, grounded, and real.'
+                  label="The Universal Law of Love"
+                  isDark={isDark}
+                  size="md"
+                />
+              </div>
             </div>
           </div>
         </FadeSection>
@@ -441,6 +464,37 @@ export function LandingPage({ onEnterJournal, isDark, setIsDark }) {
             </div>
           </div>
         </FadeSection>
+      </section>
+
+      {/* ═══════════════ SHAREABLE QUOTES ═══════════════ */}
+      <section className="py-16 md:py-24 px-6">
+        <FadeSection>
+          <div className="text-center mb-12">
+            <span className="text-gold text-sm font-medium tracking-wide uppercase">Spread the Love</span>
+            <h2 className="font-serif text-3xl md:text-4xl font-semibold text-text-main mt-3">
+              Share Wisdom Freely
+            </h2>
+            <p className="text-text-muted mt-3 max-w-md mx-auto text-sm leading-relaxed">
+              Beautiful shareable cards for Instagram, X, Facebook, WhatsApp, and beyond. Tap to share any quote.
+            </p>
+          </div>
+        </FadeSection>
+
+        <div className="max-w-2xl mx-auto space-y-4">
+          {shareableQuotes.slice(0, 4).map((quote, i) => (
+            <FadeSection key={i} delay={i * 80}>
+              <div className="glass rounded-2xl p-5 group hover:scale-[1.01] transition-transform duration-300">
+                <p className="font-serif text-base text-text-main leading-relaxed italic mb-3">
+                  "{quote.text}"
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-text-light">{quote.label}</span>
+                  <ShareButton text={quote.text} label={quote.label} isDark={isDark} size="sm" />
+                </div>
+              </div>
+            </FadeSection>
+          ))}
+        </div>
       </section>
 
       {/* ═══════════════ FOOTER ═══════════════ */}

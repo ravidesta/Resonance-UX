@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import { ShareButton } from './ShareButton'
+import { useIsDark } from '../hooks/useTheme'
 
 export function JournalPrompt({ id, label, placeholder, hint, store, multiline = true }) {
   const value = store.getValue(id, '')
   const [focused, setFocused] = useState(false)
+  const isDark = useIsDark()
 
   return (
     <div className={`mb-6 transition-all duration-300 ${focused ? 'scale-[1.005]' : ''}`}>
@@ -38,8 +41,9 @@ export function JournalPrompt({ id, label, placeholder, hint, store, multiline =
         )}
       </div>
       {value && (
-        <div className="mt-1 text-right text-xs text-text-light">
-          {value.length} characters
+        <div className="mt-1 flex items-center justify-between">
+          <ShareButton text={value} label={label} isDark={isDark} size="sm" />
+          <span className="text-xs text-text-light">{value.length} characters</span>
         </div>
       )}
     </div>

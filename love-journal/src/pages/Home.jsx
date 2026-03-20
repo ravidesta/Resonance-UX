@@ -1,4 +1,6 @@
-import { Heart, Compass, BookOpen, Layers, Feather, Clock, Sparkles } from 'lucide-react'
+import { Heart, Compass, BookOpen, Layers, Feather, Clock, Sparkles, Share2 } from 'lucide-react'
+import { ShareButton, shareableQuotes } from '../components/ShareButton'
+import { useIsDark } from '../hooks/useTheme'
 
 const journeySections = [
   { id: 'gateway', icon: Compass, title: 'Opening Gateway', desc: 'Begin your journey with love', color: 'from-gold/20 to-gold-light/10' },
@@ -7,6 +9,7 @@ const journeySections = [
 ]
 
 export function Home({ setView, store }) {
+  const isDark = useIsDark()
   const totalKeys = Object.keys(store.data).length
   const hasStarted = totalKeys > 0
 
@@ -47,6 +50,13 @@ export function Home({ setView, store }) {
         <p className="font-serif text-base text-text-main leading-relaxed">
           This journal is not here to judge how "good" you are at manifestation. It is here to notice how deeply loved you already are, and to help you practice partnering with that love in ways that feel kind, grounded, and real.
         </p>
+        <div className="mt-3 flex justify-center">
+          <ShareButton
+            text='This journal is not here to judge how "good" you are at manifestation. It is here to notice how deeply loved you already are, and to help you practice partnering with that love in ways that feel kind, grounded, and real.'
+            label="The Universal Law of Love"
+            isDark={isDark}
+          />
+        </div>
       </div>
 
       {/* Navigation Cards */}
@@ -80,6 +90,28 @@ export function Home({ setView, store }) {
           </button>
         </div>
       )}
+
+      {/* Shareable Wisdom Quotes */}
+      <div className="mt-10">
+        <div className="flex items-center gap-2 mb-4">
+          <Share2 className="text-gold" size={16} />
+          <h3 className="font-serif text-lg font-semibold text-text-main">Share the Love</h3>
+        </div>
+        <p className="text-text-muted text-xs mb-4 italic">Tap any quote to share it beautifully on social media — free advertising through wisdom.</p>
+        <div className="space-y-3">
+          {shareableQuotes.map((quote, i) => (
+            <div key={i} className="glass rounded-xl p-4">
+              <p className="font-serif text-sm text-text-main leading-relaxed mb-2 italic">
+                "{quote.text}"
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-text-light">{quote.label}</span>
+                <ShareButton text={quote.text} label={quote.label} isDark={isDark} size="sm" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

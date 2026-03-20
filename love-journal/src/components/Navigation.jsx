@@ -1,4 +1,4 @@
-import { Heart, BookOpen, Layers, Compass, Moon, Sun, Download, Upload, ChevronLeft, Globe } from 'lucide-react'
+import { Heart, BookOpen, Layers, Compass, Moon, Sun, Download, Upload, ChevronLeft, Globe, Share2 } from 'lucide-react'
 
 const navItems = [
   { id: 'home', label: 'Home', icon: Heart },
@@ -59,6 +59,20 @@ export function TopBar({ title, isDark, setIsDark, onBack, store, onLanding }) {
               <Globe size={16} />
             </button>
           )}
+          <button
+            onClick={() => {
+              const text = 'Discovering the Universal Law of Love through this beautiful wisdom journal companion. A radically calm space to partner with love.\n\n#LoveJournal #UniversalLawOfLove #Manifestation #WisdomJournal #Resonance'
+              if (navigator.share) {
+                navigator.share({ text }).catch(() => {})
+              } else {
+                navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'))
+              }
+            }}
+            className="p-2 rounded-lg hover:bg-gold/10 transition-colors text-text-muted"
+            title="Share app"
+          >
+            <Share2 size={16} />
+          </button>
           {store && (
             <>
               <button

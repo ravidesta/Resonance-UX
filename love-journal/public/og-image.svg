@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="blob1" cx="15%" cy="20%" r="40%">
+      <stop offset="0%" stop-color="#C5A059" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#C5A059" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob2" cx="85%" cy="80%" r="45%">
+      <stop offset="0%" stop-color="#1B402E" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#1B402E" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#C5A059"/>
+      <stop offset="100%" stop-color="#9A7A3A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#FAFAF8"/>
+  <rect width="1200" height="630" fill="url(#blob1)"/>
+  <rect width="1200" height="630" fill="url(#blob2)"/>
+
+  <!-- Card -->
+  <rect x="100" y="80" width="1000" height="470" rx="24" fill="white" opacity="0.7" stroke="#122E21" stroke-opacity="0.08" stroke-width="2"/>
+
+  <!-- Gold accent -->
+  <line x1="560" y1="140" x2="640" y2="140" stroke="url(#gold)" stroke-width="2"/>
+
+  <!-- Star -->
+  <text x="600" y="130" text-anchor="middle" font-family="serif" font-size="24" fill="#C5A059">&#10022;</text>
+
+  <!-- Title -->
+  <text x="600" y="210" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="48" font-weight="600" fill="#122E21">The Universal Law of Love</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="265" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="28" fill="#C5A059" font-style="italic">Your Living Wisdom Journal Companion</text>
+
+  <!-- Description -->
+  <text x="600" y="330" text-anchor="middle" font-family="Manrope, sans-serif" font-size="18" fill="#5C7065">A radically calm space to center your wisdom, your timing,</text>
+  <text x="600" y="358" text-anchor="middle" font-family="Manrope, sans-serif" font-size="18" fill="#5C7065">and your nervous system — while gently deepening your</text>
+  <text x="600" y="386" text-anchor="middle" font-family="Manrope, sans-serif" font-size="18" fill="#5C7065">partnership with the Law of Love.</text>
+
+  <!-- Bottom accent -->
+  <line x1="560" y1="430" x2="640" y2="430" stroke="url(#gold)" stroke-width="2"/>
+
+  <!-- Brand -->
+  <text x="600" y="490" text-anchor="middle" font-family="Manrope, sans-serif" font-size="16" font-weight="500" fill="#C5A059">&#10024; Love Journal  ·  Resonance UX</text>
+
+  <!-- Badges -->
+  <text x="600" y="580" text-anchor="middle" font-family="Manrope, sans-serif" font-size="14" fill="#8A9C91">Web · iOS · Android · Linux · Offline · Private</text>
+</svg>
