@@ -122,6 +122,35 @@ class GitHubBackupService: ObservableObject {
         ])
     }
 
+    // MARK: - GitHub API
+
+    /// Fetch all repositories for the authenticated user from the GitHub API.
+    func fetchAllRepos(token: String) async -> [GitHubRepo] {
+        var allRepos: [GitHubRepo] = []
+        var page = 1
+
+        while true {
+            guard let url = URL(string: "https://api.github.com/user/repos?per_page=100&page=\(page)&type=all") else { break }
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+
+            do {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                guard let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200 else { break }
+
+                let repos = try JSONDecoder().decode([GitHubRepo].self, from: data)
+                if repos.isEmpty { break }
+                allRepos.append(contentsOf: repos)
+                page += 1
+            } catch {
+                break
+            }
+        }
+        return allRepos
+    }
+
     // MARK: - GitHub Operations
 
     /// Build an authenticated clone URL by injecting the token into the HTTPS URL.
@@ -252,6 +281,28 @@ class GitHubBackupService: ObservableObject {
         case "dockerfile": return "Docker"
         default: return ext.uppercased()
         }
+    }
+}
+
+// MARK: - GitHub API Response
+
+struct GitHubRepo: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let fullName: String
+    let htmlUrl: String
+    let cloneUrl: String
+    let description: String?
+    let language: String?
+    let size: Int
+    let visibility: String?
+    let fork: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, description, language, size, fork, visibility
+        case fullName = "full_name"
+        case htmlUrl = "html_url"
+        case cloneUrl = "clone_url"
     }
 }
 

@@ -284,10 +284,78 @@ struct SettingsView: View {
                 }
             }
 
-            settingsGroup("Auto-Discovery") {
-                Text("Automatically discover and backup all repositories from your GitHub account")
+            settingsGroup("Backup Location") {
+                HStack {
+                    TextField("~/ResonanceBackups", text: $viewModel.backupPath)
+                        .textFieldStyle(.roundedBorder)
+                    #if os(macOS)
+                    Button("Browse...") {
+                        let panel = NSOpenPanel()
+                        panel.canChooseFiles = false
+                        panel.canChooseDirectories = true
+                        panel.canCreateDirectories = true
+                        panel.allowsMultipleSelection = false
+                        panel.prompt = "Choose Backup Folder"
+                        if panel.runModal() == .OK, let url = panel.url {
+                            viewModel.backupPath = url.path
+                        }
+                    }
+                    #endif
+                }
+                Text("All repos will be mirror-cloned into this folder")
                     .font(ResonanceTypography.captionSystem)
                     .foregroundColor(ResonanceColors.textLight)
+            }
+
+            settingsGroup("Clone All Repositories") {
+                Text("Discover every repo on your GitHub account and clone them all into the backup location above")
+                    .font(ResonanceTypography.captionSystem)
+                    .foregroundColor(ResonanceColors.textLight)
+
+                Button(action: {
+                    Task { await viewModel.cloneAllRepos() }
+                }) {
+                    HStack(spacing: 8) {
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else {
+                            Image(systemName: "square.and.arrow.down.on.square")
+                        }
+                        Text(viewModel.isLoading ? "Cloning..." : "Clone All My Repos")
+                            .font(ResonanceTypography.bodySystem)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(
+                        viewModel.githubToken.isEmpty
+                            ? ResonanceColors.textMuted.opacity(0.2)
+                            : ResonanceColors.growthGreen.opacity(0.15)
+                    )
+                    .foregroundColor(
+                        viewModel.githubToken.isEmpty
+                            ? ResonanceColors.textMuted
+                            : ResonanceColors.growthGreen
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(
+                                viewModel.githubToken.isEmpty
+                                    ? ResonanceColors.textMuted.opacity(0.3)
+                                    : ResonanceColors.growthGreen.opacity(0.4),
+                                lineWidth: 1
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(viewModel.githubToken.isEmpty || viewModel.isLoading)
+
+                if !viewModel.cloneProgress.isEmpty {
+                    Text(viewModel.cloneProgress)
+                        .font(ResonanceTypography.captionSystem)
+                        .foregroundColor(ResonanceColors.goldPrimary)
+                }
             }
         }
     }

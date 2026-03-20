@@ -16,6 +16,8 @@ class BackupViewModel: ObservableObject {
     @Published var selectedNavigation: NavigationDestination = .gallery
     @Published var globalCommandOutput: String = ""
     @Published var githubToken: String = ""
+    @Published var backupPath: String = "~/ResonanceBackups"
+    @Published var cloneProgress: String = ""
 
     // Services
     let backupService = GitHubBackupService()
@@ -38,10 +40,93 @@ class BackupViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Initialization
+    // MARK: - Resolved backup path
 
-    init() {
-        loadSampleData()
+    var resolvedBackupPath: String {
+        NSString(string: backupPath).expandingTildeInPath
+    }
+
+    // MARK: - Clone All Repos
+
+    /// Fetches every repo from GitHub and mirror-clones them into backupPath.
+    func cloneAllRepos() async {
+        guard !githubToken.isEmpty else {
+            await MainActor.run { cloneProgress = "No GitHub token — add it above first." }
+            return
+        }
+
+        await MainActor.run {
+            isLoading = true
+            cloneProgress = "Fetching repo list from GitHub..."
+        }
+
+        let repos = await backupService.fetchAllRepos(token: githubToken)
+
+        guard !repos.isEmpty else {
+            await MainActor.run {
+                isLoading = false
+                cloneProgress = "No repos found. Check your token permissions."
+            }
+            return
+        }
+
+        let dest = resolvedBackupPath
+        try? FileManager.default.createDirectory(atPath: dest, withIntermediateDirectories: true)
+
+        await MainActor.run {
+            cloneProgress = "Found \(repos.count) repos. Cloning..."
+            // Build portfolio entries for each
+            portfolios = repos.enumerated().map { (i, repo) in
+                Portfolio.fromGitHubRepo(
+                    name: repo.name,
+                    url: repo.cloneUrl,
+                    desc: repo.description ?? "",
+                    lang: repo.language ?? "Unknown",
+                    index: i
+                )
+            }
+        }
+
+        for (i, portfolio) in portfolios.enumerated() {
+            let repoDir = "\(dest)/\(portfolio.repositoryName).git"
+
+            await MainActor.run {
+                cloneProgress = "[\(i + 1)/\(portfolios.count)] \(portfolio.repositoryName)..."
+                portfolios[i].backupStatus = .syncing
+            }
+
+            if backupService.repositoryExists(at: repoDir) {
+                let result = await backupService.pullLatest(repoPath: repoDir, token: githubToken)
+                await MainActor.run {
+                    portfolios[i].backupStatus = result.isSuccess ? .synced : .error
+                    portfolios[i].lastSyncDate = Date()
+                    logChange(
+                        portfolioID: portfolio.id,
+                        action: .sync,
+                        description: result.isSuccess ? "Pulled latest" : "Pull failed: \(result.output)"
+                    )
+                }
+            } else {
+                let result = await backupService.cloneRepository(
+                    url: portfolio.repositoryURL, destination: repoDir, token: githubToken
+                )
+                await MainActor.run {
+                    portfolios[i].backupStatus = result.isSuccess ? .synced : .error
+                    portfolios[i].lastSyncDate = Date()
+                    logChange(
+                        portfolioID: portfolio.id,
+                        action: .upload,
+                        description: result.isSuccess ? "Cloned from GitHub" : "Clone failed: \(result.output)"
+                    )
+                }
+            }
+        }
+
+        await MainActor.run {
+            isLoading = false
+            let succeeded = portfolios.filter { $0.backupStatus == .synced }.count
+            cloneProgress = "Done — \(succeeded)/\(portfolios.count) repos cloned to \(backupPath)"
+        }
     }
 
     // MARK: - Portfolio Operations
@@ -60,15 +145,12 @@ class BackupViewModel: ObservableObject {
 
         await MainActor.run { portfolios[index].backupStatus = .syncing }
 
-        let basePath = NSString(string: kopiaConfig.repositoryPath).expandingTildeInPath
-        let repoPath = "\(basePath)/\(portfolio.repositoryName).git"
+        let repoPath = "\(resolvedBackupPath)/\(portfolio.repositoryName).git"
 
-        // Create the base directory if needed
         try? FileManager.default.createDirectory(
-            atPath: basePath, withIntermediateDirectories: true
+            atPath: resolvedBackupPath, withIntermediateDirectories: true
         )
 
-        // Clone if not already present, otherwise pull
         if backupService.repositoryExists(at: repoPath) {
             let pullResult = await backupService.pullLatest(repoPath: repoPath, token: githubToken)
             if !pullResult.isSuccess {
@@ -177,57 +259,5 @@ class BackupViewModel: ObservableObject {
 
         logChange(portfolioID: portfolioID, action: .secretAdded,
                   description: "Secret '\(name)' added")
-    }
-
-    // MARK: - Sample Data
-
-    func loadSampleData() {
-        let repos: [(String, String, String, String)] = [
-            ("Resonance-UX", "https://github.com/ravidesta/Resonance-UX",
-             "Calm, intentional productivity design system with bioluminescent aesthetics", "JavaScript"),
-            ("AppFlowy", "https://github.com/ravidesta/AppFlowy",
-             "Open-source Notion alternative. Flutter + Rust, privacy-first, collaborative workspace", "Dart"),
-            ("kopia", "https://github.com/ravidesta/kopia",
-             "Fast, secure backup tool with encryption, deduplication, and compression", "Go"),
-            ("design", "https://github.com/ravidesta/design",
-             "Luminous OS design system — bioluminescent portfolio architecture", "Markdown"),
-        ]
-
-        for (i, repo) in repos.enumerated() {
-            var portfolio = Portfolio.fromGitHubRepo(
-                name: repo.0, url: repo.1, desc: repo.2, lang: repo.3, index: i
-            )
-
-            // Add sample data
-            portfolio.fileCount = [23, 1034, 1034, 1][i]
-            portfolio.totalSize = [82400, 15_200_000, 9_800_000, 7646][i]
-            portfolio.commitCount = [12, 4521, 3892, 1][i]
-            portfolio.branchCount = [2, 45, 28, 2][i]
-            portfolio.backupStatus = [.synced, .synced, .synced, .synced][i]
-
-            portfolio.languages = [
-                LanguageBreakdown(language: repo.3, percentage: 65, lineCount: 0, fileCount: 10),
-                LanguageBreakdown(language: "CSS", percentage: 20, lineCount: 0, fileCount: 5),
-                LanguageBreakdown(language: "JSON", percentage: 15, lineCount: 0, fileCount: 3),
-            ]
-
-            // Sample changelog
-            portfolio.changelog = [
-                ChangeLogEntry(action: .upload, description: "Initial backup from GitHub"),
-                ChangeLogEntry(action: .sync, description: "Pulled latest changes"),
-                ChangeLogEntry(action: .backup, description: "Kopia snapshot created"),
-            ]
-
-            // Sample bitstamp
-            portfolio.bitstampRecords = [
-                BitstampRecord(
-                    projectHash: "a1b2c3d4e5f6789012345678",
-                    bitstampHash: "OBS-\(UUID().uuidString.prefix(16))",
-                    source: "openbitstamp.org"
-                )
-            ]
-
-            portfolios.append(portfolio)
-        }
     }
 }
