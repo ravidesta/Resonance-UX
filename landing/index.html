@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resonance — Technology That Breathes With You</title>
+  <meta name="description" content="A cross-platform ecosystem designed for digital calm, intentional living, and spacious productivity.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ───────────────────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    :root {
+      --green-50: #E8F0EC; --green-100: #C5DDD0; --green-200: #9FC8B1;
+      --green-300: #78B392; --green-400: #5BA37B; --green-500: #3E9364;
+      --green-600: #37855A; --green-700: #2D734D; --green-800: #122E21;
+      --green-900: #0A1C14;
+      --gold-50: #FBF5E8; --gold-100: #F3E4C0; --gold-200: #EBD297;
+      --gold-300: #E3C06E; --gold-400: #D4AD5C; --gold-500: #C5A059;
+      --gold-600: #B08D4A;
+      --off-white: #FAFAF8; --warm-gray-50: #F5F5F0;
+      --warm-gray-100: #E8E8E3; --warm-gray-200: #D4D4CE;
+      --warm-gray-500: #7C7C72; --warm-gray-700: #4A5A50;
+      --warm-gray-800: #3A4840; --warm-gray-900: #2A3430;
+      --deep-bg: #0D1A12; --deep-surface: #162B1E; --deep-card: #1E3628;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Manrope', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--warm-gray-800);
+      background: var(--off-white);
+      line-height: 1.7;
+      overflow-x: hidden;
+      transition: background 0.8s ease, color 0.8s ease;
+    }
+    body.deep-rest {
+      background: var(--deep-bg);
+      color: #C5DDD0;
+    }
+
+    /* ── Typography ─────────────────────────────────────────────────── */
+    h1, h2, h3 { font-family: var(--font-display); font-weight: 500; line-height: 1.2; }
+    h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); }
+    h2 { font-size: clamp(2rem, 4vw, 3rem); color: var(--green-700); margin-bottom: 1rem; }
+    h3 { font-size: clamp(1.4rem, 2.5vw, 1.8rem); }
+    body.deep-rest h2 { color: var(--green-200); }
+
+    p { max-width: 640px; }
+    a { color: var(--green-600); text-decoration: none; transition: color 0.3s; }
+    a:hover { color: var(--gold-500); }
+
+    /* ── Layout ──────────────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    section { padding: 6rem 0; }
+
+    /* ── Navigation ──────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1rem 2rem;
+      backdrop-filter: blur(20px) saturate(1.8);
+      -webkit-backdrop-filter: blur(20px) saturate(1.8);
+      background: rgba(250, 250, 248, 0.8);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.8s ease;
+    }
+    body.deep-rest nav {
+      background: rgba(13, 26, 18, 0.85);
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+    .nav-logo {
+      font-family: var(--font-display); font-size: 1.5rem; font-weight: 600;
+      color: var(--green-700); letter-spacing: -0.02em;
+    }
+    body.deep-rest .nav-logo { color: var(--green-200); }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--warm-gray-700); }
+    body.deep-rest .nav-links a { color: var(--green-100); }
+    .nav-links a:hover { color: var(--gold-500); }
+
+    .deep-rest-toggle {
+      background: none; border: 2px solid var(--green-400); border-radius: 20px;
+      padding: 0.4rem 1rem; font-family: var(--font-body); font-size: 0.8rem;
+      font-weight: 600; color: var(--green-600); cursor: pointer;
+      transition: all 0.4s ease;
+    }
+    .deep-rest-toggle:hover { background: var(--green-400); color: white; }
+    body.deep-rest .deep-rest-toggle {
+      border-color: var(--gold-400); color: var(--gold-400);
+    }
+    body.deep-rest .deep-rest-toggle:hover {
+      background: var(--gold-400); color: var(--deep-bg);
+    }
+
+    /* ── Hero ────────────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; text-align: center;
+      padding-top: 5rem;
+    }
+    .hero-content { position: relative; z-index: 2; }
+    .hero h1 { color: var(--green-800); margin-bottom: 1.5rem; letter-spacing: -0.03em; }
+    body.deep-rest .hero h1 { color: var(--green-100); }
+    .hero-subtitle {
+      font-family: var(--font-display); font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--warm-gray-500); margin-bottom: 3rem; max-width: 600px; margin-inline: auto;
+    }
+    body.deep-rest .hero-subtitle { color: var(--green-300); }
+
+    .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--green-600); color: white; border: none; border-radius: 12px;
+      padding: 0.9rem 2rem; font-family: var(--font-body); font-size: 1rem;
+      font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--green-500); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,115,77,0.25); }
+    .btn-secondary {
+      background: transparent; color: var(--green-700); border: 2px solid var(--green-300);
+      border-radius: 12px; padding: 0.9rem 2rem; font-family: var(--font-body);
+      font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+    }
+    .btn-secondary:hover { border-color: var(--gold-400); color: var(--gold-600); }
+    body.deep-rest .btn-secondary { color: var(--green-200); border-color: var(--green-400); }
+
+    /* Organic blob */
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15;
+      animation: blobFloat 20s ease-in-out infinite;
+    }
+    .blob-1 {
+      width: 600px; height: 600px; background: var(--green-300);
+      top: -100px; right: -150px; animation-delay: 0s;
+    }
+    .blob-2 {
+      width: 400px; height: 400px; background: var(--gold-300);
+      bottom: -50px; left: -100px; animation-delay: -7s;
+    }
+    .blob-3 {
+      width: 300px; height: 300px; background: var(--green-200);
+      top: 40%; left: 20%; animation-delay: -13s;
+    }
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -40px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    /* ── Philosophy ──────────────────────────────────────────────────── */
+    .philosophy { background: var(--warm-gray-50); }
+    body.deep-rest .philosophy { background: var(--deep-surface); }
+    .philosophy-intro {
+      text-align: center; max-width: 700px; margin: 0 auto 4rem;
+      font-size: 1.1rem; color: var(--warm-gray-500);
+    }
+    .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .principle {
+      padding: 2.5rem; border-radius: 20px;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(12px) saturate(1.5);
+      -webkit-backdrop-filter: blur(12px) saturate(1.5);
+      border: 1px solid rgba(0,0,0,0.06);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .principle:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.06); }
+    body.deep-rest .principle {
+      background: rgba(30, 54, 40, 0.6);
+      border-color: rgba(255,255,255,0.06);
+    }
+    .principle-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .principle h3 { margin-bottom: 0.5rem; color: var(--green-700); }
+    body.deep-rest .principle h3 { color: var(--green-200); }
+    .principle-contrast {
+      font-family: var(--font-display); font-style: italic;
+      font-size: 0.95rem; color: var(--gold-500); margin-bottom: 0.75rem;
+    }
+
+    /* ── Features ────────────────────────────────────────────────────── */
+    .features-intro { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      padding: 2rem; border-radius: 20px;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(16px) saturate(1.6);
+      -webkit-backdrop-filter: blur(16px) saturate(1.6);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .feature-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 16px 48px rgba(45,115,77,0.1);
+      border-color: var(--gold-200);
+    }
+    body.deep-rest .feature-card {
+      background: rgba(30, 54, 40, 0.5);
+      border-color: rgba(255,255,255,0.05);
+    }
+    body.deep-rest .feature-card:hover { border-color: var(--gold-500); }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 1.2rem;
+      background: linear-gradient(135deg, var(--green-50), var(--green-100));
+    }
+    body.deep-rest .feature-icon {
+      background: linear-gradient(135deg, var(--deep-card), var(--green-800));
+    }
+    .feature-card h3 { margin-bottom: 0.5rem; color: var(--green-700); }
+    body.deep-rest .feature-card h3 { color: var(--green-200); }
+    .feature-card p { font-size: 0.95rem; color: var(--warm-gray-500); }
+
+    /* ── Platforms ────────────────────────────────────────────────────── */
+    .platforms { background: var(--warm-gray-50); }
+    body.deep-rest .platforms { background: var(--deep-surface); }
+    .platforms-intro { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
+    .platform-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem; max-width: 800px; margin: 0 auto;
+    }
+    .platform-chip {
+      text-align: center; padding: 1.5rem 1rem; border-radius: 16px;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    .platform-chip:hover { transform: translateY(-3px); border-color: var(--gold-300); }
+    body.deep-rest .platform-chip {
+      background: rgba(30, 54, 40, 0.5);
+      border-color: rgba(255,255,255,0.05);
+    }
+    .platform-chip .platform-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+    .platform-chip .platform-name { font-size: 0.85rem; font-weight: 600; color: var(--green-700); }
+    body.deep-rest .platform-chip .platform-name { color: var(--green-200); }
+    .platform-chip .platform-tech { font-size: 0.75rem; color: var(--warm-gray-500); margin-top: 0.2rem; }
+
+    /* ── Deep Rest Section ───────────────────────────────────────────── */
+    .deep-rest-section { text-align: center; }
+    .deep-rest-section .section-desc {
+      max-width: 640px; margin: 0 auto 3rem; font-size: 1.1rem; color: var(--warm-gray-500);
+    }
+    .deep-rest-demo {
+      max-width: 480px; margin: 0 auto; border-radius: 24px; overflow: hidden;
+      background: linear-gradient(145deg, var(--deep-bg), var(--deep-surface));
+      padding: 3rem 2rem; border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    }
+    .deep-rest-demo h3 {
+      font-family: var(--font-display); color: var(--green-200);
+      font-size: 1.6rem; margin-bottom: 0.5rem;
+    }
+    .deep-rest-demo p { color: var(--green-300); font-size: 0.9rem; margin: 0 auto 2rem; }
+    .demo-card {
+      background: rgba(30, 54, 40, 0.6); border: 1px solid rgba(120,179,146,0.15);
+      border-radius: 16px; padding: 1.5rem; text-align: left;
+      backdrop-filter: blur(8px);
+    }
+    .demo-card-title { font-family: var(--font-display); color: var(--green-100); font-size: 1.1rem; }
+    .demo-card-sub { color: var(--green-400); font-size: 0.85rem; margin-top: 0.25rem; }
+    .demo-bar {
+      height: 4px; border-radius: 2px; margin-top: 1rem;
+      background: linear-gradient(90deg, var(--green-600), var(--gold-500));
+      width: 65%; opacity: 0.7;
+    }
+
+    /* ── Design System ───────────────────────────────────────────────── */
+    .design-system { background: var(--warm-gray-50); }
+    body.deep-rest .design-system { background: var(--deep-surface); }
+    .design-system-intro { text-align: center; max-width: 600px; margin: 0 auto 4rem; }
+    .ds-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    @media (max-width: 768px) { .ds-grid { grid-template-columns: 1fr; } }
+
+    .ds-typography h3 { margin-bottom: 1.5rem; }
+    .type-sample {
+      margin-bottom: 1.5rem; padding: 1.5rem; border-radius: 12px;
+      background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.04);
+    }
+    body.deep-rest .type-sample { background: rgba(30,54,40,0.4); border-color: rgba(255,255,255,0.04); }
+    .type-sample-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--warm-gray-500); margin-bottom: 0.5rem; }
+    .type-display { font-family: var(--font-display); font-size: 2rem; color: var(--green-700); }
+    body.deep-rest .type-display { color: var(--green-200); }
+    .type-body { font-family: var(--font-body); font-size: 1rem; color: var(--warm-gray-700); }
+    body.deep-rest .type-body { color: var(--green-300); }
+
+    .ds-colors h3 { margin-bottom: 1.5rem; }
+    .color-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.75rem; }
+    .swatch {
+      aspect-ratio: 1; border-radius: 12px; display: flex; align-items: flex-end;
+      padding: 0.4rem; font-size: 0.65rem; font-weight: 600; color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease;
+    }
+    .swatch:hover { transform: scale(1.1); }
+
+    /* ── Footer ──────────────────────────────────────────────────────── */
+    footer {
+      padding: 4rem 0 2rem; border-top: 1px solid var(--warm-gray-100);
+      text-align: center; font-size: 0.9rem; color: var(--warm-gray-500);
+    }
+    body.deep-rest footer { border-top-color: rgba(255,255,255,0.06); }
+    .footer-logo {
+      font-family: var(--font-display); font-size: 1.8rem; font-weight: 600;
+      color: var(--green-700); margin-bottom: 1rem;
+    }
+    body.deep-rest .footer-logo { color: var(--green-200); }
+    .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .footer-tagline { font-family: var(--font-display); font-style: italic; font-size: 1rem; margin-top: 1rem; }
+
+    /* ── Animations ──────────────────────────────────────────────────── */
+    .fade-in {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 640px) {
+      .nav-links a:not(.deep-rest-toggle) { display: none; }
+      section { padding: 4rem 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <span class="nav-logo">Resonance</span>
+    <div class="nav-links">
+      <a href="#philosophy">Philosophy</a>
+      <a href="#features">Features</a>
+      <a href="#platforms">Platforms</a>
+      <a href="#design">Design</a>
+      <button class="deep-rest-toggle" onclick="document.body.classList.toggle('deep-rest'); this.textContent = document.body.classList.contains('deep-rest') ? 'Light Mode' : 'Deep Rest';">Deep Rest</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="hero-content">
+      <h1>Technology that<br>breathes with you</h1>
+      <p class="hero-subtitle">A cross-platform ecosystem designed for digital calm, intentional living, and spacious productivity.</p>
+      <div class="hero-cta">
+        <button class="btn-primary">Get Started</button>
+        <button class="btn-secondary">Read the Book</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophy -->
+  <section class="philosophy" id="philosophy">
+    <div class="container">
+      <h2 style="text-align:center;">A Different Philosophy</h2>
+      <p class="philosophy-intro">Most software is designed to capture your attention. Resonance is designed to return it. Three principles guide every pixel, every interaction, every line of code.</p>
+      <div class="principles">
+        <div class="principle fade-in">
+          <div class="principle-icon" aria-hidden="true">&#9711;</div>
+          <p class="principle-contrast">Not productivity &mdash; spaciousness.</p>
+          <h3>Spaciousness Over Productivity</h3>
+          <p>Instead of cramming more into your day, Resonance creates room to breathe. The spaciousness gauge measures not what you accomplished, but how much unhurried time you preserved.</p>
+        </div>
+        <div class="principle fade-in">
+          <div class="principle-icon" aria-hidden="true">&#9682;</div>
+          <p class="principle-contrast">Not engagement &mdash; calm.</p>
+          <h3>Calm Over Engagement</h3>
+          <p>No infinite scroll. No notification badges. No streaks. Resonance never competes for your attention &mdash; it gently supports the rhythm you choose to live in.</p>
+        </div>
+        <div class="principle fade-in">
+          <div class="principle-icon" aria-hidden="true">&#10022;</div>
+          <p class="principle-contrast">Not addictive &mdash; intentional.</p>
+          <h3>Intentional Over Addictive</h3>
+          <p>Every interaction in Resonance asks: does this serve the person, or the platform? There are no dark patterns here &mdash; only tools that respect your autonomy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <h2 style="text-align:center;">Five Spaces, One Ecosystem</h2>
+      <div class="features-intro">
+        <p>Resonance organizes your digital life into five intentional spaces, each designed to support a different mode of being.</p>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card fade-in">
+          <div class="feature-icon">&#9788;</div>
+          <h3>Daily Flow</h3>
+          <p>A phase-aware day planner that follows your natural energy rhythm &mdash; Ascend, Zenith, Descent, and Rest &mdash; instead of treating every hour the same.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">&#9829;</div>
+          <h3>Inner Circle</h3>
+          <p>Intentional communication with your closest people. No read receipts, no typing indicators, no presence tracking. Just genuine connection through text and voice.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">&#9998;</div>
+          <h3>Writer</h3>
+          <p>A digital sanctuary for prose. Focus mode dims everything but your current paragraph. Luminize Prose gently refines your writing without changing your voice.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">&#9752;</div>
+          <h3>Wellness Holarchy</h3>
+          <p>Track biomarkers, connect with providers, and understand your health data through a lens of wholeness &mdash; not anxiety. AI translates clinical data into human insight.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">&#9674;</div>
+          <h3>Canvas</h3>
+          <p>A freeform space for visual thinking, mood boards, and creative exploration. No templates, no constraints &mdash; just an infinite surface that mirrors your mind.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">&#9883;</div>
+          <h3>Journal &amp; Coach</h3>
+          <p>Daily reflection with phase-aware prompts, mood tracking, and a calm AI mentor that offers gentle insights rooted in your own patterns and biomarker trends.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platforms -->
+  <section class="platforms" id="platforms">
+    <div class="container">
+      <h2 style="text-align:center;">Everywhere You Are</h2>
+      <p class="platforms-intro">Native on every platform, consistent in spirit. Each app is built with the platform's own design language while sharing Resonance's calm design tokens.</p>
+      <div class="platform-grid">
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#63743;</span>
+          <span class="platform-name">iOS</span>
+          <span class="platform-tech">SwiftUI</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#9679;</span>
+          <span class="platform-name">Android</span>
+          <span class="platform-tech">Jetpack Compose</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#8984;</span>
+          <span class="platform-name">macOS</span>
+          <span class="platform-tech">SwiftUI + AppKit</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#9632;</span>
+          <span class="platform-name">Windows</span>
+          <span class="platform-tech">WinUI 3</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#9673;</span>
+          <span class="platform-name">Linux</span>
+          <span class="platform-tech">GTK4 + Rust</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#9741;</span>
+          <span class="platform-name">Web</span>
+          <span class="platform-tech">React PWA</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#8986;</span>
+          <span class="platform-name">watchOS</span>
+          <span class="platform-tech">SwiftUI</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#9684;</span>
+          <span class="platform-name">Wear OS</span>
+          <span class="platform-tech">Compose</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#9783;</span>
+          <span class="platform-name">Apple TV</span>
+          <span class="platform-tech">SwiftUI</span>
+        </div>
+        <div class="platform-chip fade-in">
+          <span class="platform-icon" aria-hidden="true">&#9783;</span>
+          <span class="platform-name">Android TV</span>
+          <span class="platform-tech">Compose TV</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deep Rest -->
+  <section class="deep-rest-section" id="deep-rest">
+    <div class="container">
+      <h2>Deep Rest Mode</h2>
+      <p class="section-desc">More than a dark theme. Deep Rest mode shifts the entire experience &mdash; muted colors, slower animations, reduced information density &mdash; to honor your body's need for wind-down. Try it now with the toggle above.</p>
+      <div class="deep-rest-demo fade-in">
+        <h3>Evening Wind-Down</h3>
+        <p>Your interface transforms as the day transitions into rest.</p>
+        <div class="demo-card">
+          <div class="demo-card-title">Today's Spaciousness</div>
+          <div class="demo-card-sub">4.2 hours of unhurried time</div>
+          <div class="demo-bar"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Design System -->
+  <section class="design-system" id="design">
+    <div class="container">
+      <h2 style="text-align:center;">The Living Design System</h2>
+      <p class="design-system-intro">Every visual choice carries meaning. Resonance's design tokens encode a philosophy of calm into color, type, and space.</p>
+      <div class="ds-grid">
+        <div class="ds-typography fade-in">
+          <h3>Typography</h3>
+          <div class="type-sample">
+            <div class="type-sample-label">Display &mdash; Cormorant Garamond</div>
+            <div class="type-display">The architecture of calm</div>
+          </div>
+          <div class="type-sample">
+            <div class="type-sample-label">Body &mdash; Manrope</div>
+            <div class="type-body">Resonance uses two typefaces that speak different languages: one for contemplation, one for clarity. Cormorant Garamond carries the weight of ideas; Manrope handles the details.</div>
+          </div>
+        </div>
+        <div class="ds-colors fade-in">
+          <h3>Color Palette</h3>
+          <div class="color-swatches">
+            <div class="swatch" style="background:#E8F0EC;color:#2D734D;">50</div>
+            <div class="swatch" style="background:#C5DDD0;color:#2D734D;">100</div>
+            <div class="swatch" style="background:#9FC8B1;color:#122E21;">200</div>
+            <div class="swatch" style="background:#78B392;">300</div>
+            <div class="swatch" style="background:#5BA37B;">400</div>
+            <div class="swatch" style="background:#3E9364;">500</div>
+            <div class="swatch" style="background:#37855A;">600</div>
+            <div class="swatch" style="background:#2D734D;">700</div>
+            <div class="swatch" style="background:#122E21;">800</div>
+            <div class="swatch" style="background:#FBF5E8;color:#96773C;">G50</div>
+            <div class="swatch" style="background:#F3E4C0;color:#96773C;">G100</div>
+            <div class="swatch" style="background:#EBD297;color:#7C612F;">G200</div>
+            <div class="swatch" style="background:#E3C06E;color:#5A4621;">G300</div>
+            <div class="swatch" style="background:#D4AD5C;">G400</div>
+            <div class="swatch" style="background:#C5A059;">G500</div>
+            <div class="swatch" style="background:#B08D4A;">G600</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-logo">Resonance</div>
+      <div class="footer-links">
+        <a href="#philosophy">Philosophy</a>
+        <a href="#features">Features</a>
+        <a href="#platforms">Platforms</a>
+        <a href="#design">Design System</a>
+        <a href="#">Documentation</a>
+        <a href="#">GitHub</a>
+      </div>
+      <p class="footer-tagline">Designed for the life you want to live, not the metrics someone else wants to measure.</p>
+      <p style="margin-top:1.5rem;font-size:0.8rem;">&copy; 2026 The Resonance Design Collective</p>
+    </div>
+  </footer>
+
+  <script>
+    // Intersection Observer for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Auto Deep Rest after 9 PM
+    const hour = new Date().getHours();
+    if (hour >= 21 || hour < 6) {
+      document.body.classList.add('deep-rest');
+      document.querySelector('.deep-rest-toggle').textContent = 'Light Mode';
+    }
+  </script>
+</body>
+</html>
