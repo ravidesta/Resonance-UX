@@ -1,0 +1,67 @@
+[package]
+name = "resonance-ux"
+version = "1.0.0"
+edition = "2021"
+authors = ["Resonance UX Team"]
+description = "Resonance UX — calm, intentional digital experiences for Linux (GTK4/Libadwaita)"
+license = "MIT"
+repository = "https://github.com/resonance-ux/linux"
+keywords = ["ux", "gtk4", "wellness", "productivity", "calm"]
+categories = ["gui"]
+
+[dependencies]
+# GTK4 and Libadwaita for modern GNOME UI
+gtk4 = { version = "0.9", features = ["v4_14"] }
+libadwaita = { version = "0.7", features = ["v1_5"] }
+
+# Cairo for custom drawing (timeline, charts)
+cairo-rs = { version = "0.20", features = ["png"] }
+
+# GLib/GIO for async, settings, D-Bus
+glib = "0.20"
+gio = "0.20"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Async runtime
+tokio = { version = "1.40", features = ["full"] }
+
+# HTTP client for API sync
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+
+# Local database
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# Encryption
+aes-gcm = "0.10"
+sha2 = "0.10"
+rand = "0.8"
+base64 = "0.22"
+
+# Date/time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+log = "0.4"
+env_logger = "0.11"
+
+# UUID generation
+uuid = { version = "1.10", features = ["v4", "serde"] }
+
+# D-Bus for system notifications
+zbus = "4.4"
+
+# GtkSourceView for writer editor
+sourceview5 = "0.9"
+
+# Configuration
+directories = "5.0"
+toml = "0.8"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
