@@ -1,10 +1,13 @@
 import { useGoldenHour } from '@/shared/hooks/useGoldenHour'
-import { Play, Pause, RotateCcw, Sun, Sunset, Moon, Sparkles } from 'lucide-react'
+import { Play, Pause, RotateCcw, Sun, Sunset, Sparkles } from 'lucide-react'
 import type { TimerPhase } from '@/shared/types/room'
+import { ShareButton } from '@/shared/components/ShareButton'
+import { shareableFromGoldenHour } from '@/shared/services/shareService'
 
 interface GoldenHourTimerProps {
   totalMinutes: number
   compact?: boolean
+  taskTitle?: string
 }
 
 const phaseConfig: Record<TimerPhase, {
@@ -48,7 +51,7 @@ function pad(n: number): string {
   return String(n).padStart(2, '0')
 }
 
-export function GoldenHourTimer({ totalMinutes, compact = false }: GoldenHourTimerProps) {
+export function GoldenHourTimer({ totalMinutes, compact = false, taskTitle = 'Deep Work' }: GoldenHourTimerProps) {
   const timer = useGoldenHour(totalMinutes)
   const config = phaseConfig[timer.phase]
   const PhaseIcon = config.icon
@@ -258,9 +261,15 @@ export function GoldenHourTimer({ totalMinutes, compact = false }: GoldenHourTim
             animation: 'fade-in 1s ease-out',
           }}
         >
-          <span className="font-serif text-xs italic" style={{ color: 'var(--color-gold-primary)' }}>
-            Golden Hour has begun
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="font-serif text-xs italic" style={{ color: 'var(--color-gold-primary)' }}>
+              Golden Hour has begun
+            </span>
+            <ShareButton
+              content={shareableFromGoldenHour(taskTitle, totalMinutes, 'golden-hour')}
+              compact
+            />
+          </div>
         </div>
       )}
 
@@ -276,6 +285,12 @@ export function GoldenHourTimer({ totalMinutes, compact = false }: GoldenHourTim
           <p className="font-sans text-[10px] mt-1" style={{ color: 'var(--color-text-light)' }}>
             Preserve and return to the map?
           </p>
+          <div className="mt-3">
+            <ShareButton
+              content={shareableFromGoldenHour(taskTitle, totalMinutes, 'complete')}
+              label="Share Completion"
+            />
+          </div>
         </div>
       )}
     </div>

@@ -24,6 +24,8 @@ import { CreationModeSelector, type CreationMode } from './CreationModeSelector'
 import { computeTopologyLayout } from './TopologyLayout'
 import { useNodes as useNodeStore } from '@/shared/hooks/useNode'
 import { OrganicBlobs, PaperNoise } from '@/shared/design/GlobalStyles'
+import { ShareButton } from '@/shared/components/ShareButton'
+import { shareableFromMindMap } from '@/shared/services/shareService'
 
 // Node type registry for React Flow
 const nodeTypes = { mindNode: MindNodeRenderer }
@@ -190,15 +192,23 @@ function MindMapInner({ initialNodes, initialConnections, onEnterRoom }: MindMap
 
       {/* Header */}
       <div className="fixed top-6 left-6 z-30">
-        <h1
-          className="font-serif text-2xl font-bold"
-          style={{ color: 'var(--color-text-main)', textShadow: '0 2px 12px rgba(0,0,0,0.05)' }}
-        >
-          Luminous Mind
-        </h1>
-        <p className="font-sans text-xs" style={{ color: 'var(--color-text-muted)' }}>
-          {store.nodes.length} nodes · {store.connections.length} connections
-        </p>
+        <div className="flex items-center gap-3">
+          <div>
+            <h1
+              className="font-serif text-2xl font-bold"
+              style={{ color: 'var(--color-text-main)', textShadow: '0 2px 12px rgba(0,0,0,0.05)' }}
+            >
+              Luminous Mind
+            </h1>
+            <p className="font-sans text-xs" style={{ color: 'var(--color-text-muted)' }}>
+              {store.nodes.length} nodes · {store.connections.length} connections
+            </p>
+          </div>
+          <ShareButton
+            content={shareableFromMindMap(store.nodes.length, store.connections.length)}
+            label="Share Map"
+          />
+        </div>
       </div>
 
       {/* Context menu */}

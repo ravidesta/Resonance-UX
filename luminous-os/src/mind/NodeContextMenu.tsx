@@ -1,10 +1,12 @@
-import { type FC } from 'react'
+import { useState, type FC } from 'react'
 import {
   Calendar, Clock, ArrowRightCircle, Sprout, Leaf, Sun,
-  Flower2, Apple, Recycle, Trash2, Edit3, Copy
+  Flower2, Apple, Recycle, Trash2, Edit3, Copy, Share2
 } from 'lucide-react'
 import type { LuminousNode, NodeStatus } from '@/shared/types/node'
 import { statusConfig } from '@/shared/design/lexicon'
+import { ShareModal } from '@/shared/components/ShareModal'
+import { shareableFromNode, shareableFromMilestone } from '@/shared/services/shareService'
 
 interface ContextMenuProps {
   node: LuminousNode
@@ -28,6 +30,7 @@ const statusIcons: Record<NodeStatus, FC<{ size?: number }>> = {
 export function NodeContextMenu({
   node, position, onClose, onStatusChange, onEnterRoom, onDelete, onShowCalendar
 }: ContextMenuProps) {
+  const [showShare, setShowShare] = useState(false)
   const allStatuses: NodeStatus[] = ['dormant', 'germinating', 'growing', 'flowering', 'harvested', 'composting']
 
   return (
@@ -117,6 +120,17 @@ export function NodeContextMenu({
 
           <div className="mx-3 my-1 border-t" style={{ borderColor: 'var(--color-border-light)' }} />
 
+          {/* Share */}
+          <button
+            className="w-full px-3 py-2 flex items-center gap-2 hover:bg-[var(--color-bg-glass)] transition-colors text-left"
+            onClick={() => setShowShare(true)}
+          >
+            <Share2 size={14} style={{ color: 'var(--color-gold-primary)' }} />
+            <span className="font-sans text-xs" style={{ color: 'var(--color-text-main)' }}>Share</span>
+          </button>
+
+          <div className="mx-3 my-1 border-t" style={{ borderColor: 'var(--color-border-light)' }} />
+
           {/* Edit / Duplicate / Delete */}
           <button
             className="w-full px-3 py-2 flex items-center gap-2 hover:bg-[var(--color-bg-glass)] transition-colors text-left"
@@ -141,6 +155,14 @@ export function NodeContextMenu({
           </button>
         </div>
       </div>
+
+      {/* Share modal */}
+      {showShare && (
+        <ShareModal
+          content={node.status === 'harvested' ? shareableFromMilestone(node) : shareableFromNode(node)}
+          onClose={() => { setShowShare(false); onClose() }}
+        />
+      )}
     </>
   )
 }

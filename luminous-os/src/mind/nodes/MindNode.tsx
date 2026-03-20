@@ -1,9 +1,12 @@
-import { memo, type FC } from 'react'
+import { memo, useState, type FC } from 'react'
 import { Handle, Position, type NodeProps } from '@xyflow/react'
 import * as Icons from 'lucide-react'
+import { Share2 } from 'lucide-react'
 import type { LuminousNode, NodeType } from '@/shared/types/node'
 import { nodeTypeConfig } from '@/shared/types/node'
 import { statusConfig } from '@/shared/design/lexicon'
+import { ShareModal } from '@/shared/components/ShareModal'
+import { shareableFromNode } from '@/shared/services/shareService'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type LucideIcon = FC<any>
@@ -32,6 +35,7 @@ export interface MindNodeData extends Record<string, unknown> {
 }
 
 function MindNodeComponent({ data }: NodeProps & { data: MindNodeData }) {
+  const [showShare, setShowShare] = useState(false)
   const { node, altitude } = data
   const config = nodeTypeConfig[node.type]
   const status = statusConfig[node.status]
@@ -181,6 +185,22 @@ function MindNodeComponent({ data }: NodeProps & { data: MindNodeData }) {
           </div>
         )}
 
+        {/* Share button (hover) */}
+        {altitude <= 2 && (
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowShare(true) }}
+            className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center
+              opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
+            style={{
+              background: 'var(--color-bg-glass-heavy)',
+              border: '1px solid var(--color-border-light)',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+            }}
+          >
+            <Share2 size={9} style={{ color: 'var(--color-gold-primary)' }} />
+          </button>
+        )}
+
         {/* Children count badge */}
         {node.children.length > 0 && altitude >= 2 && (
           <div
@@ -218,6 +238,14 @@ function MindNodeComponent({ data }: NodeProps & { data: MindNodeData }) {
       <Handle type="source" position={Position.Bottom} className="!bg-transparent !border-0 !w-3 !h-3" />
       <Handle type="target" position={Position.Left} id="left" className="!bg-transparent !border-0 !w-3 !h-3" />
       <Handle type="source" position={Position.Right} id="right" className="!bg-transparent !border-0 !w-3 !h-3" />
+
+      {/* Share modal */}
+      {showShare && (
+        <ShareModal
+          content={shareableFromNode(node)}
+          onClose={() => setShowShare(false)}
+        />
+      )}
     </div>
   )
 }

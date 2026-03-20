@@ -8,6 +8,8 @@ import { roomVibes } from '@/shared/types/room'
 import { statusConfig } from '@/shared/design/lexicon'
 import { GoldenHourTimer } from './GoldenHourTimer'
 import { OrganicBlobs, PaperNoise } from '@/shared/design/GlobalStyles'
+import { ShareButton } from '@/shared/components/ShareButton'
+import { shareableFromRoomVibe, shareableFromGoldenHour } from '@/shared/services/shareService'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type LucideIcon = React.FC<any>
@@ -199,7 +201,7 @@ export function Room({ taskNode, onExit }: RoomProps) {
 
                 {/* Timer */}
                 <div className="glass-card rounded-2xl p-4">
-                  <GoldenHourTimer totalMinutes={taskNode.calendar.goldenHourMinutes} />
+                  <GoldenHourTimer totalMinutes={taskNode.calendar.goldenHourMinutes} taskTitle={taskNode.title} />
                 </div>
 
                 {/* Links */}
@@ -259,9 +261,15 @@ export function Room({ taskNode, onExit }: RoomProps) {
 
                 {/* Vibe info */}
                 <div className="glass-card rounded-xl p-3">
-                  <h4 className="font-sans text-[9px] uppercase tracking-widest mb-2" style={{ color: 'var(--color-text-light)' }}>
-                    Room Vibe
-                  </h4>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-sans text-[9px] uppercase tracking-widest" style={{ color: 'var(--color-text-light)' }}>
+                      Room Vibe
+                    </h4>
+                    <ShareButton
+                      content={shareableFromRoomVibe(vibe, taskNode.title)}
+                      compact
+                    />
+                  </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full" style={{ background: vibeConfig.accentColor }} />
                     <div>
@@ -274,6 +282,12 @@ export function Room({ taskNode, onExit }: RoomProps) {
                     </div>
                   </div>
                 </div>
+
+                {/* Share this session */}
+                <ShareButton
+                  content={shareableFromGoldenHour(taskNode.title, taskNode.calendar.goldenHourMinutes, 'morning')}
+                  label="Share Session"
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -297,7 +311,7 @@ export function Room({ taskNode, onExit }: RoomProps) {
           animate={{ opacity: entered ? 1 : 0, y: entered ? 0 : 20 }}
           transition={{ delay: 1, duration: 0.4 }}
         >
-          <GoldenHourTimer totalMinutes={taskNode.calendar.goldenHourMinutes} compact />
+          <GoldenHourTimer totalMinutes={taskNode.calendar.goldenHourMinutes} taskTitle={taskNode.title} compact />
 
           <div className="flex items-center gap-3">
             {/* Quick links */}
