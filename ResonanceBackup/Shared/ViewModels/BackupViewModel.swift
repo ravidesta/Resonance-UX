@@ -60,9 +60,38 @@ class BackupViewModel: ObservableObject {
 
         await MainActor.run { portfolios[index].backupStatus = .syncing }
 
-        // Pull latest
-        let repoPath = "\(kopiaConfig.repositoryPath)/\(portfolio.repositoryName)"
-        _ = await backupService.pullLatest(repoPath: repoPath)
+        let basePath = NSString(string: kopiaConfig.repositoryPath).expandingTildeInPath
+        let repoPath = "\(basePath)/\(portfolio.repositoryName).git"
+
+        // Create the base directory if needed
+        try? FileManager.default.createDirectory(
+            atPath: basePath, withIntermediateDirectories: true
+        )
+
+        // Clone if not already present, otherwise pull
+        if backupService.repositoryExists(at: repoPath) {
+            let pullResult = await backupService.pullLatest(repoPath: repoPath, token: githubToken)
+            if !pullResult.isSuccess {
+                await MainActor.run {
+                    portfolios[index].backupStatus = .error
+                    logChange(portfolioID: portfolio.id, action: .sync,
+                              description: "Pull failed: \(pullResult.output)")
+                }
+                return
+            }
+        } else {
+            let cloneResult = await backupService.cloneRepository(
+                url: portfolio.repositoryURL, destination: repoPath, token: githubToken
+            )
+            if !cloneResult.isSuccess {
+                await MainActor.run {
+                    portfolios[index].backupStatus = .error
+                    logChange(portfolioID: portfolio.id, action: .upload,
+                              description: "Clone failed: \(cloneResult.output)")
+                }
+                return
+            }
+        }
 
         // Create Kopia snapshot
         let snapshotResult = await backupService.createSnapshot(
@@ -82,7 +111,7 @@ class BackupViewModel: ObservableObject {
             logChange(
                 portfolioID: portfolio.id,
                 action: .sync,
-                description: "Synced and backed up",
+                description: snapshotResult.isSuccess ? "Synced and backed up" : "Snapshot failed: \(snapshotResult.output)",
                 commitHash: projectHash,
                 bitstampHash: bitstamp.bitstampHash
             )

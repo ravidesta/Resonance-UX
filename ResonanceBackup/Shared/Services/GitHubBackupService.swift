@@ -124,16 +124,53 @@ class GitHubBackupService: ObservableObject {
 
     // MARK: - GitHub Operations
 
-    func cloneRepository(url: String, destination: String) async -> CommandResult {
+    /// Build an authenticated clone URL by injecting the token into the HTTPS URL.
+    /// e.g. https://github.com/user/repo → https://<token>@github.com/user/repo
+    func authenticatedURL(_ url: String, token: String) -> String {
+        guard !token.isEmpty,
+              let parsed = URL(string: url),
+              let host = parsed.host else { return url }
+        var components = URLComponents(url: parsed, resolvingAgainstBaseURL: false)!
+        components.user = token
+        return components.string ?? url
+    }
+
+    func cloneRepository(url: String, destination: String, token: String = "") async -> CommandResult {
+        let cloneURL = authenticatedURL(url, token: token)
         return await executeCommand("git", arguments: [
-            "clone", "--mirror", url, destination
+            "clone", "--mirror", cloneURL, destination
         ])
     }
 
-    func pullLatest(repoPath: String) async -> CommandResult {
+    func pullLatest(repoPath: String, token: String = "") async -> CommandResult {
+        // If a token is provided, update the remote URL before fetching
+        if !token.isEmpty {
+            let remoteResult = await executeCommand("git", arguments: [
+                "-C", repoPath, "remote", "get-url", "origin"
+            ])
+            let currentURL = remoteResult.output.trimmingCharacters(in: .whitespacesAndNewlines)
+            // Strip any existing credentials from the URL before re-injecting
+            let cleanURL: String
+            if let parsed = URL(string: currentURL), var comps = URLComponents(url: parsed, resolvingAgainstBaseURL: false) {
+                comps.user = nil
+                comps.password = nil
+                cleanURL = comps.string ?? currentURL
+            } else {
+                cleanURL = currentURL
+            }
+            let authURL = authenticatedURL(cleanURL, token: token)
+            _ = await executeCommand("git", arguments: [
+                "-C", repoPath, "remote", "set-url", "origin", authURL
+            ])
+        }
         return await executeCommand("git", arguments: [
             "-C", repoPath, "fetch", "--all", "--prune"
         ])
+    }
+
+    /// Check if a mirror clone already exists at the given path.
+    func repositoryExists(at path: String) -> Bool {
+        FileManager.default.fileExists(atPath: path + "/HEAD")
     }
 
     func getRepositoryInfo(repoPath: String) async -> CommandResult {
