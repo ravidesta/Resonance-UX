@@ -1,0 +1,90 @@
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Android
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+*.class
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+output-metadata.json
+
+# Kotlin
+*.kotlin_module
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.intellijPlatform/
+
+# Xcode
+apple/*.xcodeproj/xcuserdata/
+apple/*.xcodeproj/project.xcworkspace/xcuserdata/
+apple/*.xcworkspace/xcuserdata/
+apple/**/*.xcuserdata/
+apple/DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+apple/.build/
+apple/Package.resolved
+.swiftpm/
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Compose Desktop distributions
+desktop/build/compose/
+
+# Kotlin/Native
+*.klib
+*.knm
+
+# Environment / secrets
+.env
+*.keystore
+*.jks
+google-services.json
+service-account.json
+
+# Coverage / reports
+*.exec
+*.ec
+reports/
+test-results/
+
+# Misc
+*.log
+*.tmp
+*.bak
+*.orig
+.kotlin/
