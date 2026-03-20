@@ -1,0 +1,186 @@
+{
+  "meditations": [
+    {
+      "id": "stargazers-attunement",
+      "title": "The Stargazer's Attunement",
+      "subtitle": "The oldest human spiritual act: looking up and letting the sky look back",
+      "category": "foundation",
+      "duration": 1200,
+      "backgroundAudio": "ambient/cosmos_deep.m4a",
+      "audioNarration": "audio/meditation_stargazers_attunement.m4a",
+      "coverGradient": ["#05100B", "#1B402E"],
+      "icon": "sparkles",
+      "steps": [
+        {
+          "timestamp": 0,
+          "duration": 60,
+          "instruction": "Find a place where you can see the sky. If you can see actual stars, wonderful. If not — if you live in a city, or the weather is overcast — you can do this practice with your eyes closed, using your imagination and memory of the night sky.",
+          "breathCue": null,
+          "visualCue": "fadeIn"
+        },
+        {
+          "timestamp": 60,
+          "duration": 120,
+          "instruction": "Stand or sit comfortably. Take five slow breaths. With each exhale, let your attention expand outward — beyond your body, beyond the room or the yard, beyond the horizon. You are not going anywhere. You are simply widening the field of your awareness.",
+          "breathCue": { "inhale": 4, "hold": 2, "exhale": 6, "cycles": 5 },
+          "visualCue": "expandRings"
+        },
+        {
+          "timestamp": 180,
+          "duration": 180,
+          "instruction": "Look up — or imagine looking up. Let the sky be vast. Let it be incomprehensible. Do not try to name the stars or identify constellations. Simply receive the immensity. Notice what happens in your body when you let the sky be larger than your understanding.",
+          "breathCue": null,
+          "visualCue": "starField"
+        },
+        {
+          "timestamp": 360,
+          "duration": 300,
+          "instruction": "Now bring your attention to one point of light — a star, a planet, or an imagined light. Let it be singular. Hold it in your attention the way you might hold a candle flame in a dark room. Notice any feelings, sensations, or images that arise. You are not interpreting. You are attending.",
+          "breathCue": null,
+          "visualCue": "singleStar"
+        },
+        {
+          "timestamp": 660,
+          "duration": 300,
+          "instruction": "Ask a simple question, silently: 'What is my relationship to this?' Not to astrology as a system. Not to the zodiac or your sun sign. Just to this — this light, this distance, this ancient fire burning in the dark. Let the question rest. Let whatever arises be enough.",
+          "breathCue": null,
+          "visualCue": "pulsingLight"
+        },
+        {
+          "timestamp": 960,
+          "duration": 120,
+          "instruction": "After this time of quiet attention, bring your gaze back to earth. Feel your feet on the ground. Feel the weight of your body. Take three breaths. You have just practiced the oldest human spiritual act: looking up and letting the sky look back.",
+          "breathCue": { "inhale": 4, "hold": 2, "exhale": 6, "cycles": 3 },
+          "visualCue": "grounding"
+        }
+      ],
+      "journalPrompt": "What did you notice during the Stargazer's Attunement? Any feelings, sensations, images, or words that arose?"
+    },
+    {
+      "id": "lunar-attunement",
+      "title": "Lunar Attunement",
+      "subtitle": "Connecting with the rhythm of the Moon",
+      "category": "cyclical",
+      "duration": 900,
+      "backgroundAudio": "ambient/lunar_waves.m4a",
+      "audioNarration": "audio/meditation_lunar_attunement.m4a",
+      "coverGradient": ["#0A1C14", "#5C7D9E"],
+      "icon": "moon",
+      "steps": [
+        {
+          "timestamp": 0,
+          "duration": 90,
+          "instruction": "Settle into a comfortable position. Close your eyes. Imagine the current phase of the Moon above you — whether it is new, waxing, full, or waning. Feel its presence even through walls and clouds.",
+          "breathCue": { "inhale": 4, "hold": 0, "exhale": 6, "cycles": 4 },
+          "visualCue": "moonPhase"
+        },
+        {
+          "timestamp": 90,
+          "duration": 180,
+          "instruction": "Imagine the Moon's light as a soft, silver-gold glow falling gently on your skin. Let it illuminate your inner emotional landscape. What feelings are most present for you right now? Name them without judgment.",
+          "breathCue": null,
+          "visualCue": "moonlight"
+        },
+        {
+          "timestamp": 270,
+          "duration": 240,
+          "instruction": "The Moon represents your emotional nature, your instincts, your inner world of feeling and memory. As you breathe, ask: What does my emotional self need right now? Listen with the patience of the Moon itself — cycling, changing, always returning.",
+          "breathCue": null,
+          "visualCue": "moonCycle"
+        },
+        {
+          "timestamp": 510,
+          "duration": 240,
+          "instruction": "If the Moon is waxing, set an intention for what you wish to grow. If full, celebrate what has come to fruition. If waning, consider what you are ready to release. If new, rest in the fertile darkness of possibility.",
+          "breathCue": null,
+          "visualCue": "intention"
+        },
+        {
+          "timestamp": 750,
+          "duration": 150,
+          "instruction": "Slowly return your awareness to your body. Feel the weight of yourself in this moment. The Moon will continue its cycle whether you watch or not — but you have chosen to attend, and that attention is itself a kind of devotion.",
+          "breathCue": { "inhale": 4, "hold": 2, "exhale": 6, "cycles": 3 },
+          "visualCue": "grounding"
+        }
+      ],
+      "journalPrompt": "What phase is the Moon in today? How does it mirror your inner emotional state?"
+    },
+    {
+      "id": "planetary-body-scan",
+      "title": "Planetary Body Scan",
+      "subtitle": "Mapping the archetypes within your body",
+      "category": "embodiment",
+      "duration": 1500,
+      "backgroundAudio": "ambient/planetary_harmonics.m4a",
+      "audioNarration": "audio/meditation_planetary_body.m4a",
+      "coverGradient": ["#122E21", "#C5A059"],
+      "icon": "orbit",
+      "steps": [
+        {
+          "timestamp": 0,
+          "duration": 120,
+          "instruction": "Lie down or sit comfortably. Take several deep breaths. We will move through the seven classical planets, locating their energy in your body.",
+          "breathCue": { "inhale": 4, "hold": 2, "exhale": 6, "cycles": 4 },
+          "visualCue": "bodyOutline"
+        },
+        {
+          "timestamp": 120,
+          "duration": 180,
+          "instruction": "THE SUN — Bring your awareness to your solar plexus, your center of vitality. Feel the warmth of your core identity. Who are you at your most essential? Let that self radiate outward.",
+          "breathCue": null,
+          "visualCue": "sunGlow"
+        },
+        {
+          "timestamp": 300,
+          "duration": 180,
+          "instruction": "THE MOON — Move your awareness to your chest, your heart space. Feel the tides of your emotions. What feelings are flowing through you right now? Let them move without trying to change them.",
+          "breathCue": null,
+          "visualCue": "moonGlow"
+        },
+        {
+          "timestamp": 480,
+          "duration": 150,
+          "instruction": "MERCURY — Bring attention to your throat and temples. Notice the activity of your mind. Is it busy? Quiet? Scattered? Focused? Simply observe the quality of your thoughts.",
+          "breathCue": null,
+          "visualCue": "mercuryGlow"
+        },
+        {
+          "timestamp": 630,
+          "duration": 150,
+          "instruction": "VENUS — Feel into your senses. What is beautiful in this moment? What gives you pleasure? Let your body soften into appreciation of what is here.",
+          "breathCue": null,
+          "visualCue": "venusGlow"
+        },
+        {
+          "timestamp": 780,
+          "duration": 150,
+          "instruction": "MARS — Notice your muscles, your jaw, your fists. Where do you hold tension, drive, desire? What action wants to move through you? Acknowledge your fire without igniting it.",
+          "breathCue": null,
+          "visualCue": "marsGlow"
+        },
+        {
+          "timestamp": 930,
+          "duration": 150,
+          "instruction": "JUPITER — Expand your awareness to fill the entire room. Feel the part of you that reaches for meaning, growth, abundance. What are you grateful for? What calls you to expand?",
+          "breathCue": null,
+          "visualCue": "jupiterGlow"
+        },
+        {
+          "timestamp": 1080,
+          "duration": 150,
+          "instruction": "SATURN — Feel the weight of your bones, your structure. Acknowledge the boundaries that hold you. What discipline serves you? What limitation is teaching you? Honor the wisdom of containment.",
+          "breathCue": null,
+          "visualCue": "saturnGlow"
+        },
+        {
+          "timestamp": 1230,
+          "duration": 270,
+          "instruction": "Now hold all seven planetary energies simultaneously. You are a cosmos in miniature — containing fire and structure, emotion and reason, desire and devotion. Rest in this completeness. You are whole.",
+          "breathCue": { "inhale": 4, "hold": 4, "exhale": 6, "cycles": 5 },
+          "visualCue": "allPlanets"
+        }
+      ],
+      "journalPrompt": "Which planetary energy felt strongest in your body? Which felt weakest or most unfamiliar? What might that tell you about your current developmental edge?"
+    }
+  ]
+}

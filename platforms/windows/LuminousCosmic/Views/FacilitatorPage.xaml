@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LuminousCosmic.Views.FacilitatorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Transparent">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Header ══ -->
+        <Border Grid.Row="0"
+                Background="{StaticResource ResonanceSurfaceBrush}"
+                BorderBrush="{StaticResource ResonanceBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="20,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Guide Avatar -->
+                <Canvas Grid.Column="0" x:Name="AvatarCanvas"
+                        Width="40" Height="40" Margin="0,0,12,0">
+                    <!-- Rendered programmatically -->
+                </Canvas>
+
+                <!-- Title & Status -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                    <TextBlock Text="Cosmic Guide"
+                               FontFamily="Cambria, Georgia" FontSize="20"
+                               FontWeight="Light"
+                               Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                    <TextBlock x:Name="StatusText" Text=""
+                               FontSize="11" FontStyle="Italic"
+                               Foreground="{StaticResource ResonanceAccentBrush}"
+                               Visibility="Collapsed" />
+                </StackPanel>
+
+                <!-- Voice Toggle -->
+                <ToggleButton Grid.Column="2" x:Name="VoiceToggle"
+                              Content="&#xE767;" FontFamily="Segoe MDL2 Assets"
+                              FontSize="16" Width="36" Height="36"
+                              CornerRadius="18"
+                              Background="Transparent"
+                              BorderBrush="{StaticResource ResonanceBorderBrush}"
+                              ToolTipService.ToolTip="Toggle voice playback"
+                              AutomationProperties.Name="Toggle voice playback" />
+            </Grid>
+        </Border>
+
+        <!-- ══ Chat Area ══ -->
+        <ScrollViewer Grid.Row="1" x:Name="ChatScrollViewer"
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="20,12">
+            <StackPanel x:Name="MessagesPanel" Spacing="12">
+
+                <!-- Welcome State (shown when no messages) -->
+                <StackPanel x:Name="WelcomePanel" Spacing="20"
+                            HorizontalAlignment="Center" MaxWidth="500">
+                    <StackPanel.RenderTransform>
+                        <TranslateTransform x:Name="WelcomeTranslate" Y="20" />
+                    </StackPanel.RenderTransform>
+
+                    <!-- Avatar -->
+                    <Canvas x:Name="WelcomeAvatarCanvas"
+                            Width="96" Height="96"
+                            HorizontalAlignment="Center" Margin="0,32,0,0" />
+
+                    <!-- Title -->
+                    <StackPanel HorizontalAlignment="Center" Spacing="8">
+                        <TextBlock Text="Your Cosmic Guide"
+                                   FontFamily="Cambria, Georgia" FontSize="24"
+                                   FontWeight="Light"
+                                   Foreground="{StaticResource ResonanceTextPrimaryBrush}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock TextAlignment="Center" LineHeight="22"
+                                   Foreground="{StaticResource ResonanceTextSecondaryBrush}"
+                                   FontSize="13">
+                            Wise counsel through the language of the stars.
+                            <LineBreak />
+                            Ask anything about your chart, transits, or inner world.
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- Conversation Starters -->
+                    <StackPanel Spacing="8">
+                        <Button x:Name="Starter1" Click="Starter_Click"
+                                Tag="I would love to understand my natal chart more deeply. Can you walk me through the key themes?"
+                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                Background="Transparent" BorderThickness="0" Padding="0"
+                                AutomationProperties.Name="Tell me about my chart">
+                            <Border Style="{StaticResource ResonanceCardStyle}" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#x2609;" FontSize="18"
+                                               VerticalAlignment="Center" Margin="0,0,12,0" />
+                                    <TextBlock Grid.Column="1" Text="Tell me about my chart"
+                                               FontSize="14" FontWeight="Medium"
+                                               Foreground="{StaticResource ResonanceTextPrimaryBrush}"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="&#xE76C;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                               Foreground="{StaticResource ResonanceAccentBrush}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </Button>
+
+                        <Button x:Name="Starter2" Click="Starter_Click"
+                                Tag="Based on the current transits and my chart, what energies are most relevant for me today?"
+                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                Background="Transparent" BorderThickness="0" Padding="0"
+                                AutomationProperties.Name="What should I focus on today">
+                            <Border Style="{StaticResource ResonanceCardStyle}" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#x2728;" FontSize="18"
+                                               VerticalAlignment="Center" Margin="0,0,12,0" />
+                                    <TextBlock Grid.Column="1" Text="What should I focus on today?"
+                                               FontSize="14" FontWeight="Medium"
+                                               Foreground="{StaticResource ResonanceTextPrimaryBrush}"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="&#xE76C;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                               Foreground="{StaticResource ResonanceAccentBrush}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </Button>
+
+                        <Button x:Name="Starter3" Click="Starter_Click"
+                                Tag="I want to explore what my Moon sign means for my emotional world. Can you guide me?"
+                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                Background="Transparent" BorderThickness="0" Padding="0"
+                                AutomationProperties.Name="Help me understand my Moon sign">
+                            <Border Style="{StaticResource ResonanceCardStyle}" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#x263D;" FontSize="18"
+                                               VerticalAlignment="Center" Margin="0,0,12,0" />
+                                    <TextBlock Grid.Column="1" Text="Help me understand my Moon sign"
+                                               FontSize="14" FontWeight="Medium"
+                                               Foreground="{StaticResource ResonanceTextPrimaryBrush}"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="&#xE76C;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                               Foreground="{StaticResource ResonanceAccentBrush}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </Button>
+
+                        <Button x:Name="Starter4" Click="Starter_Click"
+                                Tag="I would like a guided reflection connecting me with the current cosmic energies."
+                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                Background="Transparent" BorderThickness="0" Padding="0"
+                                AutomationProperties.Name="Guide me through a reflection">
+                            <Border Style="{StaticResource ResonanceCardStyle}" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#x2618;" FontSize="18"
+                                               VerticalAlignment="Center" Margin="0,0,12,0" />
+                                    <TextBlock Grid.Column="1" Text="Guide me through a reflection"
+                                               FontSize="14" FontWeight="Medium"
+                                               Foreground="{StaticResource ResonanceTextPrimaryBrush}"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="&#xE76C;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                               Foreground="{StaticResource ResonanceAccentBrush}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Typing Indicator (hidden by default) -->
+                <Border x:Name="TypingIndicator" Visibility="Collapsed"
+                        HorizontalAlignment="Left" MaxWidth="100"
+                        CornerRadius="{StaticResource ResonanceCornerMedium}"
+                        Padding="16,12">
+                    <Border.Background>
+                        <AcrylicBrush TintColor="#122E21" TintOpacity="0.3"
+                                      FallbackColor="#122E21" />
+                    </Border.Background>
+                    <StackPanel Orientation="Horizontal" Spacing="5"
+                                HorizontalAlignment="Center">
+                        <Ellipse x:Name="Dot1" Width="7" Height="7"
+                                 Fill="{StaticResource ResonanceAccentBrush}" Opacity="0.6" />
+                        <Ellipse x:Name="Dot2" Width="7" Height="7"
+                                 Fill="{StaticResource ResonanceAccentBrush}" Opacity="0.6" />
+                        <Ellipse x:Name="Dot3" Width="7" Height="7"
+                                 Fill="{StaticResource ResonanceAccentBrush}" Opacity="0.6" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ══ Input Bar ══ -->
+        <Border Grid.Row="2"
+                Background="{StaticResource ResonanceSurfaceBrush}"
+                BorderBrush="{StaticResource ResonanceBorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="12,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Mic Button -->
+                <Button Grid.Column="0" x:Name="MicButton"
+                        Click="MicButton_Click"
+                        Width="40" Height="40" CornerRadius="20"
+                        Background="Transparent"
+                        BorderBrush="{StaticResource ResonanceBorderBrush}"
+                        Margin="0,0,8,0"
+                        AutomationProperties.Name="Voice input"
+                        ToolTipService.ToolTip="Voice input">
+                    <TextBlock Text="&#xE720;" FontFamily="Segoe MDL2 Assets"
+                               FontSize="16"
+                               Foreground="{StaticResource ResonanceTextSecondaryBrush}" />
+                </Button>
+
+                <!-- Text Input -->
+                <TextBox Grid.Column="1" x:Name="MessageInput"
+                         PlaceholderText="Ask the cosmos..."
+                         KeyDown="MessageInput_KeyDown"
+                         Style="{StaticResource ResonanceTextBoxStyle}"
+                         CornerRadius="20"
+                         Padding="16,8"
+                         MaxHeight="120"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="False"
+                         AutomationProperties.Name="Message input" />
+
+                <!-- Send Button -->
+                <Button Grid.Column="2" x:Name="SendButton"
+                        Click="SendButton_Click"
+                        Width="40" Height="40" CornerRadius="20"
+                        Margin="8,0,0,0"
+                        AutomationProperties.Name="Send message"
+                        ToolTipService.ToolTip="Send message (Enter)">
+                    <Button.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#9A7A3A" Offset="0" />
+                            <GradientStop Color="#C5A059" Offset="1" />
+                        </LinearGradientBrush>
+                    </Button.Background>
+                    <TextBlock Text="&#xE74A;" FontFamily="Segoe MDL2 Assets"
+                               FontSize="14" Foreground="#0A1C14" />
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

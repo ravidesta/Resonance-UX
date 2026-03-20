@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LuminousCosmic.Views.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LuminousCosmic.Views"
+    Background="Transparent">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+        <Grid Padding="{StaticResource ResonancePagePadding}" MaxWidth="1200">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ══ ROW 0: Hero Header ══ -->
+            <Border Grid.Row="0" Style="{StaticResource ResonanceDarkCardStyle}"
+                    Margin="0,0,0,24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Spacing="8">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="COSMIC OVERVIEW" />
+                        <TextBlock x:Name="GreetingText"
+                                   FontFamily="Cambria, Georgia"
+                                   FontSize="32" FontWeight="Light"
+                                   Foreground="{StaticResource ResonanceNavTextBrush}"
+                                   TextWrapping="Wrap">
+                            Good morning, Cosmic Explorer
+                        </TextBlock>
+                        <TextBlock x:Name="DateText"
+                                   FontFamily="Segoe UI Variable"
+                                   FontSize="14"
+                                   Foreground="{StaticResource ResonanceAccentLightBrush}"
+                                   Margin="0,4,0,0">
+                            Friday, March 20, 2026
+                        </TextBlock>
+                        <TextBlock x:Name="SunMoonText"
+                                   Style="{StaticResource ResonanceBodyStyle}"
+                                   Foreground="{StaticResource ResonanceTextTertiaryBrush}"
+                                   Margin="0,8,0,0">
+                            Sun in Pisces | Moon in Taurus | Rising: Scorpio
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- Decorative cosmic symbol -->
+                    <TextBlock Grid.Column="1" Text="&#x2726;"
+                               FontSize="80" Opacity="0.15"
+                               Foreground="{StaticResource ResonanceAccentBrush}"
+                               VerticalAlignment="Center"
+                               Margin="24,0,0,0" />
+                </Grid>
+            </Border>
+
+            <!-- ══ ROW 1: Quick Stats Row ══ -->
+            <Grid Grid.Row="1" Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Moon Phase Card -->
+                <Border Grid.Column="0" Style="{StaticResource ResonanceGoldCardStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="MOON PHASE" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock x:Name="MoonPhaseEmoji" Text="&#x1F314;"
+                                       FontSize="36" VerticalAlignment="Center" />
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock x:Name="MoonPhaseName"
+                                           Style="{StaticResource ResonanceSubtitleStyle}"
+                                           Text="Waxing Gibbous" />
+                                <TextBlock x:Name="MoonSignText"
+                                           Style="{StaticResource ResonanceCaptionStyle}"
+                                           Text="Moon in Taurus" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock x:Name="MoonGuidanceText"
+                                   Style="{StaticResource ResonanceBodyStyle}"
+                                   Text="Refine your approach. Trust the process."
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Element Balance Card -->
+                <Border Grid.Column="2" Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="ELEMENT BALANCE" />
+                        <StackPanel Spacing="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Fire"
+                                           Style="{StaticResource ResonanceCaptionStyle}" VerticalAlignment="Center" />
+                                <ProgressBar Grid.Column="1" x:Name="FireBar" Value="30" Maximum="100"
+                                             Height="6" CornerRadius="3" Margin="0,0,8,0"
+                                             Foreground="#FFB85C3A" />
+                                <TextBlock Grid.Column="2" x:Name="FirePercent" Text="30%"
+                                           Style="{StaticResource ResonanceCaptionStyle}" VerticalAlignment="Center" />
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Earth"
+                                           Style="{StaticResource ResonanceCaptionStyle}" VerticalAlignment="Center" />
+                                <ProgressBar Grid.Column="1" x:Name="EarthBar" Value="25" Maximum="100"
+                                             Height="6" CornerRadius="3" Margin="0,0,8,0"
+                                             Foreground="#FF6B7D4A" />
+                                <TextBlock Grid.Column="2" x:Name="EarthPercent" Text="25%"
+                                           Style="{StaticResource ResonanceCaptionStyle}" VerticalAlignment="Center" />
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Air"
+                                           Style="{StaticResource ResonanceCaptionStyle}" VerticalAlignment="Center" />
+                                <ProgressBar Grid.Column="1" x:Name="AirBar" Value="20" Maximum="100"
+                                             Height="6" CornerRadius="3" Margin="0,0,8,0"
+                                             Foreground="#FF7A9BAF" />
+                                <TextBlock Grid.Column="2" x:Name="AirPercent" Text="20%"
+                                           Style="{StaticResource ResonanceCaptionStyle}" VerticalAlignment="Center" />
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Water"
+                                           Style="{StaticResource ResonanceCaptionStyle}" VerticalAlignment="Center" />
+                                <ProgressBar Grid.Column="1" x:Name="WaterBar" Value="25" Maximum="100"
+                                             Height="6" CornerRadius="3" Margin="0,0,8,0"
+                                             Foreground="#FF4A6B7D" />
+                                <TextBlock Grid.Column="2" x:Name="WaterPercent" Text="25%"
+                                           Style="{StaticResource ResonanceCaptionStyle}" VerticalAlignment="Center" />
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Daily Insight Card -->
+                <Border Grid.Column="4" Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="8">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="DAILY INSIGHT" />
+                        <TextBlock x:Name="DailyInsightText"
+                                   Style="{StaticResource ResonanceSubtitleStyle}"
+                                   FontStyle="Italic">
+                            "The cosmos is within us. We are made of star-stuff."
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource ResonanceCaptionStyle}"
+                                   Text="Based on your Sun-Moon-Rising configuration"
+                                   Margin="0,8,0,0" />
+                        <Button Content="Explore Your Chart"
+                                Style="{StaticResource ResonanceSecondaryButtonStyle}"
+                                Click="ExploreChart_Click"
+                                HorizontalAlignment="Left"
+                                Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ══ ROW 2: Transit Cards Section ══ -->
+            <StackPanel Grid.Row="2" Margin="0,0,0,24">
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Style="{StaticResource ResonanceTitleStyle}"
+                               Text="Active Transits" />
+                    <TextBlock Grid.Column="1"
+                               Style="{StaticResource ResonanceCaptionStyle}"
+                               Text="Planetary influences in effect"
+                               VerticalAlignment="Bottom" Margin="0,0,0,4" />
+                </Grid>
+
+                <ItemsRepeater x:Name="TransitsList">
+                    <ItemsRepeater.Layout>
+                        <StackLayout Spacing="12" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource ResonanceCardStyle}" Padding="16">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Transit icon -->
+                                    <Border Grid.Column="0" Width="48" Height="48"
+                                            CornerRadius="{StaticResource ResonanceCornerRound}"
+                                            Background="{StaticResource ResonanceAcrylicDarkBrush}"
+                                            Margin="0,0,16,0">
+                                        <TextBlock Text="&#x2726;"
+                                                   FontSize="20"
+                                                   Foreground="{StaticResource ResonanceAccentBrush}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <!-- Transit details -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="{Binding Summary}"
+                                                   FontFamily="Cambria, Georgia"
+                                                   FontSize="15" FontWeight="Normal"
+                                                   Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                        <TextBlock Text="{Binding Theme}"
+                                                   Style="{StaticResource ResonanceCaptionStyle}"
+                                                   Foreground="{StaticResource ResonanceAccentBrush}" />
+                                        <TextBlock Text="{Binding Interpretation}"
+                                                   Style="{StaticResource ResonanceCaptionStyle}"
+                                                   MaxLines="2" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <!-- Active indicator -->
+                                    <Border Grid.Column="2" VerticalAlignment="Center"
+                                            Background="{StaticResource ResonanceAccentBrush}"
+                                            CornerRadius="{StaticResource ResonanceCornerRound}"
+                                            Padding="10,4" Margin="12,0,0,0">
+                                        <TextBlock Text="Active" FontSize="11" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource ResonanceNavBackgroundBrush}" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </StackPanel>
+
+            <!-- ══ ROW 3: Quick Actions ══ -->
+            <Grid Grid.Row="3" Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Reflection Prompt -->
+                <Border Grid.Column="0" Style="{StaticResource ResonanceGoldCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="REFLECTION PROMPT" />
+                        <TextBlock x:Name="ReflectionPromptText"
+                                   Style="{StaticResource ResonanceSubtitleStyle}"
+                                   FontStyle="Italic">
+                            What seeds are you planting during this lunar cycle?
+                        </TextBlock>
+                        <Button Content="Begin Reflection"
+                                Style="{StaticResource ResonancePrimaryButtonStyle}"
+                                Click="BeginReflection_Click"
+                                HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Meditation Suggestion -->
+                <Border Grid.Column="2" Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="SUGGESTED MEDITATION" />
+                        <TextBlock x:Name="MeditationSuggestionTitle"
+                                   Style="{StaticResource ResonanceSubtitleStyle}">
+                            Lunar Breathing
+                        </TextBlock>
+                        <TextBlock x:Name="MeditationSuggestionDesc"
+                                   Style="{StaticResource ResonanceBodyStyle}">
+                            A 10-minute breathing meditation aligned with the current moon phase.
+                        </TextBlock>
+                        <Button Content="Start Meditation"
+                                Style="{StaticResource ResonanceSecondaryButtonStyle}"
+                                Click="StartMeditation_Click"
+                                HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ══ ROW 4: Planetary Positions Summary ══ -->
+            <StackPanel Grid.Row="4" Margin="0,0,0,32">
+                <TextBlock Style="{StaticResource ResonanceTitleStyle}"
+                           Text="Your Planetary Positions"
+                           Margin="0,0,0,16" />
+
+                <ItemsRepeater x:Name="PlanetsList">
+                    <ItemsRepeater.Layout>
+                        <UniformGridLayout MinItemWidth="200" MinItemHeight="80"
+                                           MinColumnSpacing="12" MinRowSpacing="12"
+                                           ItemsStretch="Fill" />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource ResonanceCardStyle}" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding Glyph}"
+                                               FontSize="28"
+                                               Foreground="{StaticResource ResonanceAccentBrush}"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,12,0" />
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="{Binding Planet}"
+                                                   FontFamily="Cambria, Georgia"
+                                                   FontSize="14"
+                                                   Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                        <TextBlock Text="{Binding DegreeDisplay}"
+                                                   Style="{StaticResource ResonanceCaptionStyle}" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

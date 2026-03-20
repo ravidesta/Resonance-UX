@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="LuminousCosmic.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LuminousCosmic"
+    Title="Luminous Cosmic Architecture"
+    Width="1280" Height="860"
+    MinWidth="900" MinHeight="640">
+
+    <Grid x:Name="RootGrid">
+        <!-- Title bar drag region -->
+        <Grid x:Name="AppTitleBar" Height="48" VerticalAlignment="Top"
+              Canvas.ZIndex="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="48" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Image Grid.Column="0" Width="18" Height="18"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"
+                        Spacing="8" Margin="4,0,0,0">
+                <TextBlock Text="&#x2726;" FontSize="14"
+                           Foreground="{StaticResource ResonanceAccentBrush}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="Luminous Cosmic Architecture"
+                           FontFamily="Cambria, Georgia"
+                           FontSize="13" FontWeight="Normal"
+                           Foreground="{StaticResource ResonanceTextSecondaryBrush}"
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Navigation -->
+        <NavigationView
+            x:Name="NavView"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleButtonVisible="True"
+            IsSettingsVisible="False"
+            PaneDisplayMode="Left"
+            OpenPaneLength="240"
+            CompactPaneLength="48"
+            SelectionChanged="NavView_SelectionChanged"
+            Loaded="NavView_Loaded"
+            Background="Transparent"
+            Margin="0,48,0,0">
+
+            <NavigationView.Resources>
+                <!-- Override NavigationView colors to match Resonance theme -->
+                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+                <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{StaticResource ForestDeep}" />
+                <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{StaticResource ForestDeep}" />
+            </NavigationView.Resources>
+
+            <!-- Navigation Pane Header -->
+            <NavigationView.PaneHeader>
+                <StackPanel Margin="12,12,12,8">
+                    <TextBlock Text="&#x2726; LUMINOUS"
+                               FontFamily="Segoe UI Variable"
+                               FontSize="11" FontWeight="SemiBold"
+                               CharacterSpacing="120"
+                               Foreground="{StaticResource ResonanceAccentBrush}"
+                               Margin="4,0,0,2" />
+                    <TextBlock Text="Cosmic Architecture"
+                               FontFamily="Cambria, Georgia"
+                               FontSize="16" FontWeight="Normal"
+                               Foreground="{StaticResource ResonanceNavTextBrush}"
+                               Margin="4,0,0,0" />
+                    <Rectangle Height="1" Margin="0,12,0,0"
+                               Fill="{StaticResource ResonanceGoldBorderBrush}" />
+                </StackPanel>
+            </NavigationView.PaneHeader>
+
+            <!-- Navigation Items -->
+            <NavigationView.MenuItems>
+                <NavigationViewItem x:Name="NavDashboard" Content="Dashboard" Tag="Dashboard"
+                                    Style="{StaticResource ResonanceNavItemStyle}">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE80F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavNatalChart" Content="Natal Chart" Tag="NatalChart"
+                                    Style="{StaticResource ResonanceNavItemStyle}">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xF272;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavReflection" Content="Daily Reflection" Tag="Reflection"
+                                    Style="{StaticResource ResonanceNavItemStyle}">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE70B;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavMeditation" Content="Meditation" Tag="Meditation"
+                                    Style="{StaticResource ResonanceNavItemStyle}">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE916;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavLibrary" Content="Chapter Library" Tag="Library"
+                                    Style="{StaticResource ResonanceNavItemStyle}">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE736;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItemSeparator />
+
+                <NavigationViewItem x:Name="NavSettings" Content="Settings" Tag="Settings"
+                                    Style="{StaticResource ResonanceNavItemStyle}">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE713;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <!-- Navigation Pane Footer -->
+            <NavigationView.PaneFooter>
+                <StackPanel Margin="16,0,16,16">
+                    <Rectangle Height="1" Margin="0,0,0,12"
+                               Fill="{StaticResource ResonanceGoldBorderBrush}" />
+                    <TextBlock Text="Moon Phase Today"
+                               FontSize="10" FontWeight="SemiBold"
+                               CharacterSpacing="60"
+                               Foreground="{StaticResource ResonanceAccentBrush}"
+                               Margin="4,0,0,4" />
+                    <TextBlock x:Name="NavMoonPhaseText"
+                               Text="Waxing Crescent"
+                               FontFamily="Cambria, Georgia"
+                               FontSize="13"
+                               Foreground="{StaticResource ResonanceNavTextBrush}"
+                               Margin="4,0,0,0" />
+                    <TextBlock x:Name="NavMoonSignText"
+                               Text="in Taurus"
+                               FontSize="11"
+                               Foreground="{StaticResource ResonanceTextTertiaryBrush}"
+                               Margin="4,2,0,0" />
+                </StackPanel>
+            </NavigationView.PaneFooter>
+
+            <!-- Content Frame -->
+            <Frame x:Name="ContentFrame" Padding="0" />
+        </NavigationView>
+    </Grid>
+</Window>

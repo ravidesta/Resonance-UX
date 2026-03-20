@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.LuminousCosmic" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <color name="deep_forest_darkest">#0A1C14</color>
+    <color name="deep_forest_dark">#122E21</color>
+    <color name="deep_forest_medium">#1B402E</color>
+    <color name="gold_primary">#C5A059</color>
+    <color name="gold_light">#E6D0A1</color>
+    <color name="gold_dark">#9A7A3A</color>
+    <color name="cream_base">#FAFAF8</color>
+    <color name="cream_warm">#F5F4EE</color>
+    <color name="text_muted_green">#5C7065</color>
+    <color name="text_sage">#8A9C91</color>
+    <color name="night_darkest">#05100B</color>
+    <color name="night_dark">#0A1C14</color>
+
+    <string name="app_name">Luminous Cosmic Architecture</string>
+
+</resources>

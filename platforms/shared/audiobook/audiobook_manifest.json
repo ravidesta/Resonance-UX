@@ -1,0 +1,126 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Audiobook",
+  "conformsTo": "https://www.w3.org/TR/audiobooks/",
+  "name": "Luminous Cosmic Architecture™: Astrology as Developmental Map",
+  "author": {
+    "@type": "Person",
+    "name": "Luminous Prosperity"
+  },
+  "readBy": {
+    "@type": "Person",
+    "name": "Luminous Narrator"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Luminous Prosperity Publishing"
+  },
+  "datePublished": "2026-01-01",
+  "inLanguage": "en",
+  "duration": "PT12H30M",
+  "description": "Luminous Cosmic Architecture™ explores astrology as a symbolic language connecting the cosmos and human experience — a developmental map for personal growth, not a deterministic cage.",
+  "image": "assets/audiobook_cover.jpg",
+  "accessMode": ["auditory"],
+  "accessibilityFeature": ["alternativeText", "tableOfContents"],
+  "readingOrder": [
+    {
+      "@type": "AudioObject",
+      "name": "Introduction",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/00_introduction.m4a",
+      "duration": "PT15M00S",
+      "startOffset": 0
+    },
+    {
+      "@type": "AudioObject",
+      "name": "Chapter 1: The Foundations of Astrology",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/ch1_foundations.m4a",
+      "duration": "PT1H45M00S",
+      "startOffset": 900,
+      "chapters": [
+        { "name": "The Oldest Mirror", "startOffset": 0, "duration": "PT8M00S" },
+        { "name": "Starlight and Omen: The Mesopotamian Roots", "startOffset": 480, "duration": "PT7M00S" },
+        { "name": "The Hellenistic Synthesis", "startOffset": 900, "duration": "PT9M00S" },
+        { "name": "Core Components: The Zodiac", "startOffset": 1440, "duration": "PT6M00S" },
+        { "name": "Core Components: The Planets", "startOffset": 1800, "duration": "PT5M00S" },
+        { "name": "Core Components: Houses and Aspects", "startOffset": 2100, "duration": "PT6M00S" },
+        { "name": "Astrology Beyond the West", "startOffset": 2460, "duration": "PT8M00S" },
+        { "name": "Science, Skepticism, and Intellectual Honesty", "startOffset": 2940, "duration": "PT7M00S" },
+        { "name": "Common Pitfalls and Ethical Cautions", "startOffset": 3360, "duration": "PT6M00S" },
+        { "name": "Reflection Questions", "startOffset": 3720, "duration": "PT5M00S" },
+        { "name": "Practical Exercise: The Stargazer's Attunement", "startOffset": 4020, "duration": "PT10M00S" },
+        { "name": "Luminous Invitation & Looking Ahead", "startOffset": 4620, "duration": "PT5M00S" }
+      ]
+    },
+    {
+      "@type": "AudioObject",
+      "name": "Chapter 2: The Natal Chart as a Developmental Map",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/ch2_natal_chart.m4a",
+      "duration": "PT1H50M00S",
+      "startOffset": 7200
+    },
+    {
+      "@type": "AudioObject",
+      "name": "Chapter 3: Astrology in Motion — Transits, Cycles, and the Living Chart",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/ch3_transits.m4a",
+      "duration": "PT1H40M00S",
+      "startOffset": 13800
+    },
+    {
+      "@type": "AudioObject",
+      "name": "Chapter 4: Astrology Beyond the West — A Wider Sky, a Deeper Listening",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/ch4_wider_sky.m4a",
+      "duration": "PT1H55M00S",
+      "startOffset": 19800
+    },
+    {
+      "@type": "AudioObject",
+      "name": "Chapter 5: Science, Skepticism, and Intellectual Honesty",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/ch5_science.m4a",
+      "duration": "PT1H30M00S",
+      "startOffset": 26700
+    },
+    {
+      "@type": "AudioObject",
+      "name": "Chapter 6: Ethical Astrology Practices",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/ch6_ethics.m4a",
+      "duration": "PT1H20M00S",
+      "startOffset": 32100
+    },
+    {
+      "@type": "AudioObject",
+      "name": "Chapter 7: Astrology as a Tool for Personal Development",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/ch7_development.m4a",
+      "duration": "PT1H35M00S",
+      "startOffset": 36900
+    },
+    {
+      "@type": "AudioObject",
+      "name": "Conclusion",
+      "encodingFormat": "audio/mp4",
+      "url": "audio/08_conclusion.m4a",
+      "duration": "PT20M00S",
+      "startOffset": 42600
+    }
+  ],
+  "tableOfContents": {
+    "entries": [
+      { "title": "Introduction", "chapter": 0, "timestamp": "00:00:00" },
+      { "title": "Chapter 1: The Foundations of Astrology", "chapter": 1, "timestamp": "00:15:00" },
+      { "title": "Chapter 2: The Natal Chart as a Developmental Map", "chapter": 2, "timestamp": "02:00:00" },
+      { "title": "Chapter 3: Astrology in Motion", "chapter": 3, "timestamp": "03:50:00" },
+      { "title": "Chapter 4: Astrology Beyond the West", "chapter": 4, "timestamp": "05:30:00" },
+      { "title": "Chapter 5: Science, Skepticism, and Intellectual Honesty", "chapter": 5, "timestamp": "07:25:00" },
+      { "title": "Chapter 6: Ethical Astrology Practices", "chapter": 6, "timestamp": "08:55:00" },
+      { "title": "Chapter 7: Astrology as a Tool for Personal Development", "chapter": 7, "timestamp": "10:15:00" },
+      { "title": "Conclusion", "chapter": 8, "timestamp": "11:50:00" }
+    ]
+  }
+}

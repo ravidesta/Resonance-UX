@@ -1,0 +1,424 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Luminous Cosmic Architecture™ — eBook Stylesheet
+   Resonance UX Design System for EPUB 3.0
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Fonts ────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/CormorantGaramond-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/CormorantGaramond-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/CormorantGaramond-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('fonts/CormorantGaramond-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Manrope';
+  src: url('fonts/Manrope-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Manrope';
+  src: url('fonts/Manrope-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Manrope';
+  src: url('fonts/Manrope-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* ─── Base ─────────────────────────────────────────────────────── */
+body {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 1.1em;
+  line-height: 1.75;
+  color: #122E21;
+  background-color: #FAFAF8;
+  margin: 0;
+  padding: 1.5em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Headings ─────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  color: #0A1C14;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2.2em;
+  font-weight: 300;
+  text-align: center;
+  border-bottom: 1px solid #C5A059;
+  padding-bottom: 0.5em;
+  margin-bottom: 1em;
+}
+
+h2 {
+  font-size: 1.6em;
+  font-weight: 600;
+  color: #1B402E;
+}
+
+h3 {
+  font-size: 1.3em;
+  font-weight: 500;
+  color: #1B402E;
+}
+
+h4 {
+  font-size: 1.1em;
+  font-weight: 500;
+  font-family: 'Manrope', 'Helvetica Neue', sans-serif;
+  color: #5C7065;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ─── Paragraphs & Text ────────────────────────────────────────── */
+p {
+  margin-bottom: 1em;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+em {
+  font-style: italic;
+}
+
+strong {
+  font-weight: 600;
+  color: #0A1C14;
+}
+
+/* ─── Chapter Opener ───────────────────────────────────────────── */
+.chapter-opener {
+  text-align: center;
+  margin: 3em 0;
+  page-break-before: always;
+}
+
+.chapter-number {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.85em;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #C5A059;
+  margin-bottom: 0.5em;
+}
+
+.chapter-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4em;
+  font-weight: 300;
+  color: #0A1C14;
+  margin: 0.2em 0;
+  line-height: 1.2;
+}
+
+.chapter-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1em;
+  font-weight: 400;
+  font-style: italic;
+  color: #5C7065;
+  margin-top: 0.5em;
+}
+
+.chapter-divider {
+  display: block;
+  text-align: center;
+  color: #C5A059;
+  font-size: 1.5em;
+  margin: 1.5em 0;
+  letter-spacing: 0.5em;
+}
+
+/* ─── Epigraph ─────────────────────────────────────────────────── */
+.epigraph {
+  font-style: italic;
+  font-size: 1.1em;
+  color: #5C7065;
+  text-align: center;
+  margin: 2em 3em;
+  line-height: 1.6;
+}
+
+/* ─── Pull Quotes ──────────────────────────────────────────────── */
+blockquote,
+.pull-quote {
+  border-left: 3px solid #C5A059;
+  margin: 1.5em 0;
+  padding: 0.8em 1.5em;
+  background-color: rgba(197, 160, 89, 0.05);
+  font-style: italic;
+  color: #1B402E;
+  font-size: 1.05em;
+  line-height: 1.6;
+}
+
+.pull-quote-large {
+  font-size: 1.3em;
+  font-weight: 300;
+  text-align: center;
+  border-left: none;
+  border-top: 1px solid #C5A059;
+  border-bottom: 1px solid #C5A059;
+  padding: 1.2em 2em;
+  margin: 2em 1em;
+  color: #0A1C14;
+}
+
+/* ─── Lists ────────────────────────────────────────────────────── */
+ol, ul {
+  margin: 1em 0;
+  padding-left: 1.5em;
+}
+
+li {
+  margin-bottom: 0.5em;
+  line-height: 1.6;
+}
+
+ol li::marker {
+  color: #C5A059;
+  font-weight: 600;
+}
+
+/* ─── Planet/Sign Descriptions ─────────────────────────────────── */
+.planet-entry {
+  margin: 0.8em 0;
+  padding-left: 1em;
+  border-left: 2px solid #D1E0D7;
+}
+
+.planet-name {
+  font-weight: 600;
+  color: #C5A059;
+}
+
+.planet-description {
+  color: #122E21;
+}
+
+/* ─── Zodiac Signs ─────────────────────────────────────────────── */
+.sign-symbol {
+  font-size: 1.3em;
+  color: #C5A059;
+}
+
+/* ─── Reflection Questions ─────────────────────────────────────── */
+.reflection-section {
+  background-color: rgba(232, 240, 234, 0.4);
+  border-radius: 4px;
+  padding: 1.5em;
+  margin: 2em 0;
+}
+
+.reflection-section h3 {
+  color: #C5A059;
+  font-size: 1.1em;
+  margin-top: 0;
+}
+
+.reflection-question {
+  font-style: italic;
+  color: #1B402E;
+  margin-bottom: 1em;
+  padding-left: 1em;
+  border-left: 2px solid #C5A059;
+}
+
+/* ─── Practical Exercise ───────────────────────────────────────── */
+.exercise-section {
+  background-color: rgba(197, 160, 89, 0.06);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  border-radius: 4px;
+  padding: 1.5em;
+  margin: 2em 0;
+}
+
+.exercise-section h3 {
+  color: #9A7A3A;
+  margin-top: 0;
+}
+
+.exercise-step {
+  margin-bottom: 1em;
+  padding-left: 0.5em;
+}
+
+.exercise-step-number {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+  color: #C5A059;
+  margin-right: 0.5em;
+}
+
+/* ─── Luminous Invitation ──────────────────────────────────────── */
+.luminous-invitation {
+  text-align: center;
+  margin: 2.5em 2em;
+  padding: 1.5em;
+  border: 1px solid #C5A059;
+  border-radius: 4px;
+  background-color: rgba(197, 160, 89, 0.04);
+}
+
+.luminous-invitation h3 {
+  color: #C5A059;
+  font-size: 1.2em;
+  margin-top: 0;
+  letter-spacing: 0.1em;
+}
+
+/* ─── Section Dividers ─────────────────────────────────────────── */
+.section-divider {
+  text-align: center;
+  margin: 2.5em 0;
+  color: #C5A059;
+  font-size: 0.9em;
+  letter-spacing: 0.5em;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #D1E0D7;
+  margin: 2em 4em;
+}
+
+/* ─── Cover Page ───────────────────────────────────────────────── */
+.cover-page {
+  text-align: center;
+  padding: 4em 2em;
+  background: linear-gradient(180deg, #0A1C14 0%, #122E21 50%, #1B402E 100%);
+  color: #FAFAF8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.cover-page .book-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.8em;
+  font-weight: 300;
+  color: #E6D0A1;
+  line-height: 1.2;
+  margin-bottom: 0.3em;
+}
+
+.cover-page .book-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3em;
+  font-weight: 400;
+  font-style: italic;
+  color: #8A9C91;
+  margin-bottom: 2em;
+}
+
+.cover-page .book-author {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.9em;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #C5A059;
+}
+
+.cover-page .cover-ornament {
+  color: #C5A059;
+  font-size: 2em;
+  margin: 1em 0;
+}
+
+/* ─── Looking Ahead ────────────────────────────────────────────── */
+.looking-ahead {
+  margin-top: 3em;
+  padding-top: 1.5em;
+  border-top: 1px solid #D1E0D7;
+}
+
+.looking-ahead p {
+  color: #5C7065;
+  font-style: italic;
+}
+
+.chapter-preview {
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.9em;
+  color: #C5A059;
+  margin: 0.3em 0;
+}
+
+/* ─── Footnotes & References ───────────────────────────────────── */
+.footnote {
+  font-size: 0.85em;
+  color: #5C7065;
+  font-family: 'Manrope', sans-serif;
+}
+
+/* ─── Utility ──────────────────────────────────────────────────── */
+.text-gold { color: #C5A059; }
+.text-green { color: #1B402E; }
+.text-muted { color: #5C7065; }
+.text-center { text-align: center; }
+.small-caps { font-variant: small-caps; letter-spacing: 0.05em; }
+.no-break { page-break-inside: avoid; }
+
+/* ─── Print Optimizations ──────────────────────────────────────── */
+@media print {
+  body { font-size: 11pt; }
+  .chapter-opener { page-break-before: always; }
+  blockquote { page-break-inside: avoid; }
+  .reflection-section { page-break-inside: avoid; }
+  .exercise-section { page-break-inside: avoid; }
+}
+
+/* ─── Night Mode (for e-readers that support it) ───────────────── */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #05100B;
+    color: #FAFAF8;
+  }
+  h1, h2, h3, strong { color: #FAFAF8; }
+  h4 { color: #8A9C91; }
+  blockquote, .pull-quote {
+    color: #D1E0D7;
+    background-color: rgba(27, 64, 46, 0.2);
+  }
+  .reflection-section {
+    background-color: rgba(27, 64, 46, 0.15);
+  }
+  .exercise-section {
+    background-color: rgba(197, 160, 89, 0.08);
+    border-color: rgba(197, 160, 89, 0.15);
+  }
+  hr { border-color: #1B402E; }
+}

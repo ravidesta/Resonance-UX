@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LuminousCosmic.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Transparent">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+        <Grid Padding="{StaticResource ResonancePagePadding}" MaxWidth="700">
+            <StackPanel Spacing="24">
+
+                <!-- ══ Header ══ -->
+                <StackPanel Spacing="4">
+                    <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                               Text="SETTINGS" />
+                    <TextBlock Style="{StaticResource ResonanceTitleStyle}"
+                               Text="Preferences" />
+                    <TextBlock Style="{StaticResource ResonanceCaptionStyle}"
+                               Text="Configure your Luminous Cosmic Architecture experience" />
+                </StackPanel>
+
+                <!-- ══ Appearance ══ -->
+                <Border Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Style="{StaticResource ResonanceSubtitleStyle}"
+                                   Text="Appearance" />
+
+                        <!-- Theme Toggle -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Night Mode"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                <TextBlock Text="Switch between Day (cream/forest) and Night (deep forest/cream) themes"
+                                           Style="{StaticResource ResonanceCaptionStyle}" />
+                            </StackPanel>
+
+                            <ToggleSwitch Grid.Column="1" x:Name="ThemeToggle"
+                                          OnContent="Night" OffContent="Day"
+                                          Toggled="ThemeToggle_Toggled" />
+                        </Grid>
+
+                        <Rectangle Height="1" Fill="{StaticResource ResonanceBorderBrush}" />
+
+                        <!-- Backdrop Effect -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Acrylic Backdrop"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                <TextBlock Text="Enable translucent material effects (requires Windows 11)"
+                                           Style="{StaticResource ResonanceCaptionStyle}" />
+                            </StackPanel>
+
+                            <ToggleSwitch Grid.Column="1" x:Name="AcrylicToggle"
+                                          IsOn="True"
+                                          OnContent="On" OffContent="Off" />
+                        </Grid>
+
+                        <Rectangle Height="1" Fill="{StaticResource ResonanceBorderBrush}" />
+
+                        <!-- Animations -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Animations"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                <TextBlock Text="Enable smooth page transitions and cosmic visual effects"
+                                           Style="{StaticResource ResonanceCaptionStyle}" />
+                            </StackPanel>
+
+                            <ToggleSwitch Grid.Column="1" x:Name="AnimationsToggle"
+                                          IsOn="True"
+                                          OnContent="On" OffContent="Off" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ══ Chart Settings ══ -->
+                <Border Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Style="{StaticResource ResonanceSubtitleStyle}"
+                                   Text="Chart Configuration" />
+
+                        <!-- House System -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="House System"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                <TextBlock Text="Method used to calculate house cusps"
+                                           Style="{StaticResource ResonanceCaptionStyle}" />
+                            </StackPanel>
+
+                            <ComboBox Grid.Column="1" Width="180" x:Name="HouseSystemCombo">
+                                <ComboBoxItem Content="Placidus" IsSelected="True" />
+                                <ComboBoxItem Content="Koch" />
+                                <ComboBoxItem Content="Whole Sign" />
+                                <ComboBoxItem Content="Equal House" />
+                                <ComboBoxItem Content="Campanus" />
+                            </ComboBox>
+                        </Grid>
+
+                        <Rectangle Height="1" Fill="{StaticResource ResonanceBorderBrush}" />
+
+                        <!-- Aspect Orbs -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Aspect Orb Tolerance"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                <TextBlock Text="Maximum degree deviation for aspect detection"
+                                           Style="{StaticResource ResonanceCaptionStyle}" />
+                            </StackPanel>
+
+                            <ComboBox Grid.Column="1" Width="180" x:Name="OrbToleranceCombo">
+                                <ComboBoxItem Content="Tight (6 deg)" />
+                                <ComboBoxItem Content="Standard (8 deg)" IsSelected="True" />
+                                <ComboBoxItem Content="Wide (10 deg)" />
+                            </ComboBox>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ══ Birth Data ══ -->
+                <Border Style="{StaticResource ResonanceGoldCardStyle}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Style="{StaticResource ResonanceSubtitleStyle}"
+                                   Text="Birth Data" />
+
+                        <TextBlock Style="{StaticResource ResonanceBodyStyle}"
+                                   x:Name="CurrentBirthDataText">
+                            Your current chart is calculated for the demo profile.
+                        </TextBlock>
+
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button Content="Update Birth Data"
+                                    Style="{StaticResource ResonancePrimaryButtonStyle}"
+                                    Click="UpdateBirthData_Click" />
+                            <Button Content="Reset to Demo"
+                                    Style="{StaticResource ResonanceSecondaryButtonStyle}"
+                                    Click="ResetToDemo_Click" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ══ Notifications ══ -->
+                <Border Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Style="{StaticResource ResonanceSubtitleStyle}"
+                                   Text="Notifications" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Daily Cosmic Insight"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                <TextBlock Text="Receive a morning notification with your daily cosmic overview"
+                                           Style="{StaticResource ResonanceCaptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" IsOn="True"
+                                          OnContent="On" OffContent="Off" />
+                        </Grid>
+
+                        <Rectangle Height="1" Fill="{StaticResource ResonanceBorderBrush}" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Moon Phase Alerts"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                <TextBlock Text="Get notified at each major moon phase transition"
+                                           Style="{StaticResource ResonanceCaptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" IsOn="True"
+                                          OnContent="On" OffContent="Off" />
+                        </Grid>
+
+                        <Rectangle Height="1" Fill="{StaticResource ResonanceBorderBrush}" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Transit Notifications"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}" />
+                                <TextBlock Text="Alerts when significant transits become exact"
+                                           Style="{StaticResource ResonanceCaptionStyle}" />
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" IsOn="False"
+                                          OnContent="On" OffContent="Off" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ══ About ══ -->
+                <Border Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource ResonanceSubtitleStyle}"
+                                   Text="About" />
+
+                        <StackPanel Spacing="4">
+                            <TextBlock FontFamily="Cambria, Georgia" FontSize="16"
+                                       Foreground="{StaticResource ResonanceTextPrimaryBrush}">
+                                Luminous Cosmic Architecture
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource ResonanceCaptionStyle}"
+                                       Foreground="{StaticResource ResonanceAccentBrush}">
+                                Version 1.0.0 | Built with Resonance UX Design System
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource ResonanceCaptionStyle}"
+                                       Margin="0,8,0,0">
+                                An astrology developmental map application for Windows 11.
+                                Built with WinUI 3, Windows App SDK, and Win2D.
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Rectangle Height="1" Fill="{StaticResource ResonanceBorderBrush}" />
+
+                        <TextBlock Style="{StaticResource ResonanceCaptionStyle}">
+                            Astronomical calculations are simplified approximations.
+                            For professional astrological analysis, consult a qualified practitioner.
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Bottom spacing -->
+                <Border Height="32" />
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

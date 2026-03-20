@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LuminousCosmic.Views.ChapterLibraryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Transparent">
+
+    <Grid Padding="{StaticResource ResonancePagePadding}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Header ══ -->
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                           Text="CHAPTER LIBRARY" />
+                <TextBlock Style="{StaticResource ResonanceTitleStyle}"
+                           Text="The Luminous Architecture" />
+                <TextBlock Style="{StaticResource ResonanceCaptionStyle}"
+                           Text="Explore the cosmic blueprint of your developmental map" />
+            </StackPanel>
+
+            <!-- Category filter -->
+            <ComboBox Grid.Column="1" x:Name="CategoryFilter"
+                      PlaceholderText="All Categories"
+                      Width="200"
+                      VerticalAlignment="Bottom"
+                      SelectionChanged="CategoryFilter_SelectionChanged">
+                <ComboBoxItem Content="All Categories" Tag="All" IsSelected="True" />
+                <ComboBoxItem Content="Foundations" Tag="Foundations" />
+                <ComboBoxItem Content="Planets" Tag="Planets" />
+                <ComboBoxItem Content="Houses" Tag="Houses" />
+                <ComboBoxItem Content="Aspects" Tag="Aspects" />
+                <ComboBoxItem Content="Transits" Tag="Transits" />
+                <ComboBoxItem Content="Integration" Tag="Integration" />
+            </ComboBox>
+        </Grid>
+
+        <!-- ══ Two-Pane Layout: List + Reading Pane ══ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="360" />
+                <ColumnDefinition Width="24" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ── Chapter List ── -->
+            <Border Grid.Column="0" Style="{StaticResource ResonanceCardStyle}" Padding="0">
+                <ListView x:Name="ChapterListView"
+                          SelectionChanged="ChapterListView_SelectionChanged"
+                          Padding="8">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="12,10" Margin="0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="36" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Chapter number -->
+                                <Border Grid.Column="0" Width="32" Height="32"
+                                        CornerRadius="{StaticResource ResonanceCornerRound}"
+                                        Background="{StaticResource ResonanceAcrylicDarkBrush}">
+                                    <TextBlock Text="{Binding Number}"
+                                               FontFamily="Cambria, Georgia"
+                                               FontSize="13" FontWeight="SemiBold"
+                                               Foreground="{StaticResource ResonanceAccentBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </Border>
+
+                                <!-- Title & Category -->
+                                <StackPanel Grid.Column="1" Margin="10,0,0,0"
+                                            VerticalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="{Binding Title}"
+                                               FontFamily="Cambria, Georgia"
+                                               FontSize="14"
+                                               Foreground="{StaticResource ResonanceTextPrimaryBrush}"
+                                               MaxLines="1" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{Binding Category}"
+                                               Style="{StaticResource ResonanceCaptionStyle}"
+                                               Foreground="{StaticResource ResonanceAccentBrush}" />
+                                </StackPanel>
+
+                                <!-- Progress -->
+                                <ProgressBar Grid.Column="2"
+                                             Value="{Binding ReadingProgress}"
+                                             Maximum="1"
+                                             Width="40" Height="4"
+                                             CornerRadius="2"
+                                             Foreground="{StaticResource ResonanceAccentBrush}"
+                                             VerticalAlignment="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
+
+            <!-- ── Reading Pane ── -->
+            <Border Grid.Column="2" Style="{StaticResource ResonanceCardStyle}" Padding="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="32,24">
+                    <StackPanel x:Name="ReadingPane" Spacing="16">
+
+                        <!-- Empty state -->
+                        <StackPanel x:Name="EmptyState" HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" Spacing="12" Margin="0,60,0,0">
+                            <TextBlock Text="&#x2726;" FontSize="48"
+                                       Foreground="{StaticResource ResonanceAccentBrush}"
+                                       HorizontalAlignment="Center" Opacity="0.4" />
+                            <TextBlock Text="Select a chapter to begin reading"
+                                       Style="{StaticResource ResonanceBodyStyle}"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+
+                        <!-- Chapter content (hidden until selected) -->
+                        <StackPanel x:Name="ContentPane" Visibility="Collapsed" Spacing="16">
+                            <TextBlock x:Name="ReadingCategory"
+                                       Style="{StaticResource ResonanceAccentLabelStyle}" />
+
+                            <TextBlock x:Name="ReadingTitle"
+                                       Style="{StaticResource ResonanceDisplayStyle}" />
+
+                            <TextBlock x:Name="ReadingSubtitle"
+                                       Style="{StaticResource ResonanceSubtitleStyle}"
+                                       Foreground="{StaticResource ResonanceAccentBrush}"
+                                       Margin="0,0,0,8" />
+
+                            <Rectangle Height="1"
+                                       Fill="{StaticResource ResonanceGoldBorderBrush}"
+                                       Margin="0,4,0,8" />
+
+                            <TextBlock x:Name="ReadingContent"
+                                       Style="{StaticResource ResonanceBodyStyle}"
+                                       LineHeight="26"
+                                       FontSize="15" />
+
+                            <!-- Navigation -->
+                            <Grid Margin="0,24,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Content="Previous Chapter"
+                                        Style="{StaticResource ResonanceSecondaryButtonStyle}"
+                                        Click="PreviousChapter_Click"
+                                        HorizontalAlignment="Left" />
+                                <Button Grid.Column="1" Content="Next Chapter"
+                                        Style="{StaticResource ResonancePrimaryButtonStyle}"
+                                        Click="NextChapter_Click"
+                                        HorizontalAlignment="Right" />
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

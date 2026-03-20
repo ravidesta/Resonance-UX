@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LuminousCosmic.Views.DailyReflectionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="Transparent">
+
+    <Grid Padding="{StaticResource ResonancePagePadding}" MaxWidth="900">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Header ══ -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                       Text="DAILY REFLECTION" />
+            <TextBlock Style="{StaticResource ResonanceTitleStyle}"
+                       Text="Journal of the Cosmic Self" />
+            <TextBlock Style="{StaticResource ResonanceCaptionStyle}"
+                       Text="Capture your inner world, guided by the stars" />
+        </StackPanel>
+
+        <!-- ══ Cosmic Context Bar ══ -->
+        <Border Grid.Row="1" Style="{StaticResource ResonanceDarkCardStyle}"
+                Margin="0,0,0,24" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" HorizontalAlignment="Center" Spacing="4">
+                    <TextBlock x:Name="ContextMoonPhase" Text="Waxing Gibbous"
+                               FontFamily="Cambria, Georgia" FontSize="14"
+                               Foreground="{StaticResource ResonanceNavTextBrush}"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Moon Phase"
+                               Style="{StaticResource ResonanceCaptionStyle}"
+                               Foreground="{StaticResource ResonanceAccentBrush}"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <Rectangle Grid.Column="1" Width="1" Fill="{StaticResource ResonanceGoldBorderBrush}" Margin="12,0" />
+
+                <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="4">
+                    <TextBlock x:Name="ContextMoonSign" Text="Moon in Taurus"
+                               FontFamily="Cambria, Georgia" FontSize="14"
+                               Foreground="{StaticResource ResonanceNavTextBrush}"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Emotional Tone"
+                               Style="{StaticResource ResonanceCaptionStyle}"
+                               Foreground="{StaticResource ResonanceAccentBrush}"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <Rectangle Grid.Column="3" Width="1" Fill="{StaticResource ResonanceGoldBorderBrush}" Margin="12,0" />
+
+                <StackPanel Grid.Column="4" HorizontalAlignment="Center" Spacing="4">
+                    <TextBlock x:Name="ContextDate" Text="March 20, 2026"
+                               FontFamily="Cambria, Georgia" FontSize="14"
+                               Foreground="{StaticResource ResonanceNavTextBrush}"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Today"
+                               Style="{StaticResource ResonanceCaptionStyle}"
+                               Foreground="{StaticResource ResonanceAccentBrush}"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ══ Reflection Content ══ -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20">
+
+                <!-- Today's Prompt -->
+                <Border Style="{StaticResource ResonanceGoldCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="TODAY'S COSMIC PROMPT" />
+                        <TextBlock x:Name="PromptText"
+                                   Style="{StaticResource ResonanceSubtitleStyle}"
+                                   FontStyle="Italic">
+                            What refinements can you make to align more deeply with your path?
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource ResonanceCaptionStyle}">
+                            This prompt is inspired by the current lunar phase and your natal chart.
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Journal Entry -->
+                <Border Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="YOUR REFLECTION" />
+                        <TextBox x:Name="ReflectionTextBox"
+                                 Style="{StaticResource ResonanceTextBoxStyle}"
+                                 PlaceholderText="Begin writing your reflection here..."
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 MinHeight="200"
+                                 MaxHeight="400"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Mood & Tags -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Mood Rating -->
+                    <Border Grid.Column="0" Style="{StaticResource ResonanceCardStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                       Text="MOOD" />
+                            <StackPanel Orientation="Horizontal" Spacing="8"
+                                        HorizontalAlignment="Center">
+                                <Button x:Name="Mood1" Content="1" Tag="1" Click="MoodButton_Click"
+                                        Width="44" Height="44"
+                                        CornerRadius="{StaticResource ResonanceCornerRound}"
+                                        Background="Transparent"
+                                        BorderBrush="{StaticResource ResonanceBorderBrush}" />
+                                <Button x:Name="Mood2" Content="2" Tag="2" Click="MoodButton_Click"
+                                        Width="44" Height="44"
+                                        CornerRadius="{StaticResource ResonanceCornerRound}"
+                                        Background="Transparent"
+                                        BorderBrush="{StaticResource ResonanceBorderBrush}" />
+                                <Button x:Name="Mood3" Content="3" Tag="3" Click="MoodButton_Click"
+                                        Width="44" Height="44"
+                                        CornerRadius="{StaticResource ResonanceCornerRound}"
+                                        Background="Transparent"
+                                        BorderBrush="{StaticResource ResonanceBorderBrush}" />
+                                <Button x:Name="Mood4" Content="4" Tag="4" Click="MoodButton_Click"
+                                        Width="44" Height="44"
+                                        CornerRadius="{StaticResource ResonanceCornerRound}"
+                                        Background="Transparent"
+                                        BorderBrush="{StaticResource ResonanceBorderBrush}" />
+                                <Button x:Name="Mood5" Content="5" Tag="5" Click="MoodButton_Click"
+                                        Width="44" Height="44"
+                                        CornerRadius="{StaticResource ResonanceCornerRound}"
+                                        Background="Transparent"
+                                        BorderBrush="{StaticResource ResonanceBorderBrush}" />
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource ResonanceCaptionStyle}"
+                                       Text="1 = Challenging  |  5 = Radiant"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tags -->
+                    <Border Grid.Column="2" Style="{StaticResource ResonanceCardStyle}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                       Text="TAGS" />
+                            <StackPanel Orientation="Horizontal" Spacing="6" x:Name="TagsPanel">
+                                <ToggleButton Content="Gratitude" CornerRadius="12"
+                                              FontSize="12" Padding="12,6" />
+                                <ToggleButton Content="Growth" CornerRadius="12"
+                                              FontSize="12" Padding="12,6" />
+                                <ToggleButton Content="Release" CornerRadius="12"
+                                              FontSize="12" Padding="12,6" />
+                                <ToggleButton Content="Insight" CornerRadius="12"
+                                              FontSize="12" Padding="12,6" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <ToggleButton Content="Dream" CornerRadius="12"
+                                              FontSize="12" Padding="12,6" />
+                                <ToggleButton Content="Challenge" CornerRadius="12"
+                                              FontSize="12" Padding="12,6" />
+                                <ToggleButton Content="Love" CornerRadius="12"
+                                              FontSize="12" Padding="12,6" />
+                                <ToggleButton Content="Creativity" CornerRadius="12"
+                                              FontSize="12" Padding="12,6" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Past Reflections -->
+                <Border Style="{StaticResource ResonanceCardStyle}">
+                    <StackPanel Spacing="12">
+                        <TextBlock Style="{StaticResource ResonanceAccentLabelStyle}"
+                                   Text="RECENT REFLECTIONS" />
+
+                        <ItemsRepeater x:Name="PastReflectionsList">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Spacing="8" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource ResonanceSurfaceBrush}"
+                                            CornerRadius="{StaticResource ResonanceCornerMedium}"
+                                            Padding="14,10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="{Binding Prompt}"
+                                                           FontFamily="Cambria, Georgia"
+                                                           FontSize="13" FontStyle="Italic"
+                                                           Foreground="{StaticResource ResonanceTextPrimaryBrush}"
+                                                           MaxLines="1" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Response}"
+                                                           Style="{StaticResource ResonanceCaptionStyle}"
+                                                           MaxLines="2" TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Date}"
+                                                       Style="{StaticResource ResonanceCaptionStyle}"
+                                                       VerticalAlignment="Top" Margin="12,0,0,0" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ══ Save Button ══ -->
+        <Border Grid.Row="3" Padding="0,16,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                <Button Content="Discard"
+                        Style="{StaticResource ResonanceSecondaryButtonStyle}" />
+                <Button Content="Save Reflection"
+                        Style="{StaticResource ResonancePrimaryButtonStyle}"
+                        Click="SaveReflection_Click" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

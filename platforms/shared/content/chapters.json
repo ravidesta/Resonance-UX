@@ -1,0 +1,258 @@
+{
+  "book": {
+    "title": "Luminous Cosmic Architecture™: Astrology as Developmental Map",
+    "subtitle": "A Guide to Personal Growth Through the Stars",
+    "author": "Luminous Prosperity",
+    "isbn": "978-0-000000-00-0",
+    "coverImage": "assets/cover_luminous_cosmic.jpg",
+    "description": "Luminous Cosmic Architecture™ explores astrology as a symbolic language that connects the cosmos and human experience. It emphasizes astrology's historical evolution, framing it as a developmental map rather than a deterministic tool.",
+    "chapters": [
+      {
+        "id": 1,
+        "title": "The Foundations of Astrology",
+        "subtitle": "In which we trace the ancient roots of humanity's longest conversation with the sky",
+        "epigraph": "Not to prove that the stars control us, but to recover the luminous possibility that the cosmos and the soul share a common grammar.",
+        "coverGradient": ["#0A1C14", "#1B402E"],
+        "accentColor": "#C5A059",
+        "audioFile": "audio/ch1_foundations.m4a",
+        "totalDuration": 3600,
+        "sections": [
+          {
+            "id": "1.1",
+            "title": "The Oldest Mirror",
+            "content": "Long before telescopes. Long before satellite imagery, before spectrographs and orbital mechanics, before anyone knew that the sun was a star or that the Milky Way was a galaxy among billions — humans looked up.\n\nThey looked up and they saw something. Not just light. Not just distance. They saw pattern. They saw the same constellations returning with the same seasons. They saw the moon cycling through its faces with uncanny regularity. They saw certain wandering lights — what the Greeks would call planetoi, the wanderers — tracing slow, mysterious paths against the fixed stars.\n\nAnd they did what humans have always done when confronted with pattern: they asked, What does it mean?\n\nThis question — ancient, stubborn, irrepressible — is the seed from which astrology grew. And it is a question worth taking seriously, even now, even in an age of particle accelerators and genome sequencing.\n\nWithin the Luminous Prosperity framework, we approach astrology neither as literal truth nor as mere superstition. We approach it as a developmental map — a symbolic language of extraordinary richness that, when held with the right blend of reverence and discernment, can illuminate dimensions of human experience that purely rational frameworks often miss.\n\nThis is not about believing that Mercury retrograde causes your email to crash. It is about discovering that an ancient symbolic system, refined over millennia by some of the most brilliant minds in human history, offers a vocabulary for selfhood, timing, relationship, and transformation that no modern psychology has fully replaced.",
+            "audioFile": "audio/ch1_s1_oldest_mirror.m4a",
+            "duration": 480,
+            "keyTerms": ["developmental map", "pattern recognition", "macrocosm", "microcosm", "symbolic language"],
+            "shareableQuotes": [
+              "The cosmos did not write your story for you. But it may have provided the alphabet.",
+              "To dismiss astrology without examination is not scientific rigor. It is intellectual laziness dressed as sophistication.",
+              "We approach astrology as a developmental map — a symbolic language of extraordinary richness."
+            ]
+          },
+          {
+            "id": "1.2",
+            "title": "Starlight and Omen: The Mesopotamian Roots",
+            "content": "The earliest astrological records we possess come from ancient Mesopotamia — the land between the Tigris and Euphrates rivers, in what is now Iraq. As early as the second millennium BCE, Babylonian priest-astronomers were systematically observing the sky and recording correlations between celestial events and earthly occurrences.\n\nThe Enuma Anu Enlil, a vast compendium of celestial omens dating to around 1200 BCE, catalogued thousands of observations.\n\nThe Babylonians were not ignorant people grasping at magical explanations. They were observers operating within a particular worldview — one that saw the universe as a coherent whole, alive with meaning. Their astrology was, among other things, an early form of pattern recognition applied to the relationship between nature and human affairs.\n\nIt is worth noting that Babylonian astrology was originally mundane — concerned primarily with the fate of nations, kings, and harvests, not with individual personality or destiny. The shift toward natal astrology came later, emerging fully in the Hellenistic period.",
+            "audioFile": "audio/ch1_s2_mesopotamian.m4a",
+            "duration": 420,
+            "keyTerms": ["Mesopotamia", "Enuma Anu Enlil", "mundane astrology", "natal astrology", "Babylonian"],
+            "shareableQuotes": [
+              "The Babylonians were not ignorant people grasping at magical explanations. They were observers operating within a particular worldview.",
+              "Astrology has never been a single, static system. It has always been evolving."
+            ]
+          },
+          {
+            "id": "1.3",
+            "title": "The Hellenistic Synthesis: Where Philosophy Met the Stars",
+            "content": "The astrology most of us recognize today — with its twelve zodiac signs, its natal charts, its houses and aspects — is largely a product of the Hellenistic world. When Greek philosophical traditions encountered Babylonian astronomical knowledge and Egyptian calendrical wisdom, the result was a remarkable synthesis.\n\nFrom Stoicism came the idea of sympatheia — the doctrine that the cosmos is a single, interconnected living organism in which every part resonates with every other part. Astrology, in this view, is not about causation. It is about correspondence — the recognition of meaningful parallels between cosmic patterns and human experience.\n\nFrom Platonism came the idea that the visible world is a reflection of invisible, archetypal realities. The planets are not merely rocks orbiting a star. They are symbols — embodiments of universal principles that manifest at every level of existence.\n\nThis is the philosophical heart of what we call Luminous Cosmic Architecture™: the idea that the birth chart is not a destiny machine but a symbolic portrait — a map of the archetypal themes, tensions, and potentials that constitute a particular human life.",
+            "audioFile": "audio/ch1_s3_hellenistic.m4a",
+            "duration": 540,
+            "keyTerms": ["Hellenistic", "sympatheia", "Stoicism", "Platonism", "Ptolemy", "correspondence"],
+            "shareableQuotes": [
+              "Astrology is not about causation. It is about correspondence.",
+              "The birth chart is not a destiny machine but a symbolic portrait.",
+              "The planets are not merely rocks orbiting a star. They are symbols."
+            ]
+          },
+          {
+            "id": "1.4",
+            "title": "Core Components: The Zodiac",
+            "content": "The twelve signs of the zodiac — Aries, Taurus, Gemini, Cancer, Leo, Virgo, Libra, Scorpio, Sagittarius, Capricorn, Aquarius, Pisces — are twelve modes of being, twelve archetypal styles of engaging with life.\n\nEach sign carries a cluster of associations: an element (fire, earth, air, water), a modality (cardinal, fixed, mutable), a ruling planet, and a rich tapestry of mythological, psychological, and experiential qualities.\n\nIt is essential to understand that the signs are not the same as the constellations that share their names. Western tropical astrology has always been a seasonal system, not a stellar one. The sign of Aries begins at the spring equinox — regardless of which constellation the sun happens to be passing through. The signs describe qualities of time, not locations in space.",
+            "audioFile": "audio/ch1_s4_zodiac.m4a",
+            "duration": 360,
+            "keyTerms": ["zodiac", "elements", "modalities", "tropical astrology", "sidereal", "precession"],
+            "shareableQuotes": [
+              "The twelve signs of the zodiac are twelve modes of being, twelve archetypal styles of engaging with life.",
+              "The signs describe qualities of time, not locations in space."
+            ]
+          },
+          {
+            "id": "1.5",
+            "title": "Core Components: The Planets",
+            "content": "Each planet represents a fundamental principle or drive within the psyche:\n\nThe Sun: core identity, vitality, the essential self\nThe Moon: emotional life, instinct, the inner world of feeling and memory\nMercury: communication, thought, the way the mind processes and shares information\nVenus: attraction, values, beauty, the experience of love and pleasure\nMars: drive, assertion, desire, the capacity to act and to fight\nJupiter: expansion, meaning, faith, the impulse toward growth and abundance\nSaturn: structure, limitation, discipline, the encounter with time and consequence\n\nThese are not arbitrary assignments. They reflect thousands of years of observational correlation and mythological elaboration. The Luminous framework does not claim that these correspondences are causal. We claim that they are useful — that the planetary archetypes provide a language for talking about the multiplicity of drives within the human psyche.",
+            "audioFile": "audio/ch1_s5_planets.m4a",
+            "duration": 300,
+            "keyTerms": ["planets", "luminaries", "archetypes", "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"],
+            "shareableQuotes": [
+              "The planetary archetypes provide a language for talking about the multiplicity of drives within the human psyche."
+            ]
+          },
+          {
+            "id": "1.6",
+            "title": "Core Components: Houses and Aspects",
+            "content": "The twelve houses of the birth chart represent twelve domains of life experience — the specific arenas in which the archetypal energies of the planets and signs express themselves. The house system is derived from the moment and place of birth: the exact degree of the zodiac rising on the eastern horizon at the time of your first breath becomes the cusp of the first house.\n\nAspects are the angular relationships between planets in the birth chart — the geometric conversation between different parts of the psyche. A conjunction (0 degrees) blends energies. An opposition (180 degrees) creates tension. A trine (120 degrees) indicates natural flow. A square (90 degrees) creates friction that becomes a catalyst for growth.\n\nIn the Luminous framework, we regard difficult aspects not as misfortunes but as developmental edges — places where the soul has chosen to do its most demanding and rewarding work.",
+            "audioFile": "audio/ch1_s6_houses_aspects.m4a",
+            "duration": 360,
+            "keyTerms": ["houses", "aspects", "conjunction", "opposition", "trine", "square", "developmental edges"],
+            "shareableQuotes": [
+              "We regard difficult aspects not as misfortunes but as developmental edges.",
+              "The birth chart is what makes astrology personal."
+            ]
+          },
+          {
+            "id": "1.7",
+            "title": "Astrology Beyond the West: A Wider Sky",
+            "content": "Western tropical astrology is far from the only astrological system in the world. Jyotish (Vedic astrology) uses the sidereal zodiac and its own system of 27 nakshatras (lunar mansions) and the dasha planetary period framework. In the Jyotish worldview, the birth chart is a map of karmic patterns.\n\nChinese astrology centers on a twelve-year cycle of animal signs combined with the Five Elements and Yin/Yang, forming a 60-year sexagenary cycle. It emphasizes balance and harmony rather than fixed destiny.\n\nAcross the world, Indigenous cultures have maintained sophisticated sky relationships — the Aboriginal Australians with their dark constellations, the Polynesian navigators with their stellar wayfinding, the Maya with their mathematical astronomical systems.\n\nThe Luminous Cosmic Architecture™ framework does not claim to synthesize all of these traditions into one. We honor the plurality of star knowledge as evidence of a deep, species-wide impulse: the desire to read the cosmos as a meaningful text.",
+            "audioFile": "audio/ch1_s7_beyond_west.m4a",
+            "duration": 480,
+            "keyTerms": ["Jyotish", "Vedic astrology", "Chinese astrology", "nakshatras", "dasha", "Indigenous", "Aboriginal"],
+            "shareableQuotes": [
+              "Humanity's relationship with the sky is far richer and more diverse than any single astrological tradition can contain.",
+              "We honor the plurality of star knowledge as evidence of a deep, species-wide impulse."
+            ]
+          },
+          {
+            "id": "1.8",
+            "title": "Science, Skepticism, and Intellectual Honesty",
+            "content": "There is no known physical mechanism by which the positions of distant planets at the moment of birth could influence personality or life events. Multiple large-scale statistical studies have failed to find evidence that astrological predictions perform better than chance.\n\nWe do not dismiss these findings. The Luminous framework is committed to truth-forwardness.\n\nBut the absence of a known causal mechanism does not necessarily mean that astrology is meaningless. Astrology may function as a projective framework — a structured medium through which individuals explore and articulate aspects of their inner life. The value lies not in the chart's capacity to predict the future but in its capacity to provoke self-reflection and provide a symbolic language for developmental work.\n\nThis is the position the Luminous framework holds: astrology is a powerful symbolic and developmental tool whose value does not depend on the literal truth of its cosmological claims. We use it the way a wise therapist uses dream interpretation — not because dreams are literal messages from another realm, but because engaging with their symbolism activates insight.",
+            "audioFile": "audio/ch1_s8_science.m4a",
+            "duration": 420,
+            "keyTerms": ["scientific critique", "causation", "projective framework", "truth-forwardness", "symbolic tool"],
+            "shareableQuotes": [
+              "Astrology is a powerful symbolic and developmental tool whose value does not depend on the literal truth of its cosmological claims.",
+              "The absence of a known causal mechanism does not necessarily mean that astrology is meaningless."
+            ]
+          },
+          {
+            "id": "1.9",
+            "title": "Common Pitfalls and Ethical Cautions",
+            "content": "1. Deterministic Thinking: Treating the birth chart as a fixed destiny rather than a dynamic map of potentials. The chart describes tendencies, not sentences.\n\n2. Sun-Sign Reductionism: The popular horoscope column reduces extraordinary complexity to a single variable. The Luminous approach uses the full chart.\n\n3. Confirmation Bias: Astrology is particularly vulnerable to noticing information that confirms beliefs while ignoring contradictions.\n\n4. Power Imbalances in Consultations: Any reading that leaves the client feeling trapped, doomed, or helpless has failed — regardless of its technical accuracy.\n\n5. Cultural Appropriation: Engage with traditions from other cultures with humility, proper attribution, and willingness to learn from practitioners within those traditions.\n\n6. Substituting Astrology for Professional Care: Astrology is not therapy. The responsible astrologer knows the boundaries of their practice.",
+            "audioFile": "audio/ch1_s9_pitfalls.m4a",
+            "duration": 360,
+            "keyTerms": ["determinism", "confirmation bias", "ethical practice", "cultural appropriation", "agency"],
+            "shareableQuotes": [
+              "The chart describes tendencies, not sentences.",
+              "Any reading that leaves the client feeling trapped has failed — regardless of its technical accuracy."
+            ]
+          }
+        ],
+        "reflectionQuestions": [
+          "What is your current relationship with astrology? What experiences shaped that relationship?",
+          "Have you ever read a description of your sun sign and felt genuinely seen by it? Was it revealing or reductive — or both?",
+          "When you look at the night sky, what do you feel? Not think — feel?",
+          "Where do you fall on the spectrum between 'everything is connected' and 'the universe is random'?",
+          "Have you ever had a significant experience with timing that felt meaningful beyond coincidence?"
+        ],
+        "practicalExercise": {
+          "title": "The Stargazer's Attunement",
+          "duration": 1200,
+          "description": "A guided practice for connecting with the cosmos.",
+          "steps": [
+            "Find a place where you can see the sky. If you cannot see actual stars, close your eyes and use your imagination.",
+            "Stand or sit comfortably. Take five slow breaths. With each exhale, let your attention expand outward — beyond your body, beyond the room, beyond the horizon.",
+            "Look up — or imagine looking up. Let the sky be vast. Let it be incomprehensible. Do not try to name the stars. Simply receive the immensity.",
+            "Bring your attention to one point of light. Hold it in your attention the way you might hold a candle flame in a dark room.",
+            "Ask a simple question, silently: 'What is my relationship to this?' Let whatever arises be enough.",
+            "After five minutes of quiet attention, bring your gaze back to earth. Feel your feet. Feel your weight. Take three breaths."
+          ]
+        },
+        "luminousInvitation": "Look up your full birth chart. You will need your date, time, and place of birth. When you receive your chart, do not try to interpret it. Simply look at it. Notice its geometry. Let it be a portrait you do not yet fully understand but that is, in some mysterious and ancient way, yours."
+      },
+      {
+        "id": 2,
+        "title": "The Natal Chart as a Developmental Map",
+        "subtitle": "Reading the Symbolic Portrait of a Life",
+        "epigraph": "The chart functions not as a cage of predetermined destiny but as a compass — pointing toward the full, luminous range of who you have the potential to become.",
+        "coverGradient": ["#122E21", "#C5A059"],
+        "accentColor": "#E6D0A1",
+        "audioFile": "audio/ch2_natal_chart.m4a",
+        "totalDuration": 3600,
+        "sections": [
+          {"id": "2.1", "title": "Reading the Birth Chart: First Principles", "content": "Coming in the full edition.", "audioFile": "audio/ch2_s1.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []},
+          {"id": "2.2", "title": "The Big Three: Sun, Moon, and Rising", "content": "Coming in the full edition.", "audioFile": "audio/ch2_s2.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []},
+          {"id": "2.3", "title": "Case Studies: Notable Charts", "content": "Coming in the full edition.", "audioFile": "audio/ch2_s3.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []}
+        ],
+        "reflectionQuestions": [],
+        "practicalExercise": null,
+        "luminousInvitation": "Begin interpreting your own Big Three — Sun, Moon, and Rising sign."
+      },
+      {
+        "id": 3,
+        "title": "Astrology in Motion",
+        "subtitle": "Transits, Cycles, and the Living Chart",
+        "epigraph": "The chart is not frozen at the moment of birth. It breathes with the moving sky.",
+        "coverGradient": ["#1B402E", "#9A7A3A"],
+        "accentColor": "#C5A059",
+        "audioFile": "audio/ch3_transits.m4a",
+        "totalDuration": 3600,
+        "sections": [
+          {"id": "3.1", "title": "Understanding Transits", "content": "Coming in the full edition.", "audioFile": "audio/ch3_s1.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []},
+          {"id": "3.2", "title": "Saturn Return and Life Cycles", "content": "Coming in the full edition.", "audioFile": "audio/ch3_s2.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []}
+        ],
+        "reflectionQuestions": [],
+        "practicalExercise": null,
+        "luminousInvitation": "Track one transit this month and journal about how it manifests."
+      },
+      {
+        "id": 4,
+        "title": "Astrology Beyond the West",
+        "subtitle": "A Wider Sky, a Deeper Listening",
+        "epigraph": "Every culture that has looked up has found meaning in the patterns above.",
+        "coverGradient": ["#0A1C14", "#5C7065"],
+        "accentColor": "#E6D0A1",
+        "audioFile": "audio/ch4_wider_sky.m4a",
+        "totalDuration": 3600,
+        "sections": [
+          {"id": "4.1", "title": "Jyotish: Light of the Vedas", "content": "Coming in the full edition.", "audioFile": "audio/ch4_s1.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []},
+          {"id": "4.2", "title": "Chinese Astrology: Rhythms of Heaven and Earth", "content": "Coming in the full edition.", "audioFile": "audio/ch4_s2.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []},
+          {"id": "4.3", "title": "Indigenous Star Knowledge", "content": "Coming in the full edition.", "audioFile": "audio/ch4_s3.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []}
+        ],
+        "reflectionQuestions": [],
+        "practicalExercise": null,
+        "luminousInvitation": "Research one non-Western astrological tradition and reflect on what it reveals."
+      },
+      {
+        "id": 5,
+        "title": "Science, Skepticism, and Intellectual Honesty",
+        "subtitle": "Holding Truth and Mystery Together",
+        "epigraph": "Honest engagement requires sitting with uncomfortable facts rather than retreating into wishful thinking.",
+        "coverGradient": ["#122E21", "#8A9C91"],
+        "accentColor": "#C5A059",
+        "audioFile": "audio/ch5_science.m4a",
+        "totalDuration": 3600,
+        "sections": [
+          {"id": "5.1", "title": "The Scientific Critique", "content": "Coming in the full edition.", "audioFile": "audio/ch5_s1.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []},
+          {"id": "5.2", "title": "Astrology as Projective Framework", "content": "Coming in the full edition.", "audioFile": "audio/ch5_s2.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []}
+        ],
+        "reflectionQuestions": [],
+        "practicalExercise": null,
+        "luminousInvitation": "Practice tracking both confirmations and disconfirmations of your astrological beliefs."
+      },
+      {
+        "id": 6,
+        "title": "Ethical Astrology Practices",
+        "subtitle": "Using the Stars Responsibly",
+        "epigraph": "The chart should empower, not diminish.",
+        "coverGradient": ["#1B402E", "#C5A059"],
+        "accentColor": "#E6D0A1",
+        "audioFile": "audio/ch6_ethics.m4a",
+        "totalDuration": 3600,
+        "sections": [
+          {"id": "6.1", "title": "Principles of Ethical Practice", "content": "Coming in the full edition.", "audioFile": "audio/ch6_s1.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []},
+          {"id": "6.2", "title": "Boundaries and Referrals", "content": "Coming in the full edition.", "audioFile": "audio/ch6_s2.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []}
+        ],
+        "reflectionQuestions": [],
+        "practicalExercise": null,
+        "luminousInvitation": "Reflect on a time astrology empowered you — and a time it may have limited you."
+      },
+      {
+        "id": 7,
+        "title": "Astrology as a Tool for Personal Development",
+        "subtitle": "The Luminous Journey Continues",
+        "epigraph": "The sky is old. The sky is vast. And it has been waiting — patiently, luminously — for you to look up.",
+        "coverGradient": ["#0A1C14", "#C5A059"],
+        "accentColor": "#C5A059",
+        "audioFile": "audio/ch7_development.m4a",
+        "totalDuration": 3600,
+        "sections": [
+          {"id": "7.1", "title": "Integrating Astrology into Daily Life", "content": "Coming in the full edition.", "audioFile": "audio/ch7_s1.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []},
+          {"id": "7.2", "title": "The Lifelong Journey", "content": "Coming in the full edition.", "audioFile": "audio/ch7_s2.m4a", "duration": 0, "keyTerms": [], "shareableQuotes": []}
+        ],
+        "reflectionQuestions": [],
+        "practicalExercise": null,
+        "luminousInvitation": "Commit to one practice from this book and carry it forward into your daily life."
+      }
+    ]
+  }
+}
