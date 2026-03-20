@@ -1,0 +1,383 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Sun, 
+  Moon, 
+  Wind,
+  Feather,
+  Sparkles,
+  BookOpen,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Eye,
+  Type,
+  Save,
+  MoreHorizontal
+} from 'lucide-react';
+
+// --- GLOBAL STYLES & FONTS ---
+const CustomStyles = () => (
+  <style dangerouslySetInnerHTML={{__html: `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600&display=swap');
+
+    :root {
+      /* Light / Day Mode */
+      --bg-base: #FAFAF8;
+      --bg-surface: #FFFFFF;
+      --bg-glass: rgba(255, 255, 255, 0.4);
+      --bg-glass-heavy: rgba(255, 255, 255, 0.85);
+      
+      --green-900: #0A1C14;
+      --green-800: #122E21;
+      --green-700: #1B402E;
+      --green-200: #D1E0D7;
+      --green-100: #E8F0EA;
+      
+      --gold-primary: #C5A059;
+      --gold-light: #E6D0A1;
+      --gold-dark: #9A7A3A;
+      
+      --text-main: #122E21;
+      --text-muted: #5C7065;
+      --text-light: #8A9C91;
+
+      --border-light: rgba(138, 156, 145, 0.2);
+      --border-focus: #C5A059;
+      
+      --blob-opacity: 0.6;
+    }
+
+    /* Deep Rest / Night Mode */
+    .theme-deep {
+      --bg-base: #05100B; 
+      --bg-surface: #0A1C14;
+      --bg-glass: rgba(10, 28, 20, 0.5);
+      --bg-glass-heavy: rgba(10, 28, 20, 0.85);
+      
+      --text-main: #FAFAF8;
+      --text-muted: #8A9C91;
+      --text-light: #5C7065;
+
+      --border-light: rgba(138, 156, 145, 0.15);
+      --border-focus: #C5A059;
+      
+      --blob-opacity: 0.15; 
+    }
+
+    body {
+      background-color: var(--bg-base);
+      transition: background-color 1s ease;
+      margin: 0;
+      overflow: hidden;
+      color: var(--text-main);
+    }
+
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
+    .font-sans { font-family: 'Manrope', sans-serif; }
+
+    .paper-noise {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .organic-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      z-index: 0;
+      opacity: var(--blob-opacity);
+      animation: breathe 20s infinite alternate ease-in-out;
+      transition: opacity 1s ease;
+    }
+    
+    .blob-1 {
+      top: -10%; left: 0%;
+      width: 50vw; height: 70vh;
+      background: radial-gradient(circle, var(--green-200) 0%, transparent 70%);
+    }
+    
+    .blob-2 {
+      bottom: -10%; right: -10%;
+      width: 60vw; height: 80vh;
+      background: radial-gradient(circle, rgba(197, 160, 89, 0.3) 0%, transparent 70%);
+      animation-delay: -5s;
+    }
+
+    @keyframes breathe {
+      0% { transform: scale(1) translate(0, 0); }
+      100% { transform: scale(1.05) translate(3vw, 4vh); }
+    }
+
+    .glass-panel {
+      background: var(--bg-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    /* Elegant Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-light);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-light);
+    }
+
+    /* Subtle cursor styling */
+    textarea {
+      caret-color: var(--gold-primary);
+    }
+    textarea::selection {
+      background: rgba(197, 160, 89, 0.2);
+    }
+  `}} />
+);
+
+// --- MOCK DATA ---
+const libraryDocs = [
+  { id: 1, title: "The Architecture of Calm", date: "Oct 24", words: 1240 },
+  { id: 2, title: "Chapter 1: The Ascent", date: "Oct 22", words: 3400 },
+  { id: 3, title: "Unstructured Reflections", date: "Oct 20", words: 450 },
+];
+
+const initialText = `If a room can dictate how we breathe, so can a digital space. We must design for the exhale.
+
+For decades, software has been designed under the assumption of deficit. The blank page is a void demanding to be filled. The blinking cursor is a metronome of urgency, tapping its foot, waiting for you to produce value. 
+
+But what if the interface wasn't a demanding void? What if it was a quiet sanctuary? A flat surface where thoughts could be laid out, examined, and gently sorted.
+
+When we remove the visual noise—the ribbons of formatting icons, the red squiggly lines of algorithmic judgment, the aggressive tracking of 'words per minute'—we allow the nervous system to settle. 
+
+This is not merely an aesthetic choice. It is an architectural necessity for the overwhelmed mind.`;
+
+export default function App() {
+  const [isDeepMode, setIsDeepMode] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  
+  const [title, setTitle] = useState("The Architecture of Calm");
+  const [content, setContent] = useState(initialText);
+  const [isLuminizing, setIsLuminizing] = useState(false);
+
+  const wordCount = content.trim().split(/\s+/).filter(w => w.length > 0).length;
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+  // Auto-hide UI if Focus Mode is on and user is typing
+  useEffect(() => {
+    let timeout;
+    if (isFocusMode) {
+      const handleTyping = () => {
+        setIsSidebarOpen(false);
+      };
+      window.addEventListener('keydown', handleTyping);
+      return () => window.removeEventListener('keydown', handleTyping);
+    }
+  }, [isFocusMode]);
+
+  const handleLuminize = async () => {
+    if (!content.trim()) return;
+    setIsLuminizing(true);
+    
+    try {
+      const apiKey = ""; // API key is injected by the environment
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+      
+      const prompt = `Take the following text. Refine it to flow better, removing clunky phrasing. 
+      Keep the exact same meaning and tone, but elevate the prose to be slightly more poetic and profound.
+      Original text: "${content}"`;
+
+      const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+      };
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await res.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (text) {
+        setContent(text.trim());
+      }
+    } catch (error) {
+      console.error("Luminize failed", error);
+    } finally {
+      setIsLuminizing(false);
+    }
+  };
+
+  return (
+    <div className={`h-screen w-full flex font-sans transition-colors duration-1000 ${isDeepMode ? 'theme-deep' : ''}`}>
+      <CustomStyles />
+      
+      {/* Immersive Background */}
+      <div className="blob-1 organic-blob"></div>
+      <div className="blob-2 organic-blob"></div>
+      <div className="paper-noise z-50"></div>
+
+      {/* --- SIDEBAR (LIBRARY) --- */}
+      <aside 
+        className={`h-full glass-panel border-r border-[var(--border-light)] flex flex-col transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] relative z-40 ${
+          isSidebarOpen ? 'w-[320px] translate-x-0 opacity-100' : 'w-[0px] -translate-x-full opacity-0 overflow-hidden'
+        } ${isFocusMode ? 'opacity-0 pointer-events-none' : ''}`}
+      >
+        <div className="p-8 pb-4">
+          <span className="text-[10px] font-semibold text-[var(--gold-dark)] uppercase tracking-[0.2em] block mb-2 flex items-center gap-2">
+            <Feather size={14} /> Sanctuary Writer
+          </span>
+          <h2 className="font-serif text-3xl text-[var(--text-main)] mb-8">Your Library</h2>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-6 space-y-2">
+          {libraryDocs.map(doc => (
+            <button 
+              key={doc.id}
+              className={`w-full text-left p-4 rounded-[20px] transition-all border ${
+                doc.title === title 
+                ? 'bg-[var(--bg-surface)] border-[var(--border-light)] shadow-sm' 
+                : 'bg-transparent border-transparent hover:bg-[var(--bg-surface)]/50'
+              }`}
+            >
+              <h3 className={`font-serif text-lg leading-tight mb-1 ${doc.title === title ? 'text-[var(--gold-dark)]' : 'text-[var(--text-main)]'}`}>
+                {doc.title}
+              </h3>
+              <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-[var(--text-light)]">
+                <span>{doc.date}</span>
+                <span className="w-1 h-1 rounded-full bg-[var(--border-light)]"></span>
+                <span>{doc.words} words</span>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div className="p-6 border-t border-[var(--border-light)]">
+          <button className="w-full py-4 bg-[var(--bg-surface)] rounded-[16px] flex items-center justify-center gap-3 text-[var(--text-main)] shadow-sm hover:border-[var(--gold-primary)] border border-[var(--border-light)] transition-all group">
+            <BookOpen size={16} className="text-[var(--gold-primary)]" />
+            <span className="text-[11px] font-semibold uppercase tracking-widest group-hover:text-[var(--gold-dark)] transition-colors">New Canvas</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* --- MAIN EDITOR AREA --- */}
+      <main className="flex-1 h-full flex flex-col relative z-20">
+        
+        {/* Top Header Bar */}
+        <header 
+          className={`h-20 px-8 flex items-center justify-between transition-opacity duration-1000 ${
+            isFocusMode && !isSidebarOpen ? 'opacity-0 hover:opacity-100' : 'opacity-100'
+          }`}
+        >
+          {/* Left Controls */}
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => { setIsSidebarOpen(!isSidebarOpen); setIsFocusMode(false); }}
+              className="p-2.5 rounded-full text-[var(--text-light)] hover:text-[var(--text-main)] hover:bg-[var(--bg-surface)] transition-all border border-transparent hover:border-[var(--border-light)]"
+              title="Toggle Library"
+            >
+              {isSidebarOpen ? <PanelLeftClose size={20} strokeWidth={1.5}/> : <PanelLeftOpen size={20} strokeWidth={1.5}/>}
+            </button>
+            <div className="h-6 w-px bg-[var(--border-light)]"></div>
+            <button 
+              onClick={() => setIsFocusMode(!isFocusMode)}
+              className={`px-4 py-2 rounded-full text-[11px] font-semibold uppercase tracking-widest flex items-center gap-2 transition-all ${
+                isFocusMode ? 'bg-[var(--gold-primary)]/10 text-[var(--gold-dark)] border border-[var(--gold-primary)]/30' : 'text-[var(--text-light)] hover:text-[var(--text-main)]'
+              }`}
+            >
+              <Eye size={14} /> Focus Mode
+            </button>
+          </div>
+
+          {/* Right Controls */}
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsDeepMode(!isDeepMode)}
+              className="p-2.5 rounded-full text-[var(--text-light)] hover:text-[var(--gold-primary)] transition-all"
+              title="Toggle Deep Rest"
+            >
+              {isDeepMode ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
+            </button>
+            <button className="px-5 py-2.5 rounded-full text-[11px] font-semibold uppercase tracking-widest flex items-center gap-2 bg-[var(--bg-surface)] border border-[var(--border-light)] text-[var(--text-main)] hover:border-[var(--gold-primary)] transition-all shadow-sm">
+              <Save size={14} /> Save
+            </button>
+            <button className="p-2.5 rounded-full text-[var(--text-light)] hover:text-[var(--text-main)] transition-all">
+              <MoreHorizontal size={20} strokeWidth={1.5} />
+            </button>
+          </div>
+        </header>
+
+        {/* The Writing Surface */}
+        <div className="flex-1 overflow-y-auto flex justify-center pb-32 pt-8 relative">
+          
+          {/* AI Processing Overlay */}
+          {isLuminizing && (
+            <div className="absolute inset-0 bg-[var(--bg-base)]/60 backdrop-blur-md z-30 flex flex-col items-center justify-center animate-in fade-in duration-500">
+              <Sparkles size={40} className="text-[var(--gold-primary)] animate-pulse mb-6" strokeWidth={1} />
+              <p className="font-serif text-2xl text-[var(--text-main)] animate-pulse tracking-wide">Refining your thoughts...</p>
+            </div>
+          )}
+
+          <div className="w-full max-w-[760px] px-8 flex flex-col relative z-10">
+            
+            {/* Document Title */}
+            <input 
+              type="text" 
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Untitled Document"
+              className="w-full bg-transparent border-none outline-none font-serif text-6xl md:text-7xl text-[var(--text-main)] placeholder:text-[var(--border-light)] mb-12 pb-8 border-b border-[var(--border-light)] transition-colors leading-tight"
+            />
+            
+            {/* Main Content Area */}
+            <textarea 
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Let it flow. The syntax of your mind goes here..."
+              className="flex-1 w-full bg-transparent border-none outline-none font-serif text-2xl text-[var(--text-muted)] placeholder:text-[var(--border-light)] resize-none leading-[1.8] min-h-[60vh] overflow-visible"
+            />
+          </div>
+        </div>
+
+        {/* Floating Action / Rhythm Bar (Bottom) */}
+        <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 glass-panel border border-[var(--border-light)] rounded-full px-6 py-3 flex items-center gap-6 shadow-xl transition-all duration-1000 ${
+          isFocusMode && !isSidebarOpen ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'
+        }`}>
+          
+          {/* Ambient Stats */}
+          <div className="flex items-center gap-4 text-[10px] font-semibold text-[var(--text-light)] uppercase tracking-widest">
+            <span className="flex items-center gap-2">
+              <Type size={12} /> {wordCount} Words
+            </span>
+            <span className="w-1 h-1 rounded-full bg-[var(--border-light)]"></span>
+            <span className="flex items-center gap-2">
+              <Wind size={12} /> {readingTime} min read
+            </span>
+          </div>
+
+          <div className="w-px h-6 bg-[var(--border-light)]"></div>
+
+          {/* ✨ Luminize Integration */}
+          <button 
+            onClick={handleLuminize}
+            disabled={wordCount === 0 || isLuminizing}
+            className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[var(--gold-dark)] hover:text-[var(--gold-primary)] transition-colors disabled:opacity-50"
+          >
+            <Sparkles size={14} /> 
+            <span>Luminize Prose</span>
+          </button>
+        </div>
+
+      </main>
+    </div>
+  );
+}
