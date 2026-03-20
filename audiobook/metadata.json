@@ -1,0 +1,284 @@
+{
+  "title": "Resonance: Designing Digital Calm",
+  "subtitle": "A Comprehensive Guide to Nervous-System-Aware Interface Architecture",
+  "author": {
+    "name": "The Resonance Design Collective",
+    "bio": "A multidisciplinary collective of UX designers, clinical psychologists, integrative wellness practitioners, and software engineers united by the conviction that digital technology should serve the human nervous system, not exploit it."
+  },
+  "narrator": {
+    "name": "TBD — Casting in Progress",
+    "style_notes": "Warm, unhurried, contemplative tone. Voice should convey both authority and gentleness — the listener should feel held, not lectured. Pacing should model the spaciousness the book describes. Slight pauses between paragraphs. Natural breath audible but not distracting. Gender-neutral or dual-narrator options under consideration.",
+    "casting_requirements": {
+      "vocal_quality": "Warm mid-range, resonant chest voice, minimal vocal fry",
+      "pacing": "Deliberately slower than typical audiobook narration — approximately 140-150 words per minute",
+      "emotional_range": "Contemplative, gently passionate, occasionally quietly urgent, never aggressive",
+      "technical_comfort": "Must be comfortable narrating technical content (code concepts, architecture patterns) with clarity and naturalness"
+    }
+  },
+  "isbn_audio": "978-0-000000-00-0",
+  "publisher": "Resonance Press",
+  "publication_date": "2026-03-20",
+  "language": "en",
+  "copyright": "Copyright © 2026 The Resonance Design Collective. All rights reserved.",
+  "license": "All rights reserved. No portion of this audiobook may be reproduced without written permission.",
+  "cover_art": {
+    "file_reference": "audiobook/assets/cover-3000x3000.jpg",
+    "description": "Deep forest green gradient with soft gold typography. The word 'Resonance' rendered in Fraunces display typeface with subtle glass-morphism glow. Organic concentric circles radiate outward from center, suggesting a ripple in still water. Minimal, spacious, calm.",
+    "dimensions": "3000x3000 pixels (ACX/Audible requirement)",
+    "format": "JPEG, sRGB color space"
+  },
+  "total_estimated_duration": "4 hours 35 minutes",
+  "word_count_estimate": 24500,
+  "chapters": [
+    {
+      "number": 0,
+      "id": "00-foreword",
+      "title": "Foreword: The Architecture of Calm",
+      "subtitle": "Why every pixel carries a responsibility to your nervous system",
+      "estimated_duration": "14 minutes",
+      "estimated_words": 2000,
+      "script_file": "scripts/00-foreword.md",
+      "audio_file": "production/final/00-foreword.wav",
+      "topics": [
+        "The current state of digital overwhelm",
+        "Nervous system cost of current design",
+        "How Resonance emerged",
+        "What this book offers"
+      ]
+    },
+    {
+      "number": 1,
+      "id": "01-philosophy",
+      "title": "Chapter 1: The Resonance Manifesto",
+      "subtitle": "Core principles for nervous-system-aware design",
+      "estimated_duration": "18 minutes",
+      "estimated_words": 2500,
+      "script_file": "scripts/01-philosophy.md",
+      "audio_file": "production/final/01-philosophy.wav",
+      "topics": [
+        "Radically calm design",
+        "Energy as currency",
+        "Intentional presence",
+        "Nervous system regulation as design constraint"
+      ]
+    },
+    {
+      "number": 2,
+      "id": "02-design-system",
+      "title": "Chapter 2: The Living Design System",
+      "subtitle": "Visual and interactive language of calm",
+      "estimated_duration": "18 minutes",
+      "estimated_words": 2500,
+      "script_file": "scripts/02-design-system.md",
+      "audio_file": "production/final/02-design-system.wav",
+      "topics": [
+        "Color philosophy and the green palette",
+        "Typography as breath",
+        "Glass morphism and depth",
+        "Organic spring-based animations",
+        "Deep Rest mode"
+      ]
+    },
+    {
+      "number": 3,
+      "id": "03-daily-flow",
+      "title": "Chapter 3: Daily Flow — Living in Rhythm",
+      "subtitle": "Energy-based task management",
+      "estimated_duration": "18 minutes",
+      "estimated_words": 2500,
+      "script_file": "scripts/03-daily-flow.md",
+      "audio_file": "production/final/03-daily-flow.wav",
+      "topics": [
+        "The four energy phases",
+        "Spaciousness metrics",
+        "Energy-aware task scheduling",
+        "Night mode and wind-down"
+      ]
+    },
+    {
+      "number": 4,
+      "id": "04-inner-circle",
+      "title": "Chapter 4: Inner Circle — Intentional Connection",
+      "subtitle": "Communication designed for depth",
+      "estimated_duration": "14 minutes",
+      "estimated_words": 2000,
+      "script_file": "scripts/04-inner-circle.md",
+      "audio_file": "production/final/04-inner-circle.wav",
+      "topics": [
+        "Intentional status and presence",
+        "Async voice messaging",
+        "Depth over breadth in relationships",
+        "Conversation as sanctuary"
+      ]
+    },
+    {
+      "number": 5,
+      "id": "05-writer",
+      "title": "Chapter 5: Writer — The Digital Sanctuary",
+      "subtitle": "Focused creative work in a distraction-free space",
+      "estimated_duration": "14 minutes",
+      "estimated_words": 2000,
+      "script_file": "scripts/05-writer.md",
+      "audio_file": "production/final/05-writer.wav",
+      "topics": [
+        "Focus mode and the writing sanctuary",
+        "Luminize Prose engine",
+        "Typography as architecture",
+        "The courage of the blank page"
+      ]
+    },
+    {
+      "number": 6,
+      "id": "06-wellness",
+      "title": "Chapter 6: Wellness Holarchy — The Future of Care",
+      "subtitle": "Reimagining health technology",
+      "estimated_duration": "18 minutes",
+      "estimated_words": 2500,
+      "script_file": "scripts/06-wellness.md",
+      "audio_file": "production/final/06-wellness.wav",
+      "topics": [
+        "Provider and patient views",
+        "Biomarker visualization",
+        "AI-powered health translation",
+        "Protocols and care continuity"
+      ]
+    },
+    {
+      "number": 7,
+      "id": "07-cross-platform",
+      "title": "Chapter 7: Everywhere You Are",
+      "subtitle": "Native experiences on every platform",
+      "estimated_duration": "18 minutes",
+      "estimated_words": 2500,
+      "script_file": "scripts/07-cross-platform.md",
+      "audio_file": "production/final/07-cross-platform.wav",
+      "topics": [
+        "Native on every platform",
+        "The sync layer",
+        "Respecting each platform's soul",
+        "From Apple Watch to Linux desktop"
+      ]
+    },
+    {
+      "number": 8,
+      "id": "08-integration",
+      "title": "Chapter 8: Connected Ecosystem",
+      "subtitle": "Where digital calm meets the physical world",
+      "estimated_duration": "14 minutes",
+      "estimated_words": 2000,
+      "script_file": "scripts/08-integration.md",
+      "audio_file": "production/final/08-integration.wav",
+      "topics": [
+        "Physical goods and materials",
+        "Resonance Retreats",
+        "Design labs and workshops",
+        "APIs and partner integrations"
+      ]
+    },
+    {
+      "number": 9,
+      "id": "09-technical",
+      "title": "Chapter 9: Under the Hood",
+      "subtitle": "Technical architecture for calm software",
+      "estimated_duration": "18 minutes",
+      "estimated_words": 2500,
+      "script_file": "scripts/09-technical.md",
+      "audio_file": "production/final/09-technical.wav",
+      "topics": [
+        "React and web architecture",
+        "SwiftUI for Apple platforms",
+        "Jetpack Compose for Android",
+        "WinUI 3 for Windows",
+        "GTK4 and Rust for Linux",
+        "Sync protocol",
+        "AI architecture and on-device models"
+      ]
+    },
+    {
+      "number": 10,
+      "id": "10-future",
+      "title": "Chapter 10: The Future of Resonance",
+      "subtitle": "What comes next",
+      "estimated_duration": "14 minutes",
+      "estimated_words": 2000,
+      "script_file": "scripts/10-future.md",
+      "audio_file": "production/final/10-future.wav",
+      "topics": [
+        "Spatial computing and Apple Vision Pro",
+        "Ambient AI and disappearing interfaces",
+        "Open source and community",
+        "An invitation to build together"
+      ]
+    }
+  ],
+  "distribution": {
+    "platforms": [
+      {
+        "name": "Audible/ACX",
+        "format": "MP3 192kbps CBR, 44.1kHz, mono",
+        "status": "pending",
+        "requirements": "ACX Audio Submission Requirements v2024"
+      },
+      {
+        "name": "Apple Books",
+        "format": "M4A/M4B AAC, 256kbps, 44.1kHz",
+        "status": "pending",
+        "requirements": "Apple Books Audio Asset Guide"
+      },
+      {
+        "name": "Google Play Books",
+        "format": "MP3 or M4A, 44.1kHz minimum",
+        "status": "pending"
+      },
+      {
+        "name": "Spotify (Findaway Voices)",
+        "format": "MP3 192kbps CBR, 44.1kHz",
+        "status": "pending"
+      },
+      {
+        "name": "Libro.fm",
+        "format": "MP3 192kbps CBR",
+        "status": "pending"
+      },
+      {
+        "name": "Direct (Resonance website)",
+        "format": "FLAC lossless + MP3 320kbps",
+        "status": "pending",
+        "notes": "Highest quality option for direct purchasers, includes bonus ambient tracks"
+      }
+    ],
+    "drm": "DRM-free for direct distribution; platform-native DRM for aggregator channels",
+    "pricing": {
+      "retail": "$19.99 USD",
+      "direct": "$14.99 USD",
+      "bundle_with_ebook": "$24.99 USD"
+    },
+    "territories": "Worldwide English-language distribution",
+    "release_strategy": "Simultaneous release across all platforms"
+  },
+  "supplemental_audio": {
+    "ambient_tracks": [
+      {
+        "title": "Morning Phase Ambient",
+        "duration": "30 minutes",
+        "description": "Gentle dawn-inspired soundscape for reading or working in the Resonance ecosystem"
+      },
+      {
+        "title": "Deep Focus Drone",
+        "duration": "45 minutes",
+        "description": "Minimal harmonic drone designed to support sustained concentration"
+      },
+      {
+        "title": "Evening Wind-Down",
+        "duration": "20 minutes",
+        "description": "Gradually decelerating ambient piece mirroring the Night phase transition"
+      }
+    ]
+  },
+  "accessibility": {
+    "whispersync_enabled": true,
+    "chapter_markers": true,
+    "speed_adjustment_tested_range": "0.5x to 3.0x",
+    "description_of_visual_content": "All references to visual design elements include verbal descriptions sufficient for comprehension without seeing the images"
+  }
+}
