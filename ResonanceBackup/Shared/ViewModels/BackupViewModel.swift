@@ -15,6 +15,7 @@ class BackupViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var selectedNavigation: NavigationDestination = .gallery
     @Published var globalCommandOutput: String = ""
+    @Published var githubToken: String = ""
 
     // Services
     let backupService = GitHubBackupService()

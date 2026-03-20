@@ -266,10 +266,22 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: ResonanceSpacing.md) {
             sectionHeader("GitHub Integration", subtitle: "Connect to GitHub for repository backup")
 
-            settingsGroup("Authentication") {
-                Text("Add your GitHub personal access token to enable repository cloning and backup")
+            settingsGroup("Personal Access Token") {
+                SecureField("ghp_xxxxxxxxxxxxxxxxxxxx", text: $viewModel.githubToken)
+                    .textFieldStyle(.roundedBorder)
+                Text("Generate at GitHub → Settings → Developer settings → Personal access tokens")
                     .font(ResonanceTypography.captionSystem)
                     .foregroundColor(ResonanceColors.textLight)
+
+                if !viewModel.githubToken.isEmpty {
+                    HStack(spacing: 6) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(ResonanceColors.growthGreen)
+                        Text("Token saved")
+                            .font(ResonanceTypography.captionSystem)
+                            .foregroundColor(ResonanceColors.growthGreen)
+                    }
+                }
             }
 
             settingsGroup("Auto-Discovery") {
