@@ -3,7 +3,7 @@
 
 import SwiftUI
 
-@Observable
+@MainActor @Observable
 final class WriterViewModel {
     var documents: [WriterDocument] = WriterDocument.sampleDocuments
     var selectedDocument: WriterDocument?

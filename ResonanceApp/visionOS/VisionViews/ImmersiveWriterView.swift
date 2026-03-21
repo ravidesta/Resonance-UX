@@ -7,6 +7,7 @@
 import SwiftUI
 
 #if os(visionOS)
+// visionOS-only spatial writer with glass panels and immersive mode
 struct SpatialWriterView: View {
     let theme: ResonanceTheme
     @State private var viewModel = WriterViewModel()

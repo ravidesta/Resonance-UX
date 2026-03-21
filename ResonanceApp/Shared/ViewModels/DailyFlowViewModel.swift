@@ -3,7 +3,7 @@
 
 import SwiftUI
 
-@Observable
+@MainActor @Observable
 final class DailyFlowViewModel {
     var events: [PhaseEvent] = PhaseEvent.sampleEvents
     var currentPhase: DailyPhase = .current()

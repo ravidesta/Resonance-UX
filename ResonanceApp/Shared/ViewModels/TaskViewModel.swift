@@ -3,7 +3,7 @@
 
 import SwiftUI
 
-@Observable
+@MainActor @Observable
 final class TaskViewModel {
     var tasks: [TaskItem] = TaskItem.sampleTasks
     var selectedEnergy: EnergyLevel?

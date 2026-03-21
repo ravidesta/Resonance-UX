@@ -1,0 +1,594 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	rootObject = 5299AC4324DC18342A8CCD96;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2C14E20B1722F24BBE9A5713 /* GlassMorphismModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA51D14BE68E7BC2D9201DAF; };
+		2C23A40C30BCA67586BE12E0 /* OrganicBlobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124A77E5B16D08FDFDD611DE; };
+		F8DAD883630E29086D5B741A /* ResonanceAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F13283C53060F089A1E088A; };
+		0348535EF57257140EA9AAC9 /* ResonanceTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186F776ACD21220E7A71240C; };
+		1AD4E945F80AB030077D50C7 /* ResonanceTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31BCF405F72B8499A6FFB88; };
+		98ED3E6B7E8D9273555D8750 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35544487479ADFF526BAD8D; };
+		F77DCBA849DB6C33620B4C22 /* DailyPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA6E5BC453AF64217B80AEE; };
+		2A13ECA3F7FE9435BA120586 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F615ED5438793180D2BFA1; };
+		8043B9A7EA49F560C6FE49C4 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A576EC1E244FA6E1C8FB3D17; };
+		6D10ADA6F69BCF3774474E8B /* DailyFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306A6EE079578469D3FE1F8; };
+		961E038DF8D551F01AF30714 /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9DE31CA1D9EBBA00538820; };
+		2F0F84E3CE0CC4A72BE06341 /* WriterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125A9C23E2ED108EFA59EDB9; };
+		456EB2AD97EEB0D4C84B5019 /* DeepRestToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35F6937EFF18B70DC78D1D3; };
+		1AB80E77F000DCB24CC0FBF4 /* DailyFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67D4C867E5DA51642A4EB0BD; };
+		B0A6C4E1C2F7515320412009 /* FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699A51F3CECD05C82C8D7498; };
+		533D0A7FD42F9F35D463755A /* WriterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1732B986B9B4FFCF2A8A584; };
+		EE3F142F94B69E40F4E44BB4 /* InnerCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5C2C92C3696AFDE23C0A5B; };
+		02CD2559B4D39AA38D6AC257 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B3110616A969E90F55F394; };
+		45FDF4B25531CA1FFDD5DF32 /* ResonanceApp_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3163909A8BC173FE5D22383C; };
+		EB2FCE873BC65B52AE1F5037 /* ResonanceApp_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295CE48233D25655E23E26F7; };
+		A205EB5C9F8D08315F86BC82 /* ResonanceApp_watchOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88554DC03EF94245AC19DADE; };
+		38A12F087A94C0D54E0DEFC5 /* WatchDailyFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE76E6EF4BE31B74D4A795D; };
+		D1AC05840A043363FAE207B3 /* WatchTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A9E053F84822EA96D35BFE; };
+		ADBAEDEC18E8563C5DA8F936 /* WatchBreathingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EC5780F358B910F9219C9D; };
+		EAD81EF097C0B2E6D0CB5044 /* ComplicationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0547C46C26C458162DAE283; };
+		EA669F4E8FEBA0A739AD61CD /* ResonanceApp_visionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96E54D102BC125211B65C5A; };
+		99940566EA8D8D184923C8A2 /* ImmersiveWriterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A7DDBC6ECFD194C9001DBB; };
+		501E46C550D47C0EB5E9E167 /* SpatialDailyFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B0A974354B3D10A07D4B46; };
+		72C3A7E3F8B82C14254C30D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 671E5B54412D9F8033A8454C; };
+		406FB566D8BA7A0D3BB54006 /* GlassMorphismModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA51D14BE68E7BC2D9201DAF; };
+		FC8152D77940C7DC80F76579 /* OrganicBlobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124A77E5B16D08FDFDD611DE; };
+		406B0AD48D1B3D7B26F87EF2 /* ResonanceAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F13283C53060F089A1E088A; };
+		FF4D5F5D9AE4E74C9686F481 /* ResonanceTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186F776ACD21220E7A71240C; };
+		84E64CC7C0F3DEA09477DA8D /* ResonanceTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31BCF405F72B8499A6FFB88; };
+		D96949931EA9486C8F818EA3 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35544487479ADFF526BAD8D; };
+		DCC9DBC5A9A0AD5407570524 /* DailyPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA6E5BC453AF64217B80AEE; };
+		51F2A9F48F3372736614533D /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F615ED5438793180D2BFA1; };
+		D4B9B2EBD4710791AB7AFE47 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A576EC1E244FA6E1C8FB3D17; };
+		E73DC11EDAEF00797942F1DD /* DailyFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5306A6EE079578469D3FE1F8; };
+		E4CF91B45C96299535019734 /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D9DE31CA1D9EBBA00538820; };
+		9C7E76C230DE4C557318B51E /* WriterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125A9C23E2ED108EFA59EDB9; };
+		F2BDE64217F3B35614CEC586 /* DeepRestToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35F6937EFF18B70DC78D1D3; };
+		17096A3A2EB60838A00D2BDB /* DailyFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67D4C867E5DA51642A4EB0BD; };
+		0F3A5AE69114D84F214F55D8 /* FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 699A51F3CECD05C82C8D7498; };
+		CB60FAD38CEC7265310073B7 /* WriterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1732B986B9B4FFCF2A8A584; };
+		72EF9D32383DF02B4FB47847 /* InnerCircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D5C2C92C3696AFDE23C0A5B; };
+		CA6C15848570DFE780C686D3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B3110616A969E90F55F394; };
+		F4B447911694F426303D9C75 /* ResonanceApp_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3163909A8BC173FE5D22383C; };
+		FBA718CAB6CDDD39E2133C0F /* ResonanceApp_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295CE48233D25655E23E26F7; };
+		C7757BC2A3AD5F9DED5C6F8C /* ResonanceApp_watchOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88554DC03EF94245AC19DADE; };
+		F6E6104A588521DA13C09CF5 /* WatchDailyFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABE76E6EF4BE31B74D4A795D; };
+		5F7C711417655DE31D13BF57 /* WatchTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A9E053F84822EA96D35BFE; };
+		F7605C7EB997DD5FAB2CA240 /* WatchBreathingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5EC5780F358B910F9219C9D; };
+		CC6F04B26ED7BD66F6FC07BD /* ComplicationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0547C46C26C458162DAE283; };
+		E6A48BD07258D60CB3E65FC1 /* ResonanceApp_visionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96E54D102BC125211B65C5A; };
+		996A0BBF0D35502141E145E3 /* ImmersiveWriterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A7DDBC6ECFD194C9001DBB; };
+		843F61E4ED018132028AA1B4 /* SpatialDailyFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B0A974354B3D10A07D4B46; };
+		986553486E6CBDD7C26085DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 671E5B54412D9F8033A8454C; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FA51D14BE68E7BC2D9201DAF /* GlassMorphismModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GlassMorphismModifier.swift"; sourceTree = "<group>"; };
+		124A77E5B16D08FDFDD611DE /* OrganicBlobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrganicBlobView.swift"; sourceTree = "<group>"; };
+		8F13283C53060F089A1E088A /* ResonanceAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResonanceAnimations.swift"; sourceTree = "<group>"; };
+		186F776ACD21220E7A71240C /* ResonanceTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResonanceTheme.swift"; sourceTree = "<group>"; };
+		B31BCF405F72B8499A6FFB88 /* ResonanceTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResonanceTypography.swift"; sourceTree = "<group>"; };
+		B35544487479ADFF526BAD8D /* Contact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Contact.swift"; sourceTree = "<group>"; };
+		1EA6E5BC453AF64217B80AEE /* DailyPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyPhase.swift"; sourceTree = "<group>"; };
+		92F615ED5438793180D2BFA1 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Document.swift"; sourceTree = "<group>"; };
+		A576EC1E244FA6E1C8FB3D17 /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskItem.swift"; sourceTree = "<group>"; };
+		5306A6EE079578469D3FE1F8 /* DailyFlowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyFlowViewModel.swift"; sourceTree = "<group>"; };
+		1D9DE31CA1D9EBBA00538820 /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TaskViewModel.swift"; sourceTree = "<group>"; };
+		125A9C23E2ED108EFA59EDB9 /* WriterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WriterViewModel.swift"; sourceTree = "<group>"; };
+		A35F6937EFF18B70DC78D1D3 /* DeepRestToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeepRestToggle.swift"; sourceTree = "<group>"; };
+		67D4C867E5DA51642A4EB0BD /* DailyFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DailyFlowView.swift"; sourceTree = "<group>"; };
+		699A51F3CECD05C82C8D7498 /* FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusView.swift"; sourceTree = "<group>"; };
+		E1732B986B9B4FFCF2A8A584 /* WriterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WriterView.swift"; sourceTree = "<group>"; };
+		5D5C2C92C3696AFDE23C0A5B /* InnerCircleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InnerCircleView.swift"; sourceTree = "<group>"; };
+		C9B3110616A969E90F55F394 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView.swift"; sourceTree = "<group>"; };
+		3163909A8BC173FE5D22383C /* ResonanceApp_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResonanceApp_iOS.swift"; sourceTree = "<group>"; };
+		295CE48233D25655E23E26F7 /* ResonanceApp_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResonanceApp_macOS.swift"; sourceTree = "<group>"; };
+		88554DC03EF94245AC19DADE /* ResonanceApp_watchOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResonanceApp_watchOS.swift"; sourceTree = "<group>"; };
+		ABE76E6EF4BE31B74D4A795D /* WatchDailyFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WatchDailyFlowView.swift"; sourceTree = "<group>"; };
+		05A9E053F84822EA96D35BFE /* WatchTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WatchTaskView.swift"; sourceTree = "<group>"; };
+		B5EC5780F358B910F9219C9D /* WatchBreathingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WatchBreathingView.swift"; sourceTree = "<group>"; };
+		C0547C46C26C458162DAE283 /* ComplicationViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComplicationViews.swift"; sourceTree = "<group>"; };
+		C96E54D102BC125211B65C5A /* ResonanceApp_visionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResonanceApp_visionOS.swift"; sourceTree = "<group>"; };
+		93A7DDBC6ECFD194C9001DBB /* ImmersiveWriterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImmersiveWriterView.swift"; sourceTree = "<group>"; };
+		29B0A974354B3D10A07D4B46 /* SpatialDailyFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SpatialDailyFlowView.swift"; sourceTree = "<group>"; };
+		8DE2B56B40DB91F8BE23F6C1 /* ResonanceWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ResonanceWidgets.swift"; sourceTree = "<group>"; };
+		671E5B54412D9F8033A8454C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		90F19FB24A3D4E0CECCBB391 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		157C7F377AC01FBE8F26C733 /* Resonance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Resonance.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6341D851C5BA08B51B2B944B /* Resonance Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Resonance Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		71D2E56247FE75C3DCE9B609 = {
+			isa = PBXGroup;
+			children = (
+				9B8EA7C3EDD85BDD3B598AA8,
+				724EDDE34EFF51B98FC6F40B,
+				866AE1F42866E9A4C57D6607,
+				B8375CE6B473110A24E876C7,
+				C1FC82A36772F0F5FA711B84,
+				0142CAE5DC7D56431F8234C3,
+				671E5B54412D9F8033A8454C,
+				90F19FB24A3D4E0CECCBB391,
+				30772F61AC9BDC8631745269,
+				D8BD5DD42310CB1693158D7B,
+			);
+			sourceTree = "<group>";
+		};
+		30772F61AC9BDC8631745269 = {
+			isa = PBXGroup;
+			children = (157C7F377AC01FBE8F26C733, 6341D851C5BA08B51B2B944B,);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D8BD5DD42310CB1693158D7B = {
+			isa = PBXGroup;
+			children = ();
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9B8EA7C3EDD85BDD3B598AA8 = {
+			isa = PBXGroup;
+			children = (
+				650B1A9CC9F45E52B6782C4F,
+				C9E04F99D8E7C9D4D391AEF8,
+				EE1E649591DBDF61DE2E4396,
+				9F58BDF7D4F04F6C4DC3CB6C,
+				C9B3110616A969E90F55F394,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		650B1A9CC9F45E52B6782C4F = {
+			isa = PBXGroup;
+			children = (FA51D14BE68E7BC2D9201DAF, 124A77E5B16D08FDFDD611DE, 8F13283C53060F089A1E088A, 186F776ACD21220E7A71240C, B31BCF405F72B8499A6FFB88,);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		C9E04F99D8E7C9D4D391AEF8 = {
+			isa = PBXGroup;
+			children = (B35544487479ADFF526BAD8D, 1EA6E5BC453AF64217B80AEE, 92F615ED5438793180D2BFA1, A576EC1E244FA6E1C8FB3D17, 5306A6EE079578469D3FE1F8, 1D9DE31CA1D9EBBA00538820, 125A9C23E2ED108EFA59EDB9,);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		EE1E649591DBDF61DE2E4396 = {
+			isa = PBXGroup;
+			children = (5306A6EE079578469D3FE1F8, 1D9DE31CA1D9EBBA00538820, 125A9C23E2ED108EFA59EDB9,);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		9F58BDF7D4F04F6C4DC3CB6C = {
+			isa = PBXGroup;
+			children = (F8A961A65445D96B693D0256, A730F5503BF6AD4112C59A08, 8FDD59EB96574683B425EBB4, 24C8FE97AFDED83CEAD8488D, 5CE153E7099ED515002C3E19,);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F8A961A65445D96B693D0256 = {
+			isa = PBXGroup;
+			children = (A35F6937EFF18B70DC78D1D3,);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		A730F5503BF6AD4112C59A08 = {
+			isa = PBXGroup;
+			children = (67D4C867E5DA51642A4EB0BD,);
+			path = DailyFlow;
+			sourceTree = "<group>";
+		};
+		8FDD59EB96574683B425EBB4 = {
+			isa = PBXGroup;
+			children = (699A51F3CECD05C82C8D7498,);
+			path = Focus;
+			sourceTree = "<group>";
+		};
+		24C8FE97AFDED83CEAD8488D = {
+			isa = PBXGroup;
+			children = (E1732B986B9B4FFCF2A8A584,);
+			path = Writer;
+			sourceTree = "<group>";
+		};
+		5CE153E7099ED515002C3E19 = {
+			isa = PBXGroup;
+			children = (5D5C2C92C3696AFDE23C0A5B,);
+			path = InnerCircle;
+			sourceTree = "<group>";
+		};
+		724EDDE34EFF51B98FC6F40B = {
+			isa = PBXGroup;
+			children = (3163909A8BC173FE5D22383C,);
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		866AE1F42866E9A4C57D6607 = {
+			isa = PBXGroup;
+			children = (295CE48233D25655E23E26F7,);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		B8375CE6B473110A24E876C7 = {
+			isa = PBXGroup;
+			children = (88554DC03EF94245AC19DADE, A6039C7A9C6FBF120E71D1D5,);
+			path = watchOS;
+			sourceTree = "<group>";
+		};
+		A6039C7A9C6FBF120E71D1D5 = {
+			isa = PBXGroup;
+			children = (ABE76E6EF4BE31B74D4A795D, 05A9E053F84822EA96D35BFE, B5EC5780F358B910F9219C9D, C0547C46C26C458162DAE283,);
+			path = WatchViews;
+			sourceTree = "<group>";
+		};
+		C1FC82A36772F0F5FA711B84 = {
+			isa = PBXGroup;
+			children = (C96E54D102BC125211B65C5A, 2B7C3C7B1C16880C223583BB,);
+			path = visionOS;
+			sourceTree = "<group>";
+		};
+		2B7C3C7B1C16880C223583BB = {
+			isa = PBXGroup;
+			children = (93A7DDBC6ECFD194C9001DBB, 29B0A974354B3D10A07D4B46,);
+			path = VisionViews;
+			sourceTree = "<group>";
+		};
+		0142CAE5DC7D56431F8234C3 = {
+			isa = PBXGroup;
+			children = (8DE2B56B40DB91F8BE23F6C1,);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E757D91215D317FF5AF7029D = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E265E050B10A0DC5C92544D;
+			buildPhases = (9BB7DAC2EA37D1BF1462DD70, 7755D7E1DF62C3861F2D6856, 6C8A3CF0627170731929EDDB,);
+			buildRules = ();
+			dependencies = ();
+			name = Resonance;
+			productName = Resonance;
+			productReference = 157C7F377AC01FBE8F26C733;
+			productType = "com.apple.product-type.application";
+		};
+		1B7375A8E44B762D4F5E3EDC = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DEA242933C69FC941B0C0BE;
+			buildPhases = (9F0DE556BBDC1E58C819E5B0, 505138FF9851BBD990792188, BD0A124CABDB73E197825877,);
+			buildRules = ();
+			dependencies = ();
+			name = "Resonance Watch App";
+			productName = "Resonance Watch App";
+			productReference = 6341D851C5BA08B51B2B944B;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5299AC4324DC18342A8CCD96 = {
+			isa = PBXProject;
+			buildConfigurationList = E9898A0EB58D6691901DFE9F;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base,);
+			mainGroup = 71D2E56247FE75C3DCE9B609;
+			productRefGroup = 30772F61AC9BDC8631745269;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (E757D91215D317FF5AF7029D, 1B7375A8E44B762D4F5E3EDC,);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9BB7DAC2EA37D1BF1462DD70 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C14E20B1722F24BBE9A5713,
+				2C23A40C30BCA67586BE12E0,
+				F8DAD883630E29086D5B741A,
+				0348535EF57257140EA9AAC9,
+				1AD4E945F80AB030077D50C7,
+				98ED3E6B7E8D9273555D8750,
+				F77DCBA849DB6C33620B4C22,
+				2A13ECA3F7FE9435BA120586,
+				8043B9A7EA49F560C6FE49C4,
+				6D10ADA6F69BCF3774474E8B,
+				961E038DF8D551F01AF30714,
+				2F0F84E3CE0CC4A72BE06341,
+				456EB2AD97EEB0D4C84B5019,
+				1AB80E77F000DCB24CC0FBF4,
+				B0A6C4E1C2F7515320412009,
+				533D0A7FD42F9F35D463755A,
+				EE3F142F94B69E40F4E44BB4,
+				02CD2559B4D39AA38D6AC257,
+				45FDF4B25531CA1FFDD5DF32,
+				EB2FCE873BC65B52AE1F5037,
+				A205EB5C9F8D08315F86BC82,
+				38A12F087A94C0D54E0DEFC5,
+				D1AC05840A043363FAE207B3,
+				ADBAEDEC18E8563C5DA8F936,
+				EAD81EF097C0B2E6D0CB5044,
+				EA669F4E8FEBA0A739AD61CD,
+				99940566EA8D8D184923C8A2,
+				501E46C550D47C0EB5E9E167,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F0DE556BBDC1E58C819E5B0 = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				406FB566D8BA7A0D3BB54006,
+				FC8152D77940C7DC80F76579,
+				406B0AD48D1B3D7B26F87EF2,
+				FF4D5F5D9AE4E74C9686F481,
+				84E64CC7C0F3DEA09477DA8D,
+				D96949931EA9486C8F818EA3,
+				DCC9DBC5A9A0AD5407570524,
+				51F2A9F48F3372736614533D,
+				D4B9B2EBD4710791AB7AFE47,
+				E73DC11EDAEF00797942F1DD,
+				E4CF91B45C96299535019734,
+				9C7E76C230DE4C557318B51E,
+				F2BDE64217F3B35614CEC586,
+				17096A3A2EB60838A00D2BDB,
+				0F3A5AE69114D84F214F55D8,
+				CB60FAD38CEC7265310073B7,
+				72EF9D32383DF02B4FB47847,
+				CA6C15848570DFE780C686D3,
+				F4B447911694F426303D9C75,
+				FBA718CAB6CDDD39E2133C0F,
+				C7757BC2A3AD5F9DED5C6F8C,
+				F6E6104A588521DA13C09CF5,
+				5F7C711417655DE31D13BF57,
+				F7605C7EB997DD5FAB2CA240,
+				CC6F04B26ED7BD66F6FC07BD,
+				E6A48BD07258D60CB3E65FC1,
+				996A0BBF0D35502141E145E3,
+				843F61E4ED018132028AA1B4,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6C8A3CF0627170731929EDDB = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (72C3A7E3F8B82C14254C30D0,);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD0A124CABDB73E197825877 = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (986553486E6CBDD7C26085DC,);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7755D7E1DF62C3861F2D6856 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		505138FF9851BBD990792188 = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		EDF2539783D433988A316B18 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("DEBUG=1", "$(inherited)",);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		20E4CE03CB913D0E9181E6D4 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		AC568E2E072BF75353D8A08A = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Resonance;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		F888CACDD4BB9315DBDA67AE = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Resonance;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		F7A51F4B602BDC5E5048114A = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Resonance;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.resonance.app;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.app.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Debug;
+		};
+		D7EC3F6FA02D6424DC204761 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Resonance;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.resonance.app;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks",);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.app.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "watchos watchsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E9898A0EB58D6691901DFE9F = {
+			isa = XCConfigurationList;
+			buildConfigurations = (EDF2539783D433988A316B18, 20E4CE03CB913D0E9181E6D4,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E265E050B10A0DC5C92544D = {
+			isa = XCConfigurationList;
+			buildConfigurations = (AC568E2E072BF75353D8A08A, F888CACDD4BB9315DBDA67AE,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DEA242933C69FC941B0C0BE = {
+			isa = XCConfigurationList;
+			buildConfigurations = (F7A51F4B602BDC5E5048114A, D7EC3F6FA02D6424DC204761,);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+}

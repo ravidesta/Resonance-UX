@@ -37,7 +37,9 @@ struct DeepRestToggle: View {
             }
         }
         .buttonStyle(.plain)
+        #if os(iOS) || os(watchOS)
         .sensoryFeedback(.selection, trigger: themeManager.isDeepRest)
+        #endif
     }
 }
 

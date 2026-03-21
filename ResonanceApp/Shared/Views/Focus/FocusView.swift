@@ -207,7 +207,9 @@ struct EnergyFilterChip: View {
             }
         }
         .buttonStyle(.plain)
+        #if os(iOS) || os(watchOS)
         .sensoryFeedback(.selection, trigger: isSelected)
+        #endif
     }
 }
 

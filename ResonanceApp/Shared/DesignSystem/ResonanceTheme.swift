@@ -154,8 +154,8 @@ extension Color {
 
 // MARK: - Theme Observable
 
-@Observable
-final class ThemeManager {
+@MainActor @Observable
+final class ThemeManager: Sendable {
     var currentTheme: ResonanceTheme = .light
 
     var isDeepRest: Bool {
