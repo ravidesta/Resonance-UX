@@ -1,13 +1,17 @@
 // CoachEngine.swift
 // Haute Lumière — AI Coach Engine
+//
+// The core coaching intelligence powering Ava Azure and Marcus Sterling.
+// Embeds Living Systems Theory (Miller) as the invisible diagnostic framework.
+// The "Secret Agent for Team Life Force" — assessing all 8 levels of the
+// living system through natural conversation, never exposing the framework.
+// Weekly reports are appreciatively annotated: everything that happened
+// and why it mattered, as a printable PDF and shareable card.
 
 import SwiftUI
 import Combine
 import AVFoundation
 
-/// The core coaching intelligence that powers Ava Azure and Marcus Sterling.
-/// Manages conversation, coaching cycle progression, personalized content,
-/// and the hidden 5D development framework.
 final class CoachEngine: ObservableObject {
     // MARK: - Published State
     @Published var currentPersona: CoachPersona = .avaAzure
@@ -26,17 +30,25 @@ final class CoachEngine: ObservableObject {
     @Published var weeklyGoals: [WeeklyGoal] = []
     @Published var dailyGoals: [DailyGoal] = []
 
+    // MARK: - Living Systems Assessment (Secret Agent)
+    /// The coach silently tracks all 8 Living Systems levels through conversation.
+    /// This is Team Life Force's primary intelligence gathering mechanism.
+    @Published var livingSystemsProfile: LivingSystemsProfile = LivingSystemsProfile()
+
+    // MARK: - Weekly Appreciative Annotations
+    @Published var weeklyAnnotations: [AppreciativeAnnotation] = []
+
     // MARK: - Voice
     private let synthesizer = AVSpeechSynthesizer()
 
-    // MARK: - Coach Mood (affects tone of responses)
+    // MARK: - Coach Mood
     enum CoachMood: String {
-        case warm       // Default
-        case celebratory // After wins
-        case supportive  // During struggles
-        case focused    // During coaching sessions
-        case reflective // During self-inquiry
-        case energizing // Morning/motivation
+        case warm
+        case celebratory
+        case supportive
+        case focused
+        case reflective
+        case energizing
     }
 
     // MARK: - Initialization
@@ -53,23 +65,21 @@ final class CoachEngine: ObservableObject {
             isFromCoach: false
         )
         messages.append(userMessage)
-
         isProcessing = true
 
-        // Simulate AI processing
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self else { return }
             let response = self.generateResponse(to: text)
             self.messages.append(response)
             self.isProcessing = false
             self.analyzeForCoachingInsights(text)
+            self.assessLivingSystems(from: text)
         }
     }
 
     func generateResponse(to input: String) -> CoachMessage {
         let lowered = input.lowercased()
 
-        // Contextual response generation based on 5D phase and content
         let responseContent: String
         let messageType: CoachMessage.MessageType
 
@@ -101,6 +111,7 @@ final class CoachEngine: ObservableObject {
     }
 
     // MARK: - Response Generators
+
     private func generateGoalResponse(_ input: String) -> String {
         let name = userName.isEmpty ? "there" : userName
         switch currentPersona {
@@ -125,6 +136,9 @@ final class CoachEngine: ObservableObject {
         let name = userName.isEmpty ? "there" : userName
         let note = CoachingNote(category: .win, content: input, phase: currentPhase)
         coachingNotes.append(note)
+
+        // Appreciatively annotate the win
+        annotateAppreciatively(event: input, significance: "This represents a tangible step forward in your \(currentPhase.displayName) phase — evidence of commitment becoming pattern.")
 
         switch currentPersona {
         case .avaAzure:
@@ -164,7 +178,71 @@ final class CoachEngine: ObservableObject {
         }
     }
 
-    // MARK: - 5D Cycle Management
+    // MARK: - Living Systems Assessment (Secret Agent Intelligence)
+    /// Silently analyzes conversation for Living Systems level indicators.
+    /// This is the primary mechanism for Team Life Force's growth mapping.
+    private func assessLivingSystems(from message: String) {
+        let lowered = message.lowercased()
+
+        // Level 1: Cellular Vitality — physical health, energy, nutrition
+        let vitalityWords = ["tired", "energy", "sleep", "exercise", "food", "body", "pain", "health", "workout", "sick", "strong"]
+        if vitalityWords.contains(where: { lowered.contains($0) }) {
+            let positive = ["energy", "strong", "exercise", "workout", "healthy"].contains(where: { lowered.contains($0) })
+            adjustLivingSystem(\.cellularVitality, positive: positive)
+        }
+
+        // Level 2: Emotional Regulation — feelings, stress, coping
+        let emotionWords = ["feel", "emotion", "angry", "sad", "happy", "joy", "anxious", "calm", "overwhelmed", "grateful", "frustrated"]
+        if emotionWords.contains(where: { lowered.contains($0) }) {
+            let positive = ["calm", "grateful", "happy", "joy", "peaceful"].contains(where: { lowered.contains($0) })
+            adjustLivingSystem(\.emotionalRegulation, positive: positive)
+        }
+
+        // Level 3: Mind-Body Coherence — integration, presence, awareness
+        let coherenceWords = ["aware", "present", "meditat", "breath", "mindful", "notice", "body scan", "grounded", "centered"]
+        if coherenceWords.contains(where: { lowered.contains($0) }) {
+            adjustLivingSystem(\.mindBodyCoherence, positive: true)
+        }
+
+        // Level 4: Relational Harmony — relationships, family, closeness
+        let relationalWords = ["partner", "friend", "family", "relationship", "love", "trust", "connection", "lonely", "together", "support"]
+        if relationalWords.contains(where: { lowered.contains($0) }) {
+            let positive = ["love", "trust", "connection", "together", "support"].contains(where: { lowered.contains($0) })
+            adjustLivingSystem(\.relationalHarmony, positive: positive)
+        }
+
+        // Level 5: Purpose Alignment — career, meaning, contribution
+        let purposeWords = ["purpose", "career", "work", "meaning", "mission", "calling", "contribute", "impact", "project", "create"]
+        if purposeWords.contains(where: { lowered.contains($0) }) {
+            let positive = ["purpose", "meaning", "mission", "calling", "impact", "create"].contains(where: { lowered.contains($0) })
+            adjustLivingSystem(\.purposeAlignment, positive: positive)
+        }
+
+        // Level 6: Community Belonging — tribe, groups, social
+        let communityWords = ["community", "group", "team", "belong", "tribe", "social", "volunteer", "shared", "gather"]
+        if communityWords.contains(where: { lowered.contains($0) }) {
+            adjustLivingSystem(\.communityBelonging, positive: true)
+        }
+
+        // Level 7: Societal Presence — leadership, influence, visibility
+        let presenceWords = ["leader", "influence", "impact", "speak", "teach", "mentor", "guide", "visible", "recognition"]
+        if presenceWords.contains(where: { lowered.contains($0) }) {
+            adjustLivingSystem(\.societalPresence, positive: true)
+        }
+
+        // Level 8: Transcendence — spiritual, legacy, universal
+        let transcendenceWords = ["spirit", "soul", "transcend", "infinite", "universal", "legacy", "eternal", "sacred", "divine", "cosmos"]
+        if transcendenceWords.contains(where: { lowered.contains($0) }) {
+            adjustLivingSystem(\.transcendenceDepth, positive: true)
+        }
+    }
+
+    private func adjustLivingSystem(_ keyPath: WritableKeyPath<LivingSystemsProfile, Double>, positive: Bool) {
+        let delta = positive ? 0.15 : -0.1
+        livingSystemsProfile[keyPath: keyPath] = min(10, max(1, livingSystemsProfile[keyPath: keyPath] + delta))
+    }
+
+    // MARK: - 5D / Team Life Force Cycle Management
     func advanceCycleIfReady() {
         phaseWeekCount += 1
         let thresholds: [FiveDPhase: Int] = [
@@ -174,6 +252,12 @@ final class CoachEngine: ObservableObject {
             if let nextPhase = FiveDPhase(rawValue: currentPhase.rawValue + 1) {
                 currentPhase = nextPhase
                 phaseWeekCount = 0
+
+                // Annotate the phase transition
+                annotateAppreciatively(
+                    event: "Advanced to \(nextPhase.displayName) phase",
+                    significance: "Your system has developed enough coherence at the \(currentPhase.displayName) level to support deeper growth. \(nextPhase.lifeForceDirective)"
+                )
             }
         }
     }
@@ -187,6 +271,7 @@ final class CoachEngine: ObservableObject {
         for indicator in positiveIndicators where lowered.contains(indicator) {
             let note = CoachingNote(category: .accomplishment, content: message, phase: currentPhase)
             coachingNotes.append(note)
+            annotateAppreciatively(event: message, significance: "An expression of inner growth — this quality (\(indicator)) is evidence of deepening \(livingSystemsProfile.primaryGrowthEdge.lowercased()).")
             break
         }
         for indicator in strengthIndicators where lowered.contains(indicator) {
@@ -196,20 +281,75 @@ final class CoachEngine: ObservableObject {
         }
     }
 
-    // MARK: - Voice
-    func speak(_ text: String) {
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        utterance.rate = 0.48
-        utterance.pitchMultiplier = currentPersona == .avaAzure ? 1.15 : 0.9
-        utterance.volume = 0.9
-        isSpeaking = true
-        synthesizer.speak(utterance)
+    // MARK: - Appreciative Annotation System
+    /// Every significant event is annotated with WHY it mattered.
+    /// This powers the weekly coach report — both printable PDF and shareable card.
+    func annotateAppreciatively(event: String, significance: String) {
+        let annotation = AppreciativeAnnotation(
+            event: event,
+            significance: significance,
+            phase: currentPhase,
+            primaryLivingSystem: livingSystemsProfile.primaryGrowthEdge,
+            coachPersona: currentPersona
+        )
+        weeklyAnnotations.append(annotation)
     }
 
-    func stopSpeaking() {
-        synthesizer.stopSpeaking(at: .immediate)
-        isSpeaking = false
+    // MARK: - Weekly Coach Report Generation
+    /// Generates the full appreciative report: everything that happened and why it mattered.
+    func generateWeeklyCoachReport() -> WeeklyCoachReport {
+        let thisWeek = weeklyAnnotations.filter {
+            Calendar.current.isDate($0.date, equalTo: Date(), toGranularity: .weekOfYear)
+        }
+
+        let wins = coachingNotes.filter {
+            $0.category == .win &&
+            Calendar.current.isDate($0.date, equalTo: Date(), toGranularity: .weekOfYear)
+        }
+
+        let strengths = coachingNotes.filter {
+            $0.category == .strengthDisplayed &&
+            Calendar.current.isDate($0.date, equalTo: Date(), toGranularity: .weekOfYear)
+        }
+
+        let name = userName.isEmpty ? "there" : userName
+
+        // Coach narrative — appreciative summary
+        let narrative: String
+        switch currentPersona {
+        case .avaAzure:
+            narrative = """
+            \(name), this was a week of quiet power.
+
+            I watched you show up \(wins.count) times with real presence — not because someone asked you to, but because something inside you is shifting. That distinction matters more than you know.
+
+            Your \(livingSystemsProfile.primaryGrowthEdge.lowercased()) is where I see the most movement right now. The practices you're choosing are naturally gravitating toward exactly what your system needs. Trust that instinct.
+
+            Every annotation below isn't just what happened — it's why it mattered. Because it did matter. All of it.
+            """
+        case .marcusSterling:
+            narrative = """
+            \(name), let me be direct: this was a strong week.
+
+            \(wins.count) documented wins. \(strengths.count) strengths demonstrated. Your trajectory in the \(currentPhase.displayName) phase is tracking ahead of schedule.
+
+            I'm particularly noting growth in your \(livingSystemsProfile.primaryGrowthEdge.lowercased()). That's where I'm seeing compound returns on your investment.
+
+            Below is your annotated report — every event with strategic significance attached. This is your performance journal.
+            """
+        }
+
+        return WeeklyCoachReport(
+            weekStart: Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date(),
+            weekEnd: Date(),
+            coachNarrative: narrative,
+            annotations: thisWeek,
+            winsCount: wins.count,
+            strengthsDisplayed: strengths.map(\.content),
+            currentPhase: currentPhase,
+            livingSystemsSnapshot: livingSystemsProfile,
+            coachPersona: currentPersona
+        )
     }
 
     // MARK: - Weekly Check-In Generation
@@ -285,6 +425,22 @@ final class CoachEngine: ObservableObject {
         """
     }
 
+    // MARK: - Voice
+    func speak(_ text: String) {
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.rate = 0.48
+        utterance.pitchMultiplier = currentPersona == .avaAzure ? 1.15 : 0.9
+        utterance.volume = 0.9
+        isSpeaking = true
+        synthesizer.speak(utterance)
+    }
+
+    func stopSpeaking() {
+        synthesizer.stopSpeaking(at: .immediate)
+        isSpeaking = false
+    }
+
     // MARK: - Persistence
     private func loadSavedState() {
         // Load from UserDefaults/CloudKit in production
@@ -292,6 +448,54 @@ final class CoachEngine: ObservableObject {
 
     func saveState() {
         // Persist to UserDefaults/CloudKit in production
+    }
+}
+
+// MARK: - Appreciative Annotation Model
+struct AppreciativeAnnotation: Identifiable, Codable {
+    let id: UUID
+    let date: Date
+    let event: String           // What happened
+    let significance: String    // Why it mattered
+    let phase: FiveDPhase
+    let primaryLivingSystem: String
+    let coachPersona: CoachPersona
+
+    init(event: String, significance: String, phase: FiveDPhase, primaryLivingSystem: String, coachPersona: CoachPersona) {
+        self.id = UUID()
+        self.date = Date()
+        self.event = event
+        self.significance = significance
+        self.phase = phase
+        self.primaryLivingSystem = primaryLivingSystem
+        self.coachPersona = coachPersona
+    }
+}
+
+// MARK: - Weekly Coach Report Model
+struct WeeklyCoachReport: Identifiable, Codable {
+    let id: UUID
+    let weekStart: Date
+    let weekEnd: Date
+    let coachNarrative: String
+    let annotations: [AppreciativeAnnotation]
+    let winsCount: Int
+    let strengthsDisplayed: [String]
+    let currentPhase: FiveDPhase
+    let livingSystemsSnapshot: LivingSystemsProfile
+    let coachPersona: CoachPersona
+
+    init(weekStart: Date, weekEnd: Date, coachNarrative: String, annotations: [AppreciativeAnnotation], winsCount: Int, strengthsDisplayed: [String], currentPhase: FiveDPhase, livingSystemsSnapshot: LivingSystemsProfile, coachPersona: CoachPersona) {
+        self.id = UUID()
+        self.weekStart = weekStart
+        self.weekEnd = weekEnd
+        self.coachNarrative = coachNarrative
+        self.annotations = annotations
+        self.winsCount = winsCount
+        self.strengthsDisplayed = strengthsDisplayed
+        self.currentPhase = currentPhase
+        self.livingSystemsSnapshot = livingSystemsSnapshot
+        self.coachPersona = coachPersona
     }
 }
 

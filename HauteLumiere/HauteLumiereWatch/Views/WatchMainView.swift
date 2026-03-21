@@ -1,5 +1,9 @@
 // WatchMainView.swift
 // Haute Lumière — Apple Watch Interface
+//
+// Features rotating profound quotes (vetted, real, from real people)
+// throughout the day. The kind of quotes that make you sound smarter
+// the more you use this watch. Rotates every ~6 hours automatically.
 
 import SwiftUI
 
@@ -11,14 +15,17 @@ struct WatchMainView: View {
             WatchDashboardView()
                 .tag(0)
 
-            WatchHabitView()
+            WatchQuoteView()
                 .tag(1)
 
-            WatchBreathingView()
+            WatchHabitView()
                 .tag(2)
 
-            WatchCoachView()
+            WatchBreathingView()
                 .tag(3)
+
+            WatchCoachView()
+                .tag(4)
         }
         .tabViewStyle(.carousel)
     }
@@ -84,6 +91,103 @@ struct WatchDashboardView: View {
             }
             .padding(.vertical, 8)
         }
+    }
+}
+
+// MARK: - Profound Quotes (Rotates Throughout the Day)
+/// Real quotes from real people. Vetted. Not affirmations.
+/// Rotates automatically — new quote every ~6 hours.
+/// Makes you sound smarter the more you wear this watch.
+struct WatchQuoteView: View {
+    @State private var currentQuoteIndex = 0
+
+    private var dailyQuotes: [(text: String, author: String)] {
+        ProfoundQuoteLibrary.dailyQuotes()
+    }
+
+    private var currentQuote: (text: String, author: String) {
+        ProfoundQuoteLibrary.quoteForNow()
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 12) {
+                // Subtle brand
+                Image(systemName: "light.max")
+                    .font(.system(size: 8, weight: .ultraLight))
+                    .foregroundColor(Color(hex: "C5A059").opacity(0.5))
+
+                // Quote
+                Text("\"\(currentQuote.text)\"")
+                    .font(.system(size: 13, weight: .light, design: .serif))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+                    .padding(.horizontal, 4)
+
+                // Attribution
+                Text("— \(currentQuote.author)")
+                    .font(.system(size: 10, weight: .light))
+                    .foregroundColor(Color(hex: "C5A059").opacity(0.7))
+
+                // Time indicator (dots showing which of 4 daily quotes)
+                HStack(spacing: 6) {
+                    let hour = Calendar.current.component(.hour, from: Date())
+                    let slot = hour / 6
+                    ForEach(0..<4, id: \.self) { index in
+                        Circle()
+                            .fill(index == slot ? Color(hex: "C5A059") : Color.white.opacity(0.15))
+                            .frame(width: 4, height: 4)
+                    }
+                }
+                .padding(.top, 4)
+
+                // Share to companion app
+                Button(action: {}) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 10))
+                        Text("Share")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(Color(hex: "C5A059"))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                    .background(Color(hex: "C5A059").opacity(0.15))
+                    .clipShape(Capsule())
+                }
+            }
+            .padding(.vertical, 8)
+        }
+    }
+}
+
+// MARK: - Watch Complication Quote Provider
+/// Provides the current quote for watch face complications.
+/// This is the primary status-symbol feature — a gold serif quote
+/// on your watch face that changes throughout the day.
+struct WatchComplicationQuote {
+    static func currentComplicationText() -> String {
+        let quote = ProfoundQuoteLibrary.quoteForNow()
+        // Truncate for complication if needed
+        if quote.text.count > 60 {
+            let truncated = String(quote.text.prefix(57)) + "..."
+            return "\"\(truncated)\""
+        }
+        return "\"\(quote.text)\""
+    }
+
+    static func currentAuthor() -> String {
+        ProfoundQuoteLibrary.quoteForNow().author
+    }
+
+    /// Short form for small complications
+    static func shortQuote() -> String {
+        let quote = ProfoundQuoteLibrary.quoteForNow()
+        if quote.text.count > 30 {
+            return String(quote.text.prefix(27)) + "..."
+        }
+        return quote.text
     }
 }
 

@@ -83,7 +83,7 @@ struct HauteLumiereTabBar: View {
         case .home: return selectedTab == tab ? "house.fill" : "house"
         case .practice: return selectedTab == tab ? "leaf.fill" : "leaf"
         case .coach: return selectedTab == tab ? "message.fill" : "message"
-        case .journey: return selectedTab == tab ? "chart.line.uptrend.xyaxis" : "chart.line.uptrend.xyaxis"
+        case .journey: return selectedTab == tab ? "book.closed.fill" : "book.closed"
         case .profile: return selectedTab == tab ? "person.fill" : "person"
         }
     }
