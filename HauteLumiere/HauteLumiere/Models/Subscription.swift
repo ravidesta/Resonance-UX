@@ -104,6 +104,42 @@ struct SubscriptionFeature: Identifiable {
     let included: Bool
 }
 
+// MARK: - Date & Time Products (Companion App)
+/// Pricing for the Haute Lumière Date & Time companion app
+enum DateTimeProduct: String, Codable, CaseIterable {
+    case bespokeReading = "Bespoke Reading"       // $30 — 10-page illustrated PDF + audiobook
+    case yearAhead = "Year Ahead"                  // $99 — 30+ page comprehensive forecast
+    case relationshipReading = "Relationship Reading" // $99 — synastry across all 5 traditions
+
+    var price: Decimal {
+        switch self {
+        case .bespokeReading: return 30
+        case .yearAhead: return 99
+        case .relationshipReading: return 99
+        }
+    }
+
+    var displayPrice: String {
+        switch self {
+        case .bespokeReading: return "$30"
+        case .yearAhead: return "$99"
+        case .relationshipReading: return "$99"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .bespokeReading: return "10-page impeccably illustrated PDF + audiobook narration on any topic"
+        case .yearAhead: return "30+ page year-ahead forecast across all life wheel dimensions + all traditions"
+        case .relationshipReading: return "Synastry + composite across astrology, numerology, ayurveda, elements, enneagram"
+        }
+    }
+
+    var includedTraditions: [String] {
+        ["Western Astrology", "Numerology", "Ayurveda", "Five Elements", "Enneagram"]
+    }
+}
+
 // MARK: - Article Model
 struct BespokeArticle: Identifiable, Codable {
     let id: UUID
