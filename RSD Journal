@@ -1,0 +1,632 @@
+const { useState, useEffect, useRef } = React;
+
+// ============================================================
+// RSD JOURNAL - Password-Protected On-Device Journal
+// Share entries with therapist. Guided prompts. Mood tracking.
+// ============================================================
+
+const JOURNAL_PROMPTS = {
+  'Chapter 1 - Hidden Struggle': [
+    'Describe a moment when you felt rejection intensely. What was actually happening vs. what your brain told you?',
+    'What does your inner critic say most often? Write it down, then write what a compassionate friend would say instead.',
+    'List 3 situations where you avoided something because you feared rejection. What might have happened if you tried?',
+  ],
+  'Chapter 2 - Full Spectrum ADHD': [
+    'How does your ADHD show up in ways most people don\'t see?',
+    'When do you feel most focused and alive? What conditions create that flow?',
+    'Write about a time your executive function challenges were misread as laziness. How did that feel?',
+  ],
+  'Chapter 3 - Everyday Impact': [
+    'Describe your most recent shutdown-overdrive cycle. What triggered it?',
+    'How does masking show up in your daily life? What are you hiding and from whom?',
+    'Write a letter to someone who doesn\'t understand your RSD. What would you want them to know?',
+  ],
+  'Chapter 4 - Rejection-Proof Your Mind': [
+    'Practice the Rejection Reframe: Write about a recent rejection, then rewrite it as redirection.',
+    'What emotional boundaries do you need to set? With whom?',
+    'When does your fear feel like abandonment vs. when does it feel like genuine intuition?',
+  ],
+  'Chapter 5 - Managing Emotions': [
+    'Try STOPP right now: Stop, Take a breath, Observe, Pull back, Practice. Write what you notice.',
+    'What sensory things overwhelm you most? What sensory things calm you?',
+    'After your last emotional flood, what helped you recover? What didn\'t?',
+  ],
+  'Chapter 6 - Calming the Chaos': [
+    'What systems do you currently have? Which ones work? Which ones have you abandoned?',
+    'Describe your ideal morning routine - one that honors both your ADHD and your sensitivity.',
+    'What is one small system you could implement today that would reduce chaos?',
+  ],
+  'Chapter 7 - Achievement & Identity': [
+    'List 5 things about yourself that have nothing to do with achievements or productivity.',
+    'When did you first learn that your worth was tied to what you produced? Who taught you that?',
+    'Write about a time you felt worthy just for being you.',
+  ],
+  'Chapter 8 - Inner Critic & IFS': [
+    'If your inner critic had a name, what would it be? What is it trying to protect you from?',
+    'Write a dialogue between your Self and one of your protector parts.',
+    'What exile (wounded part) is your inner critic guarding? Can you send it compassion?',
+  ],
+  'Chapter 9 - Polyvagal Theory': [
+    'Where do you feel safety in your body? Where do you feel threat?',
+    'Describe what ventral vagal (safe & social) feels like for you.',
+    'What activities help you shift from fight/flight to calm? List as many as you can.',
+  ],
+  'Chapter 10 - Sensitivity as Strength': [
+    'Name 3 ways your sensitivity has been a genuine gift in your life.',
+    'Who do you know that also lives with sensitivity? How do they inspire you?',
+    'Write a love letter to your sensitive self.',
+  ],
+  'Chapter 11 - Relationships': [
+    'How does RSD show up in your closest relationship right now?',
+    'What does your partner/friend need to know about how you experience rejection?',
+    'Describe the relationship you deserve - one that honors your sensitivity.',
+  ],
+};
+
+const MOOD_TAGS = [
+  { emoji: '🌿', label: 'Calm' },
+  { emoji: '🌤', label: 'Hopeful' },
+  { emoji: '🌊', label: 'Overwhelmed' },
+  { emoji: '🔥', label: 'Triggered' },
+  { emoji: '🌙', label: 'Withdrawn' },
+  { emoji: '✨', label: 'Thriving' },
+  { emoji: '😔', label: 'Rejected' },
+  { emoji: '💪', label: 'Resilient' },
+  { emoji: '🤔', label: 'Processing' },
+  { emoji: '💜', label: 'Self-Compassion' },
+];
+
+const SAMPLE_ENTRIES = [
+  {
+    id: 1, date: 'March 21, 2026', time: '8:42 AM',
+    title: 'Morning reflection',
+    content: 'Woke up with that heavy feeling again. The email from my boss yesterday is still echoing. She said "we should talk about the project timeline" and my brain immediately went to "you\'re going to be fired." I know that\'s my RSD talking. The rational part of me knows she just wants to discuss timelines. But the feeling is so real...',
+    mood: { emoji: '🤔', label: 'Processing' },
+    tags: ['rsd-trigger', 'work', 'reframe'],
+    sharedWithTherapist: false,
+    prompt: null,
+    chapter: null
+  },
+  {
+    id: 2, date: 'March 20, 2026', time: '10:15 PM',
+    title: 'Chapter 8 exercise - Inner Critic dialogue',
+    content: 'My inner critic sounds like a mix of my 4th grade teacher and my father. It says "You\'re not trying hard enough" and "Everyone else can do this, why can\'t you?" Today I named it Harold. Harold is scared. He thinks if I\'m not perfect, I\'ll be abandoned. I told Harold: "I see you. You\'re trying to keep us safe. But I\'ve got this."',
+    mood: { emoji: '💜', label: 'Self-Compassion' },
+    tags: ['ifs', 'inner-critic', 'breakthrough'],
+    sharedWithTherapist: true,
+    prompt: 'Write a dialogue between your Self and one of your protector parts.',
+    chapter: 'Chapter 8'
+  },
+  {
+    id: 3, date: 'March 19, 2026', time: '3:30 PM',
+    title: 'Rejection reframe practice',
+    content: 'My friend cancelled plans again. First thought: "She doesn\'t want to see me." Reframe: "She has her own life and struggles. Cancelling plans doesn\'t mean cancelling our friendship." This is hard but I\'m getting better at catching the spiral before it starts.',
+    mood: { emoji: '💪', label: 'Resilient' },
+    tags: ['reframe', 'friendship', 'growth'],
+    sharedWithTherapist: false,
+    prompt: 'Practice the Rejection Reframe exercise.',
+    chapter: 'Chapter 4'
+  }
+];
+
+function RSDJournal() {
+  const [locked, setLocked] = useState(true);
+  const [passcode, setPasscode] = useState('');
+  const [view, setView] = useState('entries');
+  const [entries, setEntries] = useState(SAMPLE_ENTRIES);
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [isWriting, setIsWriting] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [showPrompts, setShowPrompts] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState(null);
+  const [newEntry, setNewEntry] = useState({ title: '', content: '', mood: null, tags: [] });
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [biometricEnabled, setBiometricEnabled] = useState(true);
+
+  const bg = darkMode ? '#05100B' : '#FAFAF8';
+  const textMain = darkMode ? '#E8F0EA' : '#122E21';
+  const textMuted = darkMode ? '#8A9C91' : '#5C7065';
+  const textLight = darkMode ? '#5C7065' : '#8A9C91';
+  const glassBg = darkMode ? 'rgba(10, 28, 20, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+  const glassBorder = darkMode ? 'rgba(197, 160, 89, 0.12)' : 'rgba(18, 46, 33, 0.08)';
+  const gold = '#C5A059';
+
+  const handlePasscode = (digit) => {
+    const next = passcode + digit;
+    setPasscode(next);
+    if (next.length >= 4) {
+      setTimeout(() => {
+        setLocked(false);
+        setPasscode('');
+      }, 300);
+    }
+  };
+
+  const renderLockScreen = () => (
+    <div style={{
+      height: 844,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 40
+    }}>
+      <div style={{
+        width: 72, height: 72, borderRadius: '50%',
+        background: `${gold}15`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        marginBottom: 20
+      }}>
+        <span style={{ fontSize: 32 }}>🔒</span>
+      </div>
+      <p style={{
+        fontFamily: "'Cormorant Garamond', serif",
+        fontSize: 24, color: textMain, fontWeight: 500, marginBottom: 6
+      }}>Your Safe Space</p>
+      <p style={{
+        fontFamily: "'Manrope', sans-serif",
+        fontSize: 13, color: textMuted, marginBottom: 32
+      }}>Enter your passcode to unlock</p>
+
+      {/* Dots */}
+      <div style={{ display: 'flex', gap: 16, marginBottom: 40 }}>
+        {[0,1,2,3].map(i => (
+          <div key={i} style={{
+            width: 14, height: 14, borderRadius: '50%',
+            background: i < passcode.length ? gold : 'transparent',
+            border: `2px solid ${i < passcode.length ? gold : textLight}`,
+            transition: 'all 0.2s ease'
+          }} />
+        ))}
+      </div>
+
+      {/* Numpad */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, maxWidth: 260 }}>
+        {[1,2,3,4,5,6,7,8,9,'bio',0,'del'].map(key => (
+          <button key={key} onClick={() => {
+            if (key === 'del') setPasscode(passcode.slice(0, -1));
+            else if (key === 'bio') { setLocked(false); }
+            else handlePasscode(String(key));
+          }} style={{
+            width: 72, height: 72, borderRadius: '50%',
+            background: key === 'bio' ? `${gold}15` : (darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'),
+            border: `1px solid ${glassBorder}`,
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'all 0.2s ease'
+          }}>
+            {key === 'bio' ? (
+              <span style={{ fontSize: 24 }}>👆</span>
+            ) : key === 'del' ? (
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted }}>⌫</span>
+            ) : (
+              <span style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 28, color: textMain
+              }}>{key}</span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      <p style={{
+        fontFamily: "'Manrope', sans-serif",
+        fontSize: 11, color: textLight, marginTop: 20
+      }}>Your entries never leave this device unless you choose to share them.</p>
+    </div>
+  );
+
+  const renderEntries = () => (
+    <div style={{ padding: '60px 20px 100px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>
+            ON-DEVICE · ENCRYPTED
+          </p>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, color: textMain, fontWeight: 500 }}>
+            My Journal
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={() => setDarkMode(!darkMode)} style={{
+            background: glassBg, border: `1px solid ${glassBorder}`,
+            borderRadius: 14, width: 40, height: 40, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <span style={{ fontSize: 16 }}>{darkMode ? '☀️' : '🌙'}</span>
+          </button>
+          <button onClick={() => setLocked(true)} style={{
+            background: glassBg, border: `1px solid ${glassBorder}`,
+            borderRadius: 14, width: 40, height: 40, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <span style={{ fontSize: 16 }}>🔒</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Quick Stats */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+        {[
+          { label: 'Entries', value: entries.length, color: gold },
+          { label: 'Streak', value: '5 days', color: '#7BA68C' },
+          { label: 'Shared', value: entries.filter(e => e.sharedWithTherapist).length, color: '#B07AAF' },
+        ].map((stat, i) => (
+          <div key={i} style={{
+            flex: 1, background: glassBg, backdropFilter: 'blur(12px)',
+            border: `1px solid ${glassBorder}`, borderRadius: 16,
+            padding: '12px', textAlign: 'center'
+          }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, color: stat.color, fontWeight: 600 }}>
+              {stat.value}
+            </p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Write New Entry */}
+      <button onClick={() => setIsWriting(true)} style={{
+        width: '100%',
+        background: `linear-gradient(135deg, ${gold} 0%, #9A7A3A 100%)`,
+        border: 'none', borderRadius: 20,
+        padding: '16px 20px', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', gap: 12,
+        marginBottom: 10,
+        boxShadow: `0 4px 20px ${gold}30`
+      }}>
+        <span style={{ fontSize: 20 }}>✍️</span>
+        <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#FFFFFF', fontWeight: 600 }}>
+          Write Freely
+        </span>
+      </button>
+
+      <button onClick={() => setShowPrompts(true)} style={{
+        width: '100%',
+        background: glassBg, backdropFilter: 'blur(12px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 20,
+        padding: '16px 20px', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', gap: 12,
+        marginBottom: 24
+      }}>
+        <span style={{ fontSize: 20 }}>📝</span>
+        <div style={{ textAlign: 'left' }}>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: textMain, fontWeight: 500, display: 'block' }}>
+            Guided Prompts
+          </span>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>
+            {Object.keys(JOURNAL_PROMPTS).length} chapters · {Object.values(JOURNAL_PROMPTS).flat().length} prompts
+          </span>
+        </div>
+      </button>
+
+      {/* Entries */}
+      <p style={{
+        fontFamily: "'Cormorant Garamond', serif", fontSize: 20,
+        color: textMain, fontWeight: 500, marginBottom: 14
+      }}>Recent Entries</p>
+
+      {entries.map(entry => (
+        <button key={entry.id} onClick={() => {
+          setSelectedEntry(entry);
+          setView('read');
+        }} style={{
+          width: '100%',
+          background: glassBg, backdropFilter: 'blur(12px)',
+          border: `1px solid ${glassBorder}`, borderRadius: 20,
+          padding: '16px 18px', cursor: 'pointer',
+          marginBottom: 10, textAlign: 'left',
+          transition: 'all 0.3s ease'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: textMain, fontWeight: 600, marginBottom: 2 }}>
+                {entry.title}
+              </p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textLight }}>
+                {entry.date} · {entry.time}
+                {entry.chapter && ` · ${entry.chapter}`}
+              </p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {entry.sharedWithTherapist && <span style={{ fontSize: 12 }}>🤝</span>}
+              <span style={{ fontSize: 18 }}>{entry.mood.emoji}</span>
+            </div>
+          </div>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 12,
+            color: textMuted, lineHeight: 1.5,
+            overflow: 'hidden', textOverflow: 'ellipsis',
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'
+          }}>{entry.content}</p>
+          {entry.tags.length > 0 && (
+            <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+              {entry.tags.map(tag => (
+                <span key={tag} style={{
+                  fontFamily: "'Manrope', sans-serif", fontSize: 9,
+                  color: gold, fontWeight: 500,
+                  background: `${gold}12`, borderRadius: 8,
+                  padding: '3px 8px'
+                }}>#{tag}</span>
+              ))}
+            </div>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+
+  const renderReadEntry = () => {
+    if (!selectedEntry) return null;
+    return (
+      <div style={{ padding: '60px 20px 100px' }}>
+        <button onClick={() => { setSelectedEntry(null); setView('entries'); }} style={{
+          background: 'transparent', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20
+        }}>
+          <span style={{ color: textMuted }}>‹</span>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted }}>Back</span>
+        </button>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+          <div>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: textMain, fontWeight: 500, marginBottom: 4 }}>
+              {selectedEntry.title}
+            </p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted }}>
+              {selectedEntry.date} · {selectedEntry.time}
+            </p>
+          </div>
+          <span style={{ fontSize: 28 }}>{selectedEntry.mood.emoji}</span>
+        </div>
+
+        {selectedEntry.prompt && (
+          <div style={{
+            background: `${gold}10`, border: `1px solid ${gold}25`,
+            borderRadius: 16, padding: '14px 16px', marginBottom: 20
+          }}>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: gold, fontWeight: 600, letterSpacing: '0.04em', marginBottom: 4 }}>
+              GUIDED PROMPT · {selectedEntry.chapter}
+            </p>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: textMain, fontStyle: 'italic', lineHeight: 1.5 }}>
+              {selectedEntry.prompt}
+            </p>
+          </div>
+        )}
+
+        <p style={{
+          fontFamily: "'Manrope', sans-serif", fontSize: 14,
+          color: textMain, lineHeight: 1.8, marginBottom: 24
+        }}>{selectedEntry.content}</p>
+
+        {selectedEntry.tags.length > 0 && (
+          <div style={{ display: 'flex', gap: 6, marginBottom: 24, flexWrap: 'wrap' }}>
+            {selectedEntry.tags.map(tag => (
+              <span key={tag} style={{
+                fontFamily: "'Manrope', sans-serif", fontSize: 10,
+                color: gold, fontWeight: 500,
+                background: `${gold}12`, borderRadius: 10, padding: '4px 10px'
+              }}>#{tag}</span>
+            ))}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={() => setShowShareDialog(true)} style={{
+            flex: 1,
+            background: selectedEntry.sharedWithTherapist ? '#7BA68C18' : glassBg,
+            border: `1px solid ${selectedEntry.sharedWithTherapist ? '#7BA68C40' : glassBorder}`,
+            borderRadius: 16, padding: '14px', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8
+          }}>
+            <span style={{ fontSize: 16 }}>{selectedEntry.sharedWithTherapist ? '✅' : '🤝'}</span>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMain }}>
+              {selectedEntry.sharedWithTherapist ? 'Shared with therapist' : 'Share with therapist'}
+            </span>
+          </button>
+          <button style={{
+            background: glassBg, border: `1px solid ${glassBorder}`,
+            borderRadius: 16, padding: '14px 18px', cursor: 'pointer'
+          }}>
+            <span style={{ fontSize: 16 }}>📤</span>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderWriting = () => (
+    <div style={{ padding: '60px 20px 100px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <button onClick={() => setIsWriting(false)} style={{
+          background: 'transparent', border: 'none', cursor: 'pointer'
+        }}>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted }}>Cancel</span>
+        </button>
+        <button style={{
+          background: gold, border: 'none', borderRadius: 12,
+          padding: '8px 20px', cursor: 'pointer'
+        }}>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#FFFFFF', fontWeight: 600 }}>Save</span>
+        </button>
+      </div>
+
+      {/* Mood selector */}
+      <div style={{ marginBottom: 20 }}>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, marginBottom: 8 }}>How are you feeling?</p>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {MOOD_TAGS.map(m => (
+            <button key={m.label} onClick={() => setNewEntry({...newEntry, mood: m})} style={{
+              background: newEntry.mood?.label === m.label ? `${gold}20` : (darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'),
+              border: `1px solid ${newEntry.mood?.label === m.label ? `${gold}40` : glassBorder}`,
+              borderRadius: 12, padding: '6px 10px', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 4
+            }}>
+              <span style={{ fontSize: 14 }}>{m.emoji}</span>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>{m.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Title */}
+      <div style={{
+        background: 'transparent', borderBottom: `1px solid ${glassBorder}`,
+        marginBottom: 16, paddingBottom: 8
+      }}>
+        <input
+          placeholder="Title (optional)"
+          value={newEntry.title}
+          onChange={(e) => setNewEntry({...newEntry, title: e.target.value})}
+          style={{
+            width: '100%', background: 'transparent', border: 'none', outline: 'none',
+            fontFamily: "'Cormorant Garamond', serif", fontSize: 22,
+            color: textMain, fontWeight: 500
+          }}
+        />
+      </div>
+
+      {/* Content */}
+      <textarea
+        placeholder="Write freely. This is your safe space. No one sees this unless you choose to share it..."
+        value={newEntry.content}
+        onChange={(e) => setNewEntry({...newEntry, content: e.target.value})}
+        style={{
+          width: '100%', minHeight: 400, background: 'transparent',
+          border: 'none', outline: 'none', resize: 'none',
+          fontFamily: "'Manrope', sans-serif", fontSize: 14,
+          color: textMain, lineHeight: 1.8,
+          caretColor: gold
+        }}
+      />
+
+      {/* Footer tools */}
+      <div style={{
+        display: 'flex', gap: 12, paddingTop: 16,
+        borderTop: `1px solid ${glassBorder}`
+      }}>
+        {[
+          { icon: '📝', label: 'Prompt' },
+          { icon: '🏷', label: 'Tag' },
+          { icon: '🤝', label: 'Share' },
+          { icon: '📤', label: 'Export' },
+        ].map(tool => (
+          <button key={tool.label} style={{
+            background: glassBg, border: `1px solid ${glassBorder}`,
+            borderRadius: 12, padding: '8px 14px', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 6
+          }}>
+            <span style={{ fontSize: 14 }}>{tool.icon}</span>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>{tool.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderPrompts = () => (
+    <div style={{ padding: '60px 20px 100px' }}>
+      <button onClick={() => {
+        if (selectedChapter) setSelectedChapter(null);
+        else setShowPrompts(false);
+      }} style={{
+        background: 'transparent', border: 'none', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20
+      }}>
+        <span style={{ color: textMuted }}>‹</span>
+        <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted }}>Back</span>
+      </button>
+
+      <p style={{
+        fontFamily: "'Cormorant Garamond', serif", fontSize: 24,
+        color: textMain, fontWeight: 500, marginBottom: 4
+      }}>{selectedChapter ? selectedChapter : 'Guided Journal Prompts'}</p>
+      <p style={{
+        fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, marginBottom: 20
+      }}>{selectedChapter ? `${JOURNAL_PROMPTS[selectedChapter].length} prompts` : 'Exercises from every chapter of the book'}</p>
+
+      {!selectedChapter ? (
+        Object.keys(JOURNAL_PROMPTS).map(chapter => (
+          <button key={chapter} onClick={() => setSelectedChapter(chapter)} style={{
+            width: '100%', background: glassBg, backdropFilter: 'blur(12px)',
+            border: `1px solid ${glassBorder}`, borderRadius: 20,
+            padding: '16px 18px', cursor: 'pointer', marginBottom: 10,
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            textAlign: 'left'
+          }}>
+            <div>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: textMain, fontWeight: 500 }}>{chapter}</p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>
+                {JOURNAL_PROMPTS[chapter].length} prompts
+              </p>
+            </div>
+            <span style={{ color: textLight }}>›</span>
+          </button>
+        ))
+      ) : (
+        JOURNAL_PROMPTS[selectedChapter].map((prompt, i) => (
+          <button key={i} onClick={() => {
+            setNewEntry({ title: '', content: '', mood: null, tags: [] });
+            setIsWriting(true);
+            setShowPrompts(false);
+            setSelectedChapter(null);
+          }} style={{
+            width: '100%', background: glassBg, backdropFilter: 'blur(12px)',
+            border: `1px solid ${glassBorder}`, borderRadius: 20,
+            padding: '18px', cursor: 'pointer', marginBottom: 10,
+            textAlign: 'left'
+          }}>
+            <div style={{
+              fontFamily: "'Manrope', sans-serif", fontSize: 10, color: gold,
+              fontWeight: 600, letterSpacing: '0.04em', marginBottom: 6
+            }}>PROMPT {i + 1}</div>
+            <p style={{
+              fontFamily: "'Cormorant Garamond', serif", fontSize: 16,
+              color: textMain, lineHeight: 1.5, fontStyle: 'italic'
+            }}>{prompt}</p>
+            <div style={{
+              marginTop: 10, display: 'flex', alignItems: 'center', gap: 6
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: gold, fontWeight: 500 }}>
+                Start writing →
+              </span>
+            </div>
+          </button>
+        ))
+      )}
+    </div>
+  );
+
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
+      minHeight: '100vh', background: darkMode ? '#020805' : '#F0EDE8',
+      padding: 20, fontFamily: "'Manrope', sans-serif"
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      <div style={{
+        width: 390, minHeight: 844, background: bg,
+        borderRadius: 44, overflow: 'hidden', position: 'relative',
+        boxShadow: darkMode
+          ? '0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,160,89,0.08)'
+          : '0 25px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)',
+      }}>
+        <div style={{ height: 844, overflowY: 'auto', scrollbarWidth: 'none' }}>
+          {locked && renderLockScreen()}
+          {!locked && showPrompts && renderPrompts()}
+          {!locked && !showPrompts && isWriting && renderWriting()}
+          {!locked && !showPrompts && !isWriting && view === 'entries' && renderEntries()}
+          {!locked && !showPrompts && !isWriting && view === 'read' && renderReadEntry()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<RSDJournal />, document.getElementById('root'));

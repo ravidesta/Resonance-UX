@@ -1,0 +1,871 @@
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ============================================================
+// RSD BREATHWORK - Animated Breathwork & Calming Engine
+// Syncs with Apple Watch. Multiple techniques for RSD triggers.
+// ============================================================
+
+const BREATH_TECHNIQUES = [
+  {
+    id: 'calm-storm',
+    name: 'Calm the Storm',
+    subtitle: 'For RSD Triggers',
+    description: 'When rejection hits hard, this breath pattern activates your vagus nerve and brings you back to safety.',
+    inhale: 4, hold: 4, exhale: 6, holdOut: 2,
+    rounds: 6,
+    color: '#6A9BC2',
+    gradient: 'linear-gradient(135deg, #6A9BC2 0%, #3A5A7A 100%)',
+    icon: '🌊',
+    music: 'ocean',
+    polyvagal: 'Activates ventral vagal (safe & social)'
+  },
+  {
+    id: 'grounding',
+    name: 'Ground & Root',
+    subtitle: 'For Anxiety & Overwhelm',
+    description: 'Extended exhale pattern that tells your nervous system you are safe.',
+    inhale: 4, hold: 2, exhale: 8, holdOut: 0,
+    rounds: 8,
+    color: '#7BA68C',
+    gradient: 'linear-gradient(135deg, #7BA68C 0%, #4A6A5C 100%)',
+    icon: '🌿',
+    music: 'forest',
+    polyvagal: 'Shifts from sympathetic to ventral vagal'
+  },
+  {
+    id: 'box',
+    name: 'Box Breathing',
+    subtitle: 'For Focus & Clarity',
+    description: 'Military-grade focus technique. Equal counts create neural balance.',
+    inhale: 4, hold: 4, exhale: 4, holdOut: 4,
+    rounds: 6,
+    color: '#C5A059',
+    gradient: 'linear-gradient(135deg, #C5A059 0%, #8A6A2A 100%)',
+    icon: '🔲',
+    music: 'ambient',
+    polyvagal: 'Balances sympathetic & parasympathetic'
+  },
+  {
+    id: 'compassion',
+    name: 'Self-Compassion Breath',
+    subtitle: 'For Shame Spirals',
+    description: 'Breathe in kindness for yourself. Breathe out self-judgment.',
+    inhale: 5, hold: 3, exhale: 7, holdOut: 0,
+    rounds: 8,
+    color: '#B07AAF',
+    gradient: 'linear-gradient(135deg, #B07AAF 0%, #7A4A79 100%)',
+    icon: '💜',
+    music: 'gentle',
+    polyvagal: 'Engages social engagement system'
+  },
+  {
+    id: 'energy',
+    name: 'Energize',
+    subtitle: 'For ADHD Fog & Shutdown',
+    description: 'Quick rhythmic breathing to activate your sympathetic system gently.',
+    inhale: 3, hold: 1, exhale: 3, holdOut: 1,
+    rounds: 10,
+    color: '#D4896A',
+    gradient: 'linear-gradient(135deg, #D4896A 0%, #A45A3A 100%)',
+    icon: '🔥',
+    music: 'rhythmic',
+    polyvagal: 'Gentle sympathetic activation'
+  },
+  {
+    id: 'sleep',
+    name: 'Drift to Sleep',
+    subtitle: 'For Racing Thoughts',
+    description: 'Ultra-slow pattern that quiets the mind and invites deep rest.',
+    inhale: 4, hold: 7, exhale: 8, holdOut: 0,
+    rounds: 6,
+    color: '#5A6A8A',
+    gradient: 'linear-gradient(135deg, #3A4A6A 0%, #1A2A4A 100%)',
+    icon: '🌙',
+    music: 'sleep',
+    polyvagal: 'Deep dorsal vagal (safe rest)'
+  }
+];
+
+const FAVORITE_QUOTES = [
+  "This feeling will pass. You are not your rejection.",
+  "Your nervous system is trying to protect you. Thank it, then guide it.",
+  "Breathe in what you need. Release what no longer serves you.",
+  "You are safe. You are worthy. You are enough.",
+  "Sensitivity is your superpower, not your weakness.",
+  "Between the trigger and the response, there is you.",
+  "Every breath is a chance to come home to yourself."
+];
+
+function RSDBreathwork() {
+  const [view, setView] = useState('menu');
+  const [selectedTechnique, setSelectedTechnique] = useState(null);
+  const [isBreathing, setIsBreathing] = useState(false);
+  const [phase, setPhase] = useState('ready');
+  const [phaseTime, setPhaseTime] = useState(0);
+  const [currentRound, setCurrentRound] = useState(0);
+  const [totalBreaths, setTotalBreaths] = useState(0);
+  const [darkMode, setDarkMode] = useState(true);
+  const [showAnimation, setShowAnimation] = useState('circle');
+  const [watchSync, setWatchSync] = useState(true);
+  const [favoriteQuote, setFavoriteQuote] = useState(0);
+  const [completed, setCompleted] = useState(false);
+  const [hapticFeedback, setHapticFeedback] = useState(true);
+  const [musicPlaying, setMusicPlaying] = useState(true);
+  const [sessionHistory, setSessionHistory] = useState([
+    { date: 'Today', technique: 'Calm the Storm', duration: '4:30', mood: 'better' },
+    { date: 'Yesterday', technique: 'Box Breathing', duration: '6:00', mood: 'calm' },
+    { date: 'Mar 19', technique: 'Self-Compassion', duration: '5:15', mood: 'peaceful' },
+  ]);
+
+  const animFrame = useRef(null);
+  const timerRef = useRef(null);
+  const startTimeRef = useRef(null);
+
+  const bg = darkMode ? '#05100B' : '#FAFAF8';
+  const surface = darkMode ? '#0A1C14' : '#FFFFFF';
+  const textMain = darkMode ? '#E8F0EA' : '#122E21';
+  const textMuted = darkMode ? '#8A9C91' : '#5C7065';
+  const glassBg = darkMode ? 'rgba(10, 28, 20, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+  const glassBorder = darkMode ? 'rgba(197, 160, 89, 0.12)' : 'rgba(18, 46, 33, 0.08)';
+  const gold = '#C5A059';
+
+  // Animation state
+  const [animProgress, setAnimProgress] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimProgress(prev => (prev + 1) % 360);
+    }, 40);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (!isBreathing || !selectedTechnique) return;
+
+    const t = selectedTechnique;
+    const phases = [];
+    if (t.inhale > 0) phases.push({ name: 'inhale', duration: t.inhale, label: 'Breathe In' });
+    if (t.hold > 0) phases.push({ name: 'hold', duration: t.hold, label: 'Hold' });
+    if (t.exhale > 0) phases.push({ name: 'exhale', duration: t.exhale, label: 'Breathe Out' });
+    if (t.holdOut > 0) phases.push({ name: 'holdOut', duration: t.holdOut, label: 'Rest' });
+
+    let phaseIdx = 0;
+    let secondsInPhase = 0;
+    let round = 1;
+
+    setPhase(phases[0].name);
+    setPhaseTime(phases[0].duration);
+    setCurrentRound(1);
+
+    const interval = setInterval(() => {
+      secondsInPhase++;
+      const currentPhase = phases[phaseIdx];
+
+      if (secondsInPhase >= currentPhase.duration) {
+        secondsInPhase = 0;
+        phaseIdx++;
+
+        if (phaseIdx >= phases.length) {
+          phaseIdx = 0;
+          round++;
+          setTotalBreaths(prev => prev + 1);
+
+          if (round > t.rounds) {
+            setIsBreathing(false);
+            setCompleted(true);
+            setPhase('complete');
+            clearInterval(interval);
+            return;
+          }
+          setCurrentRound(round);
+        }
+
+        setPhase(phases[phaseIdx].name);
+        setPhaseTime(phases[phaseIdx].duration - secondsInPhase);
+      } else {
+        setPhaseTime(phases[phaseIdx].duration - secondsInPhase);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isBreathing, selectedTechnique]);
+
+  const getBreathScale = () => {
+    if (!isBreathing) {
+      return 1 + Math.sin(animProgress * 0.017) * 0.05;
+    }
+    switch (phase) {
+      case 'inhale': return 1.4;
+      case 'hold': return 1.4;
+      case 'exhale': return 0.7;
+      case 'holdOut': return 0.7;
+      default: return 1;
+    }
+  };
+
+  const getPhaseLabel = () => {
+    switch (phase) {
+      case 'inhale': return 'Breathe In';
+      case 'hold': return 'Hold';
+      case 'exhale': return 'Breathe Out';
+      case 'holdOut': return 'Rest';
+      case 'complete': return 'Complete';
+      default: return 'Ready';
+    }
+  };
+
+  const getPhaseColor = () => {
+    if (!selectedTechnique) return gold;
+    return selectedTechnique.color;
+  };
+
+  const renderMenu = () => (
+    <div style={{ padding: '60px 20px 100px' }}>
+      <div style={{ marginBottom: 24 }}>
+        <p style={{
+          fontFamily: "'Manrope', sans-serif",
+          fontSize: 11,
+          color: textMuted,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          marginBottom: 4
+        }}>BREATHWORK FOR RSD & ADHD</p>
+        <p style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontSize: 28,
+          color: textMain,
+          fontWeight: 500
+        }}>Find Your Calm</p>
+      </div>
+
+      {/* Quick SOS Button */}
+      <button onClick={() => {
+        setSelectedTechnique(BREATH_TECHNIQUES[0]);
+        setView('session');
+        setIsBreathing(true);
+      }} style={{
+        width: '100%',
+        background: 'linear-gradient(135deg, #D4896A 0%, #A45A3A 100%)',
+        border: 'none',
+        borderRadius: 24,
+        padding: '20px',
+        cursor: 'pointer',
+        marginBottom: 20,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          position: 'absolute', top: -30, right: -30,
+          width: 100, height: 100, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.1)',
+          animation: 'breathe-fast 2s ease-in-out infinite'
+        }} />
+        <div style={{
+          width: 48, height: 48, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.2)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 24
+        }}>🆘</div>
+        <div style={{ textAlign: 'left' }}>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 16,
+            color: '#FFFFFF',
+            fontWeight: 600,
+            marginBottom: 2
+          }}>I Need to Calm Down NOW</p>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 12,
+            color: 'rgba(255,255,255,0.8)'
+          }}>Instant 2-minute calming breath</p>
+        </div>
+      </button>
+
+      {/* Technique Cards */}
+      <p style={{
+        fontFamily: "'Cormorant Garamond', serif",
+        fontSize: 20,
+        color: textMain,
+        fontWeight: 500,
+        marginBottom: 14
+      }}>Choose Your Practice</p>
+
+      {BREATH_TECHNIQUES.map(tech => (
+        <button key={tech.id} onClick={() => {
+          setSelectedTechnique(tech);
+          setView('preview');
+        }} style={{
+          width: '100%',
+          background: glassBg,
+          backdropFilter: 'blur(16px)',
+          border: `1px solid ${glassBorder}`,
+          borderRadius: 20,
+          padding: '16px 18px',
+          cursor: 'pointer',
+          marginBottom: 10,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          transition: 'all 0.3s ease'
+        }}>
+          <div style={{
+            width: 50, height: 50, borderRadius: 16,
+            background: tech.gradient,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 24,
+            boxShadow: `0 4px 16px ${tech.color}30`,
+            flexShrink: 0
+          }}>{tech.icon}</div>
+          <div style={{ textAlign: 'left', flex: 1 }}>
+            <p style={{
+              fontFamily: "'Manrope', sans-serif",
+              fontSize: 14,
+              color: textMain,
+              fontWeight: 600,
+              marginBottom: 2
+            }}>{tech.name}</p>
+            <p style={{
+              fontFamily: "'Manrope', sans-serif",
+              fontSize: 11,
+              color: tech.color,
+              fontWeight: 500,
+              marginBottom: 2
+            }}>{tech.subtitle}</p>
+            <p style={{
+              fontFamily: "'Manrope', sans-serif",
+              fontSize: 10,
+              color: textMuted,
+            }}>{tech.inhale}-{tech.hold}-{tech.exhale}{tech.holdOut > 0 ? `-${tech.holdOut}` : ''} pattern  ·  {tech.rounds} rounds</p>
+          </div>
+          <div style={{ color: textMuted, fontSize: 18 }}>›</div>
+        </button>
+      ))}
+
+      {/* Session History */}
+      <div style={{ marginTop: 24 }}>
+        <p style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontSize: 20,
+          color: textMain,
+          fontWeight: 500,
+          marginBottom: 14
+        }}>Recent Sessions</p>
+        {sessionHistory.map((session, i) => (
+          <div key={i} style={{
+            background: glassBg,
+            backdropFilter: 'blur(12px)',
+            border: `1px solid ${glassBorder}`,
+            borderRadius: 16,
+            padding: '12px 16px',
+            marginBottom: 8,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <div>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain, fontWeight: 500 }}>
+                {session.technique}
+              </p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>
+                {session.date}  ·  {session.duration}
+              </p>
+            </div>
+            <span style={{
+              background: '#7BA68C18',
+              borderRadius: 10,
+              padding: '4px 10px',
+              fontFamily: "'Manrope', sans-serif",
+              fontSize: 10,
+              color: '#7BA68C',
+              fontWeight: 500
+            }}>Felt {session.mood}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Watch Integration */}
+      <div style={{
+        background: glassBg,
+        backdropFilter: 'blur(16px)',
+        border: `1px solid ${glassBorder}`,
+        borderRadius: 20,
+        padding: '16px 20px',
+        marginTop: 20,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontSize: 24 }}>⌚</span>
+          <div>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain, fontWeight: 500 }}>
+              Apple Watch
+            </p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>
+              Haptic breath cues enabled
+            </p>
+          </div>
+        </div>
+        <div style={{
+          width: 44, height: 24, borderRadius: 12,
+          background: watchSync ? '#7BA68C' : (darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
+          padding: 2, cursor: 'pointer',
+          transition: 'all 0.3s ease'
+        }} onClick={() => setWatchSync(!watchSync)}>
+          <div style={{
+            width: 20, height: 20, borderRadius: 10,
+            background: '#FFFFFF',
+            transform: watchSync ? 'translateX(20px)' : 'translateX(0)',
+            transition: 'transform 0.3s ease',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+          }} />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPreview = () => {
+    const tech = selectedTechnique;
+    if (!tech) return null;
+
+    return (
+      <div style={{ padding: '60px 20px 100px' }}>
+        <button onClick={() => setView('menu')} style={{
+          background: 'transparent', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6,
+          marginBottom: 24
+        }}>
+          <span style={{ color: textMuted, fontSize: 18 }}>‹</span>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted }}>Back</span>
+        </button>
+
+        <div style={{
+          width: 80, height: 80, borderRadius: 24,
+          background: tech.gradient,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 40,
+          boxShadow: `0 8px 32px ${tech.color}40`,
+          margin: '0 auto 20px'
+        }}>{tech.icon}</div>
+
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <p style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: 28, color: textMain, fontWeight: 500, marginBottom: 4
+          }}>{tech.name}</p>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 14, color: tech.color, fontWeight: 500, marginBottom: 8
+          }}>{tech.subtitle}</p>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 13, color: textMuted, lineHeight: 1.6, maxWidth: 300, margin: '0 auto'
+          }}>{tech.description}</p>
+        </div>
+
+        {/* Pattern visualization */}
+        <div style={{
+          background: glassBg,
+          backdropFilter: 'blur(16px)',
+          border: `1px solid ${glassBorder}`,
+          borderRadius: 24,
+          padding: '20px',
+          marginBottom: 20
+        }}>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 11, color: textMuted, letterSpacing: '0.04em',
+            textTransform: 'uppercase', marginBottom: 14
+          }}>BREATH PATTERN</p>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+            {[
+              { label: 'In', value: tech.inhale, color: tech.color },
+              ...(tech.hold > 0 ? [{ label: 'Hold', value: tech.hold, color: tech.color + '80' }] : []),
+              { label: 'Out', value: tech.exhale, color: tech.color + '60' },
+              ...(tech.holdOut > 0 ? [{ label: 'Rest', value: tech.holdOut, color: tech.color + '40' }] : []),
+            ].map((p, i) => (
+              <div key={i} style={{ textAlign: 'center' }}>
+                <div style={{
+                  width: 56, height: 56, borderRadius: 18,
+                  background: p.color + '20',
+                  border: `2px solid ${p.color}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  marginBottom: 6
+                }}>
+                  <span style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: 24, color: tech.color, fontWeight: 600
+                  }}>{p.value}</span>
+                </div>
+                <span style={{
+                  fontFamily: "'Manrope', sans-serif",
+                  fontSize: 10, color: textMuted
+                }}>{p.label}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{
+            marginTop: 14, display: 'flex', justifyContent: 'center', gap: 20
+          }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>
+              {tech.rounds} rounds
+            </span>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>
+              ~{Math.ceil((tech.inhale + tech.hold + tech.exhale + tech.holdOut) * tech.rounds / 60)} min
+            </span>
+          </div>
+        </div>
+
+        {/* Polyvagal info */}
+        <div style={{
+          background: glassBg,
+          backdropFilter: 'blur(16px)',
+          border: `1px solid ${glassBorder}`,
+          borderRadius: 20,
+          padding: '16px 20px',
+          marginBottom: 24,
+          display: 'flex', alignItems: 'center', gap: 12
+        }}>
+          <span style={{ fontSize: 20 }}>🧠</span>
+          <div>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.03em' }}>
+              POLYVAGAL EFFECT
+            </p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMain, fontWeight: 500 }}>
+              {tech.polyvagal}
+            </p>
+          </div>
+        </div>
+
+        {/* Settings */}
+        <div style={{
+          background: glassBg, backdropFilter: 'blur(16px)',
+          border: `1px solid ${glassBorder}`, borderRadius: 20,
+          padding: '16px 20px', marginBottom: 24
+        }}>
+          {[
+            { label: 'Background Music', value: musicPlaying, toggle: () => setMusicPlaying(!musicPlaying) },
+            { label: 'Watch Haptics', value: hapticFeedback, toggle: () => setHapticFeedback(!hapticFeedback) },
+          ].map((setting, i) => (
+            <div key={i} style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '8px 0',
+              borderBottom: i === 0 ? `1px solid ${glassBorder}` : 'none'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain }}>{setting.label}</span>
+              <div onClick={setting.toggle} style={{
+                width: 44, height: 24, borderRadius: 12,
+                background: setting.value ? '#7BA68C' : (darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
+                padding: 2, cursor: 'pointer', transition: 'all 0.3s ease'
+              }}>
+                <div style={{
+                  width: 20, height: 20, borderRadius: 10, background: '#FFFFFF',
+                  transform: setting.value ? 'translateX(20px)' : 'translateX(0)',
+                  transition: 'transform 0.3s ease',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                }} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Animation style */}
+        <div style={{ marginBottom: 24 }}>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted,
+            letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 12
+          }}>ANIMATION STYLE</p>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {['circle', 'wave', 'petals', 'particles'].map(style => (
+              <button key={style} onClick={() => setShowAnimation(style)} style={{
+                flex: 1,
+                background: showAnimation === style ? tech.color + '20' : glassBg,
+                border: `1px solid ${showAnimation === style ? tech.color + '50' : glassBorder}`,
+                borderRadius: 14,
+                padding: '12px 8px',
+                cursor: 'pointer',
+                textAlign: 'center'
+              }}>
+                <span style={{ fontSize: 20, display: 'block', marginBottom: 4 }}>
+                  {style === 'circle' && '⭕'}
+                  {style === 'wave' && '🌊'}
+                  {style === 'petals' && '🌸'}
+                  {style === 'particles' && '✨'}
+                </span>
+                <span style={{
+                  fontFamily: "'Manrope', sans-serif", fontSize: 10,
+                  color: showAnimation === style ? tech.color : textMuted,
+                  fontWeight: 500, textTransform: 'capitalize'
+                }}>{style}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Start button */}
+        <button onClick={() => {
+          setView('session');
+          setIsBreathing(true);
+          setCompleted(false);
+          setCurrentRound(0);
+          setTotalBreaths(0);
+        }} style={{
+          width: '100%',
+          background: tech.gradient,
+          border: 'none',
+          borderRadius: 20,
+          padding: '18px',
+          cursor: 'pointer',
+          boxShadow: `0 8px 32px ${tech.color}40`
+        }}>
+          <span style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 16, color: '#FFFFFF', fontWeight: 600
+          }}>Begin Breathing</span>
+        </button>
+      </div>
+    );
+  };
+
+  const renderSession = () => {
+    const tech = selectedTechnique;
+    if (!tech) return null;
+    const scale = getBreathScale();
+    const color = tech.color;
+
+    if (completed) {
+      return (
+        <div style={{
+          padding: '60px 20px 100px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 700,
+          textAlign: 'center'
+        }}>
+          <div style={{
+            width: 100, height: 100, borderRadius: '50%',
+            background: `${color}20`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 48, marginBottom: 24
+          }}>✨</div>
+          <p style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: 28, color: textMain, fontWeight: 500, marginBottom: 8
+          }}>Beautiful</p>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 14, color: textMuted, marginBottom: 8, maxWidth: 260
+          }}>You completed {tech.rounds} rounds of {tech.name}</p>
+          <p style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: 16, color: color, fontStyle: 'italic', marginBottom: 32, maxWidth: 280,
+            lineHeight: 1.5
+          }}>"{FAVORITE_QUOTES[Math.floor(Math.random() * FAVORITE_QUOTES.length)]}"</p>
+
+          <p style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 13, color: textMuted, marginBottom: 14
+          }}>How do you feel now?</p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 32 }}>
+            {['Calm', 'Better', 'Peaceful', 'Grounded', 'Still processing'].map(feel => (
+              <button key={feel} style={{
+                background: glassBg, backdropFilter: 'blur(12px)',
+                border: `1px solid ${glassBorder}`, borderRadius: 14,
+                padding: '8px 16px', cursor: 'pointer'
+              }}>
+                <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMain }}>{feel}</span>
+              </button>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, width: '100%' }}>
+            <button onClick={() => { setView('menu'); setCompleted(false); }} style={{
+              flex: 1, background: glassBg, border: `1px solid ${glassBorder}`,
+              borderRadius: 16, padding: '14px', cursor: 'pointer'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain }}>Done</span>
+            </button>
+            <button onClick={() => {
+              setIsBreathing(true); setCompleted(false);
+              setCurrentRound(0); setTotalBreaths(0);
+            }} style={{
+              flex: 1, background: tech.gradient, border: 'none',
+              borderRadius: 16, padding: '14px', cursor: 'pointer'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#FFFFFF', fontWeight: 600 }}>Again</span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div style={{
+        height: 844,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Ambient background */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: `radial-gradient(circle at 50% 50%, ${color}15, transparent 70%)`,
+          transition: 'all 2s ease'
+        }} />
+
+        {/* Back button */}
+        <button onClick={() => { setIsBreathing(false); setView('menu'); }} style={{
+          position: 'absolute', top: 60, left: 20,
+          background: 'rgba(255,255,255,0.08)', border: 'none',
+          borderRadius: 14, padding: '10px 16px', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6
+        }}>
+          <span style={{ color: textMuted }}>✕</span>
+        </button>
+
+        {/* Round indicator */}
+        <div style={{
+          position: 'absolute', top: 60, right: 20,
+          textAlign: 'right'
+        }}>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 11,
+            color: textMuted, letterSpacing: '0.04em'
+          }}>Round {currentRound}/{tech.rounds}</p>
+        </div>
+
+        {/* Main breathing animation */}
+        <div style={{
+          position: 'relative',
+          width: 240, height: 240,
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          {/* Outer ring */}
+          <div style={{
+            position: 'absolute',
+            width: 240, height: 240,
+            borderRadius: '50%',
+            border: `2px solid ${color}20`,
+            transform: `scale(${scale})`,
+            transition: `transform ${phase === 'inhale' ? tech.inhale : phase === 'exhale' ? tech.exhale : 1}s ease-in-out`
+          }} />
+
+          {/* Main circle */}
+          <div style={{
+            width: 180, height: 180,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, ${color}40, ${color}10)`,
+            boxShadow: `0 0 60px ${color}30, 0 0 120px ${color}10`,
+            transform: `scale(${scale})`,
+            transition: `transform ${phase === 'inhale' ? tech.inhale : phase === 'exhale' ? tech.exhale : 1}s ease-in-out`,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <p style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 20,
+              color: textMain,
+              fontWeight: 500,
+              marginBottom: 4
+            }}>{getPhaseLabel()}</p>
+            <p style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 40,
+              color: color,
+              fontWeight: 600
+            }}>{phaseTime}</p>
+          </div>
+
+          {/* Particle ring */}
+          {showAnimation === 'particles' && [...Array(12)].map((_, i) => {
+            const angle = (i / 12) * Math.PI * 2 + animProgress * 0.01;
+            const radius = 105 * scale;
+            return (
+              <div key={i} style={{
+                position: 'absolute',
+                width: 6, height: 6, borderRadius: '50%',
+                background: color,
+                opacity: 0.4 + Math.sin(animProgress * 0.03 + i) * 0.3,
+                left: `calc(50% + ${Math.cos(angle) * radius}px - 3px)`,
+                top: `calc(50% + ${Math.sin(angle) * radius}px - 3px)`,
+                transition: 'all 0.5s ease'
+              }} />
+            );
+          })}
+        </div>
+
+        {/* Phase instruction */}
+        <p style={{
+          fontFamily: "'Manrope', sans-serif",
+          fontSize: 13,
+          color: textMuted,
+          marginTop: 40,
+          textAlign: 'center',
+          maxWidth: 260
+        }}>
+          {phase === 'inhale' && 'Fill your lungs slowly and gently'}
+          {phase === 'hold' && 'Hold softly, no tension'}
+          {phase === 'exhale' && 'Release everything that doesn\'t serve you'}
+          {phase === 'holdOut' && 'Rest in the stillness'}
+        </p>
+
+        {/* Pause button */}
+        <button onClick={() => setIsBreathing(!isBreathing)} style={{
+          position: 'absolute', bottom: 100,
+          background: 'rgba(255,255,255,0.08)',
+          border: `1px solid ${glassBorder}`,
+          borderRadius: 20,
+          padding: '14px 32px',
+          cursor: 'pointer'
+        }}>
+          <span style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 14, color: textMain, fontWeight: 500
+          }}>{isBreathing ? 'Pause' : 'Resume'}</span>
+        </button>
+      </div>
+    );
+  };
+
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
+      minHeight: '100vh', background: darkMode ? '#020805' : '#F0EDE8',
+      padding: 20, fontFamily: "'Manrope', sans-serif"
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+        @keyframes breathe-fast { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.2); opacity: 0.4; } }
+      `}</style>
+
+      <div style={{
+        width: 390, minHeight: 844, background: bg,
+        borderRadius: 44, overflow: 'hidden', position: 'relative',
+        boxShadow: darkMode
+          ? '0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,160,89,0.08)'
+          : '0 25px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)',
+      }}>
+        <div style={{ height: 844, overflowY: 'auto', scrollbarWidth: 'none' }}>
+          {view === 'menu' && renderMenu()}
+          {view === 'preview' && renderPreview()}
+          {view === 'session' && renderSession()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<RSDBreathwork />, document.getElementById('root'));

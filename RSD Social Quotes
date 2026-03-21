@@ -1,0 +1,355 @@
+const { useState, useEffect } = React;
+
+// ============================================================
+// RSD SOCIAL QUOTES - Shareable Quote Cards
+// Instagram, Pinterest, X, Facebook optimized
+// Beautiful paintings with healing words from the book
+// ============================================================
+
+const QUOTE_CARDS = [
+  {
+    id: 1, text: "Your sensitivity is not a flaw. It is the very thing that makes you capable of extraordinary empathy, creativity, and connection.",
+    source: "Chapter 10 - Turning Sensitivity into Strength",
+    palette: { bg: 'linear-gradient(135deg, #7BA68C 0%, #4A6A5C 100%)', text: '#FFFFFF', accent: '#E6D0A1' },
+    painting: 'Soft watercolor meadow with golden light filtering through trees',
+    tags: ['#RSD', '#ADHD', '#SensitivityIsStrength', '#MentalHealth'],
+  },
+  {
+    id: 2, text: "Between the trigger and the response, there is a space. In that space is your power to choose your growth.",
+    source: "Chapter 4 - Rejection-Proof Your Mind",
+    palette: { bg: 'linear-gradient(135deg, #6A9BC2 0%, #3A5A7A 100%)', text: '#FFFFFF', accent: '#E6D0A1' },
+    painting: 'Ocean at dawn with gentle waves and a calm horizon',
+    tags: ['#RejectionSensitive', '#EmotionalRegulation', '#Healing'],
+  },
+  {
+    id: 3, text: "You are not your rejection. You are the resilience that keeps choosing to try again.",
+    source: "Chapter 1 - The Hidden Struggle",
+    palette: { bg: 'linear-gradient(135deg, #B07AAF 0%, #7A4A79 100%)', text: '#FFFFFF', accent: '#E6D0A1' },
+    painting: 'Purple wildflowers growing through rocky terrain',
+    tags: ['#RSD', '#Resilience', '#YouAreEnough', '#ADHD'],
+  },
+  {
+    id: 4, text: "The shame spiral starts with a lie you tell yourself about your worth. Today, choose a different story.",
+    source: "Chapter 1 - The Shame Spiral",
+    palette: { bg: 'linear-gradient(135deg, #C5A059 0%, #8A6A2A 100%)', text: '#FFFFFF', accent: '#FAFAF8' },
+    painting: 'Golden sunrise over misty mountains with warmth breaking through',
+    tags: ['#ShameSpiral', '#SelfCompassion', '#RSD', '#Healing'],
+  },
+  {
+    id: 5, text: "Your nervous system is trying to protect you. Thank it, then gently guide it back to safety.",
+    source: "Chapter 9 - Polyvagal Theory and ADHD",
+    palette: { bg: 'linear-gradient(135deg, #5A6A8A 0%, #3A4A6A 100%)', text: '#FFFFFF', accent: '#E6D0A1' },
+    painting: 'Night sky with bioluminescent forest and gentle stars',
+    tags: ['#PolyvagalTheory', '#NervousSystem', '#ADHD', '#Safety'],
+  },
+  {
+    id: 6, text: "Emotional intensity is not a weakness. It is the depth from which your greatest empathy, creativity, and love emerge.",
+    source: "Preface - Emotional Whiplash",
+    palette: { bg: 'linear-gradient(135deg, #D4896A 0%, #A45A3A 100%)', text: '#FFFFFF', accent: '#FAFAF8' },
+    painting: 'Abstract warm watercolor with flowing orange and gold',
+    tags: ['#EmotionalIntensity', '#ADHD', '#RSD', '#Strength'],
+  },
+  {
+    id: 7, text: "Every breath is a chance to come home to yourself.",
+    source: "Chapter 5 - Strategies for Managing Emotions",
+    palette: { bg: 'linear-gradient(135deg, #7BA68C 0%, #2A4A3A 100%)', text: '#FFFFFF', accent: '#E6D0A1' },
+    painting: 'Peaceful forest clearing with dappled sunlight',
+    tags: ['#Breathwork', '#Mindfulness', '#RSD', '#CalmTheChaos'],
+  },
+  {
+    id: 8, text: "You deserve relationships that honor your sensitivity, not ones that ask you to shrink.",
+    source: "Chapter 11 - Navigating Relationships",
+    palette: { bg: 'linear-gradient(135deg, #B07AAF 0%, #6A3A69 100%)', text: '#FFFFFF', accent: '#E6D0A1' },
+    painting: 'Two trees growing side by side with intertwined roots',
+    tags: ['#Relationships', '#RSD', '#Boundaries', '#LoveYourself'],
+  },
+  {
+    id: 9, text: "The inner critic is just a scared child trying to keep you safe. Meet it with compassion, not combat.",
+    source: "Chapter 8 - Healing with IFS",
+    palette: { bg: 'linear-gradient(135deg, #8B7EC8 0%, #5A4A8A 100%)', text: '#FFFFFF', accent: '#E6D0A1' },
+    painting: 'Gentle abstract art with soft purple and lavender swirls',
+    tags: ['#IFS', '#InnerCritic', '#SelfCompassion', '#PartsWork'],
+  },
+];
+
+const PLATFORMS = [
+  { id: 'instagram', name: 'Instagram', icon: '📷', size: '1080×1080', aspect: 1 },
+  { id: 'pinterest', name: 'Pinterest', icon: '📌', size: '1000×1500', aspect: 1.5 },
+  { id: 'x', name: 'X / Twitter', icon: '🐦', size: '1200×675', aspect: 0.5625 },
+  { id: 'facebook', name: 'Facebook', icon: '📘', size: '1200×630', aspect: 0.525 },
+  { id: 'story', name: 'Stories', icon: '📱', size: '1080×1920', aspect: 1.78 },
+];
+
+function RSDSocialQuotes() {
+  const [selectedQuote, setSelectedQuote] = useState(0);
+  const [selectedPlatform, setSelectedPlatform] = useState('instagram');
+  const [darkMode, setDarkMode] = useState(false);
+  const [view, setView] = useState('gallery');
+  const [showBookLink, setShowBookLink] = useState(true);
+
+  const bg = darkMode ? '#05100B' : '#FAFAF8';
+  const textMain = darkMode ? '#E8F0EA' : '#122E21';
+  const textMuted = darkMode ? '#8A9C91' : '#5C7065';
+  const glassBg = darkMode ? 'rgba(10, 28, 20, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+  const glassBorder = darkMode ? 'rgba(197, 160, 89, 0.12)' : 'rgba(18, 46, 33, 0.08)';
+  const gold = '#C5A059';
+
+  const quote = QUOTE_CARDS[selectedQuote];
+  const platform = PLATFORMS.find(p => p.id === selectedPlatform);
+
+  const getCardDimensions = () => {
+    const baseWidth = 300;
+    switch (selectedPlatform) {
+      case 'instagram': return { width: baseWidth, height: baseWidth };
+      case 'pinterest': return { width: baseWidth, height: baseWidth * 1.5 };
+      case 'x': return { width: baseWidth, height: baseWidth * 0.5625 };
+      case 'facebook': return { width: baseWidth, height: baseWidth * 0.525 };
+      case 'story': return { width: 200, height: 356 };
+      default: return { width: baseWidth, height: baseWidth };
+    }
+  };
+
+  const dims = getCardDimensions();
+
+  const renderQuoteCard = () => (
+    <div style={{
+      width: dims.width, height: dims.height,
+      background: quote.palette.bg,
+      borderRadius: 20,
+      position: 'relative',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      padding: selectedPlatform === 'story' ? '32px 20px' : '28px 24px',
+      margin: '0 auto'
+    }}>
+      {/* Painting background layer */}
+      <div style={{
+        position: 'absolute', inset: 0, opacity: 0.15,
+        background: `radial-gradient(ellipse at 30% 40%, rgba(255,255,255,0.3), transparent 60%),
+                     radial-gradient(ellipse at 70% 70%, rgba(255,255,255,0.2), transparent 50%)`
+      }} />
+
+      {/* Organic shapes */}
+      <div style={{
+        position: 'absolute', top: '-15%', right: '-10%',
+        width: '60%', height: '60%', borderRadius: '50%',
+        background: 'rgba(255,255,255,0.06)',
+      }} />
+      <div style={{
+        position: 'absolute', bottom: '-20%', left: '-15%',
+        width: '50%', height: '50%', borderRadius: '50%',
+        background: 'rgba(255,255,255,0.04)',
+      }} />
+
+      {/* Content */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontSize: selectedPlatform === 'x' || selectedPlatform === 'facebook' ? 28 : 36,
+          color: quote.palette.accent, lineHeight: 0.8, marginBottom: 8
+        }}>"</div>
+
+        <p style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontSize: selectedPlatform === 'x' || selectedPlatform === 'facebook' ? 14 :
+                   selectedPlatform === 'story' ? 16 : 18,
+          color: quote.palette.text,
+          lineHeight: 1.6,
+          fontStyle: 'italic',
+          fontWeight: 500,
+          marginBottom: 16,
+          textShadow: '0 1px 3px rgba(0,0,0,0.2)'
+        }}>{quote.text}</p>
+
+        {/* Divider */}
+        <div style={{
+          width: 40, height: 2, background: `${quote.palette.accent}60`,
+          borderRadius: 1, marginBottom: 12
+        }} />
+
+        <p style={{
+          fontFamily: "'Manrope', sans-serif",
+          fontSize: 9,
+          color: `${quote.palette.text}90`,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          marginBottom: 4
+        }}>{quote.source}</p>
+
+        {showBookLink && (
+          <p style={{
+            fontFamily: "'Manrope', sans-serif",
+            fontSize: 8,
+            color: quote.palette.accent,
+            letterSpacing: '0.04em',
+            fontWeight: 500
+          }}>RSD & ADHD by Ammanuel Santa Anna</p>
+        )}
+      </div>
+
+      {/* Bottom watermark */}
+      <div style={{
+        position: 'absolute', bottom: 12, right: 16,
+        display: 'flex', alignItems: 'center', gap: 4
+      }}>
+        <span style={{
+          fontFamily: "'Manrope', sans-serif", fontSize: 7,
+          color: `${quote.palette.text}40`,
+          letterSpacing: '0.06em'
+        }}>RESONANCE</span>
+      </div>
+    </div>
+  );
+
+  const renderGallery = () => (
+    <div style={{ padding: '60px 20px 100px' }}>
+      <div style={{ marginBottom: 24 }}>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>
+          SHARE & INSPIRE
+        </p>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, color: textMain, fontWeight: 500 }}>
+          Quote Cards
+        </p>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, marginTop: 4 }}>
+          Beautiful shareable quotes optimized for every platform
+        </p>
+      </div>
+
+      {/* Platform selector */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 20, overflowX: 'auto', scrollbarWidth: 'none' }}>
+        {PLATFORMS.map(p => (
+          <button key={p.id} onClick={() => setSelectedPlatform(p.id)} style={{
+            background: selectedPlatform === p.id ? `${gold}20` : glassBg,
+            border: `1px solid ${selectedPlatform === p.id ? `${gold}40` : glassBorder}`,
+            borderRadius: 14, padding: '8px 12px', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap'
+          }}>
+            <span style={{ fontSize: 14 }}>{p.icon}</span>
+            <div style={{ textAlign: 'left' }}>
+              <span style={{
+                fontFamily: "'Manrope', sans-serif", fontSize: 10,
+                color: selectedPlatform === p.id ? gold : textMuted,
+                fontWeight: selectedPlatform === p.id ? 600 : 400,
+                display: 'block'
+              }}>{p.name}</span>
+              <span style={{
+                fontFamily: "'Manrope', sans-serif", fontSize: 8, color: textLight
+              }}>{p.size}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Preview */}
+      <div style={{ marginBottom: 20 }}>
+        {renderQuoteCard()}
+      </div>
+
+      {/* Tags */}
+      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 16 }}>
+        {quote.tags.map(tag => (
+          <span key={tag} style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 10,
+            color: gold, background: `${gold}10`,
+            borderRadius: 8, padding: '3px 8px'
+          }}>{tag}</span>
+        ))}
+      </div>
+
+      {/* Share buttons */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
+        <button style={{
+          flex: 1, background: gold, border: 'none',
+          borderRadius: 16, padding: '14px', cursor: 'pointer'
+        }}>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#FFF', fontWeight: 600 }}>
+            📤 Share to {platform.name}
+          </span>
+        </button>
+        <button style={{
+          background: glassBg, border: `1px solid ${glassBorder}`,
+          borderRadius: 16, padding: '14px 18px', cursor: 'pointer'
+        }}>
+          <span style={{ fontSize: 16 }}>💾</span>
+        </button>
+      </div>
+
+      {/* Quote selector */}
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, color: textMain, fontWeight: 500, marginBottom: 14 }}>
+        All Quotes
+      </p>
+      {QUOTE_CARDS.map((q, i) => (
+        <button key={q.id} onClick={() => setSelectedQuote(i)} style={{
+          width: '100%',
+          background: selectedQuote === i ? `${gold}10` : glassBg,
+          backdropFilter: 'blur(12px)',
+          border: `1px solid ${selectedQuote === i ? `${gold}30` : glassBorder}`,
+          borderRadius: 20, padding: '14px 18px', cursor: 'pointer',
+          marginBottom: 8, textAlign: 'left'
+        }}>
+          <p style={{
+            fontFamily: "'Cormorant Garamond', serif", fontSize: 14,
+            color: textMain, lineHeight: 1.5, fontStyle: 'italic',
+            marginBottom: 4,
+            overflow: 'hidden', textOverflow: 'ellipsis',
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'
+          }}>"{q.text}"</p>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>{q.source}</p>
+        </button>
+      ))}
+
+      {/* Settings */}
+      <div style={{
+        background: glassBg, backdropFilter: 'blur(12px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 20,
+        padding: '16px 20px', marginTop: 16
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain }}>Show book link</span>
+          <div onClick={() => setShowBookLink(!showBookLink)} style={{
+            width: 44, height: 24, borderRadius: 12,
+            background: showBookLink ? '#7BA68C' : (darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'),
+            padding: 2, cursor: 'pointer', transition: 'all 0.3s ease'
+          }}>
+            <div style={{
+              width: 20, height: 20, borderRadius: 10, background: '#FFFFFF',
+              transform: showBookLink ? 'translateX(20px)' : 'translateX(0)',
+              transition: 'transform 0.3s ease',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+            }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
+      minHeight: '100vh', background: darkMode ? '#020805' : '#F0EDE8',
+      padding: 20, fontFamily: "'Manrope', sans-serif"
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      <div style={{
+        width: 390, minHeight: 844, background: bg,
+        borderRadius: 44, overflow: 'hidden', position: 'relative',
+        boxShadow: darkMode
+          ? '0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,160,89,0.08)'
+          : '0 25px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)',
+      }}>
+        <div style={{ height: 844, overflowY: 'auto', scrollbarWidth: 'none' }}>
+          {renderGallery()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<RSDSocialQuotes />, document.getElementById('root'));

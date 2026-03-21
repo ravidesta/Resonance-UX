@@ -1,0 +1,460 @@
+const { useState, useEffect } = React;
+
+// ============================================================
+// RSD THERAPIST PORTAL - Communication & Clinical Support
+// Between-session messaging, shared journal entries, courses,
+// client progress tracking, RSD-specific clinical resources
+// ============================================================
+
+const CLIENTS = [
+  {
+    id: 1, name: 'Alex M.', initials: 'AM', color: '#6A9BC2',
+    lastSession: 'Mar 19, 2026', nextSession: 'Mar 26, 2026',
+    status: 'active', journalShares: 3, unreadMessages: 2,
+    rsdScore: 7, mood: 'Processing', habits: { completed: 6, total: 10 },
+    notes: 'Working on rejection reframe exercises. Significant progress with IFS parts work.',
+    tags: ['rsd-high', 'ifs-active', 'medication-review']
+  },
+  {
+    id: 2, name: 'Jordan K.', initials: 'JK', color: '#B07AAF',
+    lastSession: 'Mar 20, 2026', nextSession: 'Mar 27, 2026',
+    status: 'active', journalShares: 1, unreadMessages: 0,
+    rsdScore: 5, mood: 'Hopeful', habits: { completed: 8, total: 10 },
+    notes: 'Strong engagement with breathwork app. Exploring polyvagal awareness.',
+    tags: ['adhd-combined', 'breathwork-engaged']
+  },
+  {
+    id: 3, name: 'Sam R.', initials: 'SR', color: '#D4896A',
+    lastSession: 'Mar 18, 2026', nextSession: 'Mar 25, 2026',
+    status: 'needs-attention', journalShares: 5, unreadMessages: 1,
+    rsdScore: 9, mood: 'Triggered', habits: { completed: 2, total: 10 },
+    notes: 'RSD spike after workplace conflict. Assigned Calm the Storm breathing. Consider medication adjustment.',
+    tags: ['rsd-severe', 'crisis-protocol', 'workplace-trigger']
+  }
+];
+
+const SHARED_ENTRIES = [
+  {
+    client: 'Sam R.', date: 'Mar 20', time: '11:42 PM',
+    title: 'Bad day at work',
+    excerpt: 'My manager gave feedback in front of the whole team. I know she didn\'t mean it as an attack but I couldn\'t stop the shame spiral. I used the STOPP technique and it helped a little...',
+    mood: '🔥 Triggered', flagged: true
+  },
+  {
+    client: 'Alex M.', date: 'Mar 20', time: '8:15 PM',
+    title: 'IFS dialogue with Harold',
+    excerpt: 'Had a breakthrough talking to my inner critic. Named him Harold. He\'s been protecting me since 4th grade. I told him I see him...',
+    mood: '💜 Compassion', flagged: false
+  },
+  {
+    client: 'Alex M.', date: 'Mar 19', time: '3:30 PM',
+    title: 'Friend cancelled again',
+    excerpt: 'Used the rejection reframe. First thought: "She doesn\'t want to see me." Reframe: "She has her own life." Getting better at catching it...',
+    mood: '💪 Resilient', flagged: false
+  }
+];
+
+const THERAPIST_COURSES = [
+  {
+    title: 'Understanding RSD: A Clinical Perspective',
+    type: 'Course', format: 'Audio + eBook',
+    lessons: 12, duration: '6 hours',
+    progress: 75, color: '#6A9BC2'
+  },
+  {
+    title: 'IFS for RSD: Parts Work in Practice',
+    type: 'Course', format: 'Video + Workbook',
+    lessons: 8, duration: '4 hours',
+    progress: 30, color: '#B07AAF'
+  },
+  {
+    title: 'Polyvagal-Informed RSD Treatment',
+    type: 'Course', format: 'Audio + PDF',
+    lessons: 10, duration: '5 hours',
+    progress: 0, color: '#7BA68C'
+  },
+  {
+    title: 'Medication Options for RSD & ADHD',
+    type: 'Article', format: 'Non-clinical guide',
+    lessons: 1, duration: '15 min read',
+    progress: 100, color: '#C5A059'
+  }
+];
+
+function TherapistPortal() {
+  const [view, setView] = useState('dashboard');
+  const [darkMode, setDarkMode] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [messageText, setMessageText] = useState('');
+
+  const bg = darkMode ? '#05100B' : '#FAFAF8';
+  const textMain = darkMode ? '#E8F0EA' : '#122E21';
+  const textMuted = darkMode ? '#8A9C91' : '#5C7065';
+  const textLight = darkMode ? '#5C7065' : '#8A9C91';
+  const glassBg = darkMode ? 'rgba(10, 28, 20, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+  const glassBorder = darkMode ? 'rgba(197, 160, 89, 0.12)' : 'rgba(18, 46, 33, 0.08)';
+  const gold = '#C5A059';
+
+  const renderDashboard = () => (
+    <div style={{ padding: '60px 20px 100px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>
+            THERAPIST PORTAL
+          </p>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, color: textMain, fontWeight: 500 }}>
+            Your Clients
+          </p>
+        </div>
+        <button onClick={() => setDarkMode(!darkMode)} style={{
+          background: glassBg, border: `1px solid ${glassBorder}`,
+          borderRadius: 14, width: 40, height: 40, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: 16 }}>{darkMode ? '☀️' : '🌙'}</span>
+        </button>
+      </div>
+
+      {/* Quick Stats */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+        {[
+          { label: 'Active Clients', value: CLIENTS.length, color: gold },
+          { label: 'Unread', value: CLIENTS.reduce((a, c) => a + c.unreadMessages, 0), color: '#D4896A' },
+          { label: 'Journal Shares', value: CLIENTS.reduce((a, c) => a + c.journalShares, 0), color: '#B07AAF' },
+        ].map((stat, i) => (
+          <div key={i} style={{
+            flex: 1, background: glassBg, backdropFilter: 'blur(12px)',
+            border: `1px solid ${glassBorder}`, borderRadius: 16,
+            padding: '14px', textAlign: 'center'
+          }}>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: stat.color, fontWeight: 600 }}>{stat.value}</p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: textMuted }}>{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Needs Attention */}
+      {CLIENTS.filter(c => c.status === 'needs-attention').map(client => (
+        <div key={client.id} style={{
+          background: '#D4896A10', border: '1px solid #D4896A30',
+          borderRadius: 20, padding: '16px 18px', marginBottom: 16,
+          cursor: 'pointer'
+        }} onClick={() => { setSelectedClient(client); setView('client'); }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
+            <span style={{ fontSize: 12 }}>⚠️</span>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: '#D4896A', fontWeight: 600, letterSpacing: '0.04em' }}>
+              NEEDS ATTENTION
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              width: 44, height: 44, borderRadius: 14,
+              background: client.color, display: 'flex',
+              alignItems: 'center', justifyContent: 'center'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#FFF', fontWeight: 600 }}>{client.initials}</span>
+            </div>
+            <div>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: textMain, fontWeight: 600 }}>{client.name}</p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>
+                RSD: {client.rsdScore}/10 · Mood: {client.mood} · Habits: {client.habits.completed}/{client.habits.total}
+              </p>
+            </div>
+          </div>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, lineHeight: 1.5, marginTop: 8 }}>
+            {client.notes}
+          </p>
+        </div>
+      ))}
+
+      {/* Client Cards */}
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, color: textMain, fontWeight: 500, marginBottom: 14 }}>
+        All Clients
+      </p>
+      {CLIENTS.map(client => (
+        <button key={client.id} onClick={() => { setSelectedClient(client); setView('client'); }} style={{
+          width: '100%', background: glassBg, backdropFilter: 'blur(12px)',
+          border: `1px solid ${glassBorder}`, borderRadius: 20,
+          padding: '14px 18px', cursor: 'pointer', marginBottom: 8,
+          display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left'
+        }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 14,
+            background: client.color, display: 'flex',
+            alignItems: 'center', justifyContent: 'center', flexShrink: 0
+          }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#FFF', fontWeight: 600 }}>{client.initials}</span>
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: textMain, fontWeight: 500 }}>{client.name}</p>
+              {client.unreadMessages > 0 && (
+                <div style={{
+                  background: gold, borderRadius: 10, padding: '2px 8px',
+                  fontSize: 10, fontFamily: "'Manrope', sans-serif", color: '#FFF', fontWeight: 600
+                }}>{client.unreadMessages}</div>
+              )}
+            </div>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>
+              Next: {client.nextSession} · {client.journalShares} shared entries
+            </p>
+            {/* Mini habit bar */}
+            <div style={{ display: 'flex', gap: 2, marginTop: 6 }}>
+              {Array(client.habits.total).fill(0).map((_, i) => (
+                <div key={i} style={{
+                  flex: 1, height: 3, borderRadius: 2,
+                  background: i < client.habits.completed ? '#7BA68C60' : (darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)')
+                }} />
+              ))}
+            </div>
+          </div>
+        </button>
+      ))}
+
+      {/* Shared Journal Entries */}
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, color: textMain, fontWeight: 500, marginTop: 24, marginBottom: 14 }}>
+        Recent Shared Entries
+      </p>
+      {SHARED_ENTRIES.map((entry, i) => (
+        <div key={i} style={{
+          background: entry.flagged ? '#D4896A08' : glassBg,
+          backdropFilter: 'blur(12px)',
+          border: `1px solid ${entry.flagged ? '#D4896A20' : glassBorder}`,
+          borderRadius: 20, padding: '14px 18px', marginBottom: 8
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+            <div>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain, fontWeight: 600 }}>{entry.title}</p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>
+                {entry.client} · {entry.date} {entry.time} · {entry.mood}
+              </p>
+            </div>
+            {entry.flagged && <span style={{ fontSize: 14 }}>🚩</span>}
+          </div>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, lineHeight: 1.5,
+            overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box',
+            WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'
+          }}>{entry.excerpt}</p>
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <button style={{
+              background: glassBg, border: `1px solid ${glassBorder}`,
+              borderRadius: 10, padding: '6px 12px', cursor: 'pointer'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>Reply</span>
+            </button>
+            <button style={{
+              background: glassBg, border: `1px solid ${glassBorder}`,
+              borderRadius: 10, padding: '6px 12px', cursor: 'pointer'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>Add to Session Notes</span>
+            </button>
+          </div>
+        </div>
+      ))}
+
+      {/* Therapist Courses */}
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, color: textMain, fontWeight: 500, marginTop: 24, marginBottom: 14 }}>
+        Your RSD Education
+      </p>
+      {THERAPIST_COURSES.map((course, i) => (
+        <div key={i} style={{
+          background: glassBg, backdropFilter: 'blur(12px)',
+          border: `1px solid ${glassBorder}`, borderRadius: 20,
+          padding: '14px 18px', marginBottom: 8, cursor: 'pointer'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+            <div>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain, fontWeight: 500 }}>{course.title}</p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>
+                {course.type} · {course.format} · {course.duration}
+              </p>
+            </div>
+            <span style={{
+              fontFamily: "'Manrope', sans-serif", fontSize: 10,
+              color: course.progress === 100 ? '#7BA68C' : course.progress > 0 ? gold : textLight,
+              fontWeight: 500
+            }}>
+              {course.progress === 100 ? '✅ Done' : course.progress > 0 ? `${course.progress}%` : 'Start'}
+            </span>
+          </div>
+          {course.progress > 0 && course.progress < 100 && (
+            <div style={{ height: 3, borderRadius: 2, background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', marginTop: 8 }}>
+              <div style={{ width: `${course.progress}%`, height: '100%', borderRadius: 2, background: course.color }} />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderClient = () => {
+    if (!selectedClient) return null;
+    const c = selectedClient;
+
+    return (
+      <div style={{ padding: '60px 20px 100px' }}>
+        <button onClick={() => { setView('dashboard'); setSelectedClient(null); }} style={{
+          background: 'transparent', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20
+        }}>
+          <span style={{ color: textMuted }}>‹</span>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted }}>Back</span>
+        </button>
+
+        {/* Client Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: 18,
+            background: c.color, display: 'flex',
+            alignItems: 'center', justifyContent: 'center'
+          }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 18, color: '#FFF', fontWeight: 600 }}>{c.initials}</span>
+          </div>
+          <div>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: textMain, fontWeight: 500 }}>{c.name}</p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>
+              Last session: {c.lastSession} · Next: {c.nextSession}
+            </p>
+          </div>
+        </div>
+
+        {/* Metrics */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
+          {[
+            { label: 'RSD Score', value: `${c.rsdScore}/10`, color: c.rsdScore > 7 ? '#D4896A' : c.rsdScore > 4 ? gold : '#7BA68C' },
+            { label: 'Mood', value: c.mood, color: '#B07AAF' },
+            { label: 'Habits', value: `${c.habits.completed}/${c.habits.total}`, color: '#7BA68C' },
+          ].map((m, i) => (
+            <div key={i} style={{
+              flex: 1, background: glassBg, backdropFilter: 'blur(12px)',
+              border: `1px solid ${glassBorder}`, borderRadius: 16, padding: '12px', textAlign: 'center'
+            }}>
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, color: m.color, fontWeight: 600 }}>{m.value}</p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: textMuted }}>{m.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Tags */}
+        <div style={{ display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
+          {c.tags.map(tag => (
+            <span key={tag} style={{
+              background: tag.includes('crisis') || tag.includes('severe') ? '#D4896A15' : `${gold}10`,
+              border: `1px solid ${tag.includes('crisis') || tag.includes('severe') ? '#D4896A30' : `${gold}20`}`,
+              borderRadius: 10, padding: '4px 10px',
+              fontFamily: "'Manrope', sans-serif", fontSize: 10,
+              color: tag.includes('crisis') || tag.includes('severe') ? '#D4896A' : gold, fontWeight: 500
+            }}>#{tag}</span>
+          ))}
+        </div>
+
+        {/* Clinical Notes */}
+        <div style={{
+          background: glassBg, backdropFilter: 'blur(12px)',
+          border: `1px solid ${glassBorder}`, borderRadius: 20,
+          padding: '16px 18px', marginBottom: 20
+        }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted, letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 8 }}>
+            SESSION NOTES
+          </p>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain, lineHeight: 1.6 }}>{c.notes}</p>
+        </div>
+
+        {/* Message Thread */}
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, color: textMain, fontWeight: 500, marginBottom: 14 }}>
+          Between-Session Messages
+        </p>
+        <div style={{
+          background: glassBg, backdropFilter: 'blur(12px)',
+          border: `1px solid ${glassBorder}`, borderRadius: 20,
+          padding: '16px', marginBottom: 20
+        }}>
+          {[
+            { sender: 'client', text: 'Had a really rough day. Used the STOPP technique when I felt the shame spiral starting. It helped but I\'m still shaky.', time: '8:30 PM' },
+            { sender: 'client', text: 'I shared my journal entry with you — the one about the team meeting.', time: '8:32 PM' },
+          ].map((msg, i) => (
+            <div key={i} style={{
+              display: 'flex', justifyContent: msg.sender === 'therapist' ? 'flex-end' : 'flex-start',
+              marginBottom: 10
+            }}>
+              <div style={{
+                maxWidth: '85%',
+                background: msg.sender === 'therapist' ? '#7BA68C20' : (darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'),
+                borderRadius: 16, padding: '10px 14px'
+              }}>
+                <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMain, lineHeight: 1.5 }}>{msg.text}</p>
+                <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: textLight, marginTop: 4 }}>{msg.time}</p>
+              </div>
+            </div>
+          ))}
+
+          {/* Reply input */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+            <input
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              placeholder="Reply to client..."
+              style={{
+                flex: 1, background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+                border: `1px solid ${glassBorder}`, borderRadius: 14,
+                padding: '10px 14px', outline: 'none',
+                fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMain
+              }}
+            />
+            <button style={{
+              background: gold, border: 'none', borderRadius: 14,
+              padding: '10px 18px', cursor: 'pointer'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#FFF', fontWeight: 600 }}>Send</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {[
+            'Assign Breathwork', 'Assign Journal Prompt', 'Suggest Meditation',
+            'Schedule Emergency Session', 'Review Medication'
+          ].map(action => (
+            <button key={action} style={{
+              background: glassBg, border: `1px solid ${glassBorder}`,
+              borderRadius: 14, padding: '10px 14px', cursor: 'pointer'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>{action}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
+      minHeight: '100vh', background: darkMode ? '#020805' : '#F0EDE8',
+      padding: 20, fontFamily: "'Manrope', sans-serif"
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      <div style={{
+        width: 390, minHeight: 844, background: bg,
+        borderRadius: 44, overflow: 'hidden', position: 'relative',
+        boxShadow: darkMode
+          ? '0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,160,89,0.08)'
+          : '0 25px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)',
+      }}>
+        <div style={{ height: 844, overflowY: 'auto', scrollbarWidth: 'none' }}>
+          {view === 'dashboard' && renderDashboard()}
+          {view === 'client' && renderClient()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<TherapistPortal />, document.getElementById('root'));

@@ -1,0 +1,543 @@
+const { useState, useEffect, useRef } = React;
+
+// ============================================================
+// AVA - Appreciative Inquiry AI Coach for RSD
+// 5D Appreciative Coaching: Define, Discover, Dream, Design, Destiny
+// Strength-based personality assessment conversation
+// ============================================================
+
+const AVA_PHASES = [
+  { id: 'define', name: 'Define', icon: '🔍', color: '#6A9BC2', description: 'Understanding your unique experience' },
+  { id: 'discover', name: 'Discover', icon: '✨', color: '#C5A059', description: 'Finding your peak moments & strengths' },
+  { id: 'dream', name: 'Dream', icon: '🌟', color: '#B07AAF', description: 'Envisioning your best possible life' },
+  { id: 'design', name: 'Design', icon: '🎨', color: '#7BA68C', description: 'Creating your path forward' },
+  { id: 'destiny', name: 'Destiny', icon: '🚀', color: '#D4896A', description: 'Committing to your growth' },
+];
+
+const AVA_CONVERSATIONS = {
+  welcome: [
+    { sender: 'ava', text: "Hi, I'm Ava. 💜", delay: 800 },
+    { sender: 'ava', text: "I'm your appreciative inquiry coach. I'm not here to fix you — because you're not broken.", delay: 1500 },
+    { sender: 'ava', text: "Instead, I'm going to help you discover what makes you extraordinary. Your sensitivity, your depth, your fire — these are gifts.", delay: 2200 },
+    { sender: 'ava', text: "Ready to begin? I'd love to know more about you.", delay: 2800 },
+  ],
+  define: [
+    "Tell me about a time when your sensitivity was actually your superpower. What happened?",
+    "What does RSD feel like in your body when it shows up? Where do you feel it?",
+    "If your RSD had a voice, what would it say it's trying to protect you from?",
+    "What would change in your life if rejection didn't have so much power over you?",
+  ],
+  discover: [
+    "Tell me about the most alive you've ever felt. Paint the picture for me — where were you? Who was there? What were you doing?",
+    "What are you naturally brilliant at? Not what you've been trained to do, but what comes effortlessly?",
+    "When people who love you describe you at your best, what words do they use?",
+    "Think of a moment when you overcame something that felt impossible. What strengths did you draw on?",
+    "What values are so core to who you are that you'd fight for them?",
+  ],
+  dream: [
+    "Imagine your life one year from now, and everything has gone as well as it possibly could. Describe that day.",
+    "If rejection sensitivity was completely manageable, what would you do that you're currently avoiding?",
+    "What kind of relationships would you have if you felt truly safe to be yourself?",
+    "If you could give your younger self one gift, what would it be?",
+  ],
+  design: [
+    "Based on everything you've shared, what's one small step you could take this week toward that dream?",
+    "What support would help you most right now? Be specific.",
+    "What habit or ritual could you create that honors your sensitivity instead of fighting it?",
+    "Who in your life would be an ally in this journey? How could you invite them in?",
+  ],
+  destiny: [
+    "What commitment are you making to yourself right now?",
+    "How will you celebrate your progress, no matter how small?",
+    "What will you do when the old patterns try to pull you back?",
+    "Complete this sentence: 'I am choosing to believe that I am...'",
+  ]
+};
+
+const STRENGTH_CARDS = [
+  { strength: 'Deep Empathy', description: 'You feel what others feel with extraordinary depth. This makes you a powerful connector.', icon: '💜' },
+  { strength: 'Pattern Recognition', description: 'Your ADHD brain spots connections others miss. You see the big picture instantly.', icon: '🔗' },
+  { strength: 'Creative Fire', description: 'Your mind generates ideas at a pace that would exhaust most people. This is your engine.', icon: '🔥' },
+  { strength: 'Fierce Loyalty', description: 'When you love, you love with your whole heart. People are lucky to have you.', icon: '🛡' },
+  { strength: 'Emotional Intelligence', description: 'You read rooms, sense tension, and know when someone is hurting before they say a word.', icon: '🧠' },
+  { strength: 'Resilience', description: 'You\'ve been knocked down by rejection more times than most — and you\'re still here, still trying.', icon: '💪' },
+  { strength: 'Passion', description: 'When something matters to you, you give everything. Your intensity is a gift.', icon: '✨' },
+  { strength: 'Authenticity', description: 'You crave real connection, not surface-level pleasantries. You want to be truly known.', icon: '🌿' },
+];
+
+function AvaCoach() {
+  const [view, setView] = useState('welcome');
+  const [darkMode, setDarkMode] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [inputText, setInputText] = useState('');
+  const [currentPhase, setCurrentPhase] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(false);
+  const [showStrengths, setShowStrengths] = useState(false);
+  const [discoveredStrengths, setDiscoveredStrengths] = useState([]);
+  const [assessmentComplete, setAssessmentComplete] = useState(false);
+  const [showPhaseMap, setShowPhaseMap] = useState(false);
+  const messagesEndRef = useRef(null);
+  const [animDot, setAnimDot] = useState(0);
+
+  const bg = darkMode ? '#05100B' : '#FAFAF8';
+  const textMain = darkMode ? '#E8F0EA' : '#122E21';
+  const textMuted = darkMode ? '#8A9C91' : '#5C7065';
+  const glassBg = darkMode ? 'rgba(10, 28, 20, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+  const glassBorder = darkMode ? 'rgba(197, 160, 89, 0.12)' : 'rgba(18, 46, 33, 0.08)';
+  const gold = '#C5A059';
+
+  useEffect(() => {
+    const interval = setInterval(() => setAnimDot(prev => (prev + 1) % 3), 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const addAvaMessage = (text, delay = 600) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      setMessages(prev => [...prev, { sender: 'ava', text, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
+      setIsTyping(false);
+    }, delay);
+  };
+
+  const handleStartConversation = () => {
+    setView('chat');
+    setMessages([]);
+
+    AVA_CONVERSATIONS.welcome.forEach((msg, i) => {
+      setTimeout(() => {
+        setMessages(prev => [...prev, { sender: 'ava', text: msg.text, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
+        if (i === AVA_CONVERSATIONS.welcome.length - 1) {
+          setTimeout(() => {
+            const phaseKey = AVA_PHASES[0].id;
+            const question = AVA_CONVERSATIONS[phaseKey][0];
+            addAvaMessage(question, 1000);
+          }, 1000);
+        }
+      }, msg.delay);
+    });
+  };
+
+  const handleSend = () => {
+    if (!inputText.trim()) return;
+
+    setMessages(prev => [...prev, {
+      sender: 'user',
+      text: inputText,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }]);
+    setInputText('');
+
+    // Simulate Ava's response
+    const phaseKey = AVA_PHASES[currentPhase].id;
+    const questions = AVA_CONVERSATIONS[phaseKey];
+    const nextQ = questionIndex + 1;
+
+    // Random strength discovery
+    if (Math.random() > 0.5 && discoveredStrengths.length < STRENGTH_CARDS.length) {
+      const undiscovered = STRENGTH_CARDS.filter(s => !discoveredStrengths.includes(s));
+      if (undiscovered.length > 0) {
+        const newStrength = undiscovered[Math.floor(Math.random() * undiscovered.length)];
+        setDiscoveredStrengths(prev => [...prev, newStrength]);
+        setTimeout(() => {
+          addAvaMessage(`${newStrength.icon} I'm noticing something beautiful here. You have **${newStrength.strength}** — ${newStrength.description}`, 1200);
+        }, 800);
+      }
+    }
+
+    if (nextQ < questions.length) {
+      setQuestionIndex(nextQ);
+      setTimeout(() => {
+        addAvaMessage("I hear you. Thank you for sharing that with me. 💜", 800);
+        setTimeout(() => {
+          addAvaMessage(questions[nextQ], 1500);
+        }, 2000);
+      }, 1000);
+    } else {
+      // Move to next phase
+      if (currentPhase < AVA_PHASES.length - 1) {
+        const nextPhase = currentPhase + 1;
+        setCurrentPhase(nextPhase);
+        setQuestionIndex(0);
+        setTimeout(() => {
+          addAvaMessage("That was really powerful. Thank you. 🌿", 800);
+          setTimeout(() => {
+            const nextPhaseData = AVA_PHASES[nextPhase];
+            addAvaMessage(`We're moving into the ${nextPhaseData.name} phase now — ${nextPhaseData.description}. ${nextPhaseData.icon}`, 1500);
+            setTimeout(() => {
+              const nextPhaseKey = nextPhaseData.id;
+              addAvaMessage(AVA_CONVERSATIONS[nextPhaseKey][0], 2000);
+            }, 2500);
+          }, 1800);
+        }, 1000);
+      } else {
+        setAssessmentComplete(true);
+        setTimeout(() => {
+          addAvaMessage("We've completed all five phases of your appreciative inquiry journey. 🌟", 800);
+          setTimeout(() => {
+            addAvaMessage(`I've discovered ${discoveredStrengths.length} core strengths in you. Want to see your full Strength Profile?`, 1500);
+          }, 1800);
+        }, 1000);
+      }
+    }
+  };
+
+  const renderWelcome = () => (
+    <div style={{
+      height: 844, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', padding: 32,
+      textAlign: 'center', position: 'relative', overflow: 'hidden'
+    }}>
+      <div style={{
+        position: 'absolute', top: '30%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 300, height: 300, borderRadius: '50%',
+        background: `radial-gradient(circle, #B07AAF15, transparent)`,
+        animation: 'breathe-glow 4s ease-in-out infinite'
+      }} />
+
+      <div style={{
+        width: 100, height: 100, borderRadius: '50%',
+        background: 'linear-gradient(135deg, #B07AAF 0%, #7A4A79 100%)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 48, marginBottom: 24,
+        boxShadow: '0 8px 40px rgba(176, 122, 175, 0.3)',
+        position: 'relative'
+      }}>✨</div>
+
+      <p style={{
+        fontFamily: "'Cormorant Garamond', serif",
+        fontSize: 32, color: textMain, fontWeight: 500, marginBottom: 8
+      }}>Meet Ava</p>
+      <p style={{
+        fontFamily: "'Manrope', sans-serif",
+        fontSize: 14, color: '#B07AAF', fontWeight: 500, marginBottom: 16
+      }}>Your Appreciative Inquiry Coach</p>
+      <p style={{
+        fontFamily: "'Manrope', sans-serif",
+        fontSize: 13, color: textMuted, lineHeight: 1.7,
+        maxWidth: 300, marginBottom: 32
+      }}>
+        Ava uses the 5D model of Appreciative Inquiry to help you discover your strengths,
+        envision your best life, and create a path forward — all through the lens of living with RSD & ADHD.
+      </p>
+
+      {/* 5D phases preview */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 32 }}>
+        {AVA_PHASES.map(phase => (
+          <div key={phase.id} style={{
+            background: glassBg, backdropFilter: 'blur(12px)',
+            border: `1px solid ${glassBorder}`, borderRadius: 14,
+            padding: '10px 8px', textAlign: 'center', width: 62
+          }}>
+            <span style={{ fontSize: 18, display: 'block', marginBottom: 4 }}>{phase.icon}</span>
+            <span style={{
+              fontFamily: "'Manrope', sans-serif", fontSize: 9,
+              color: phase.color, fontWeight: 600
+            }}>{phase.name}</span>
+          </div>
+        ))}
+      </div>
+
+      <button onClick={handleStartConversation} style={{
+        background: 'linear-gradient(135deg, #B07AAF 0%, #7A4A79 100%)',
+        border: 'none', borderRadius: 20, padding: '16px 48px',
+        cursor: 'pointer', boxShadow: '0 8px 32px rgba(176, 122, 175, 0.3)'
+      }}>
+        <span style={{
+          fontFamily: "'Manrope', sans-serif", fontSize: 15,
+          color: '#FFFFFF', fontWeight: 600
+        }}>Begin Your Journey</span>
+      </button>
+
+      <p style={{
+        fontFamily: "'Manrope', sans-serif", fontSize: 11,
+        color: textMuted, marginTop: 16
+      }}>Takes about 20-30 minutes · Private & on-device</p>
+    </div>
+  );
+
+  const renderChat = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', height: 844 }}>
+      {/* Header */}
+      <div style={{
+        padding: '56px 20px 12px',
+        background: glassBg, backdropFilter: 'blur(20px)',
+        borderBottom: `1px solid ${glassBorder}`,
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #B07AAF, #7A4A79)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 20
+          }}>✨</div>
+          <div>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: textMain, fontWeight: 600 }}>Ava</p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: '#B07AAF' }}>
+              {AVA_PHASES[currentPhase].icon} {AVA_PHASES[currentPhase].name} Phase
+            </p>
+          </div>
+        </div>
+        <button onClick={() => setShowPhaseMap(!showPhaseMap)} style={{
+          background: glassBg, border: `1px solid ${glassBorder}`,
+          borderRadius: 12, padding: '8px 14px', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6
+        }}>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted }}>
+            {currentPhase + 1}/5
+          </span>
+        </button>
+      </div>
+
+      {/* Phase Progress */}
+      {showPhaseMap && (
+        <div style={{
+          padding: '12px 20px', background: glassBg,
+          borderBottom: `1px solid ${glassBorder}`
+        }}>
+          <div style={{ display: 'flex', gap: 4 }}>
+            {AVA_PHASES.map((phase, i) => (
+              <div key={phase.id} style={{
+                flex: 1, height: 4, borderRadius: 2,
+                background: i <= currentPhase ? phase.color : (darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)')
+              }} />
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+            {AVA_PHASES.map((phase, i) => (
+              <span key={phase.id} style={{
+                fontFamily: "'Manrope', sans-serif", fontSize: 8,
+                color: i <= currentPhase ? phase.color : textMuted,
+                fontWeight: i === currentPhase ? 600 : 400
+              }}>{phase.name}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Messages */}
+      <div style={{
+        flex: 1, overflowY: 'auto', padding: '16px 20px',
+        scrollbarWidth: 'none'
+      }}>
+        {messages.map((msg, i) => (
+          <div key={i} style={{
+            display: 'flex',
+            justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+            marginBottom: 12
+          }}>
+            {msg.sender === 'ava' && (
+              <div style={{
+                width: 28, height: 28, borderRadius: '50%',
+                background: 'linear-gradient(135deg, #B07AAF, #7A4A79)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 12, marginRight: 8, flexShrink: 0, marginTop: 4
+              }}>✨</div>
+            )}
+            <div style={{
+              maxWidth: '80%',
+              background: msg.sender === 'user'
+                ? 'linear-gradient(135deg, #B07AAF 0%, #7A4A79 100%)'
+                : glassBg,
+              backdropFilter: msg.sender === 'ava' ? 'blur(12px)' : 'none',
+              border: msg.sender === 'ava' ? `1px solid ${glassBorder}` : 'none',
+              borderRadius: msg.sender === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+              padding: '12px 16px'
+            }}>
+              <p style={{
+                fontFamily: "'Manrope', sans-serif", fontSize: 13,
+                color: msg.sender === 'user' ? '#FFFFFF' : textMain,
+                lineHeight: 1.6
+              }}>{msg.text}</p>
+              <p style={{
+                fontFamily: "'Manrope', sans-serif", fontSize: 9,
+                color: msg.sender === 'user' ? 'rgba(255,255,255,0.5)' : textMuted,
+                marginTop: 4, textAlign: 'right'
+              }}>{msg.time}</p>
+            </div>
+          </div>
+        ))}
+
+        {/* Typing indicator */}
+        {isTyping && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <div style={{
+              width: 28, height: 28, borderRadius: '50%',
+              background: 'linear-gradient(135deg, #B07AAF, #7A4A79)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 12
+            }}>✨</div>
+            <div style={{
+              background: glassBg, backdropFilter: 'blur(12px)',
+              border: `1px solid ${glassBorder}`, borderRadius: '20px 20px 20px 4px',
+              padding: '12px 16px', display: 'flex', gap: 4
+            }}>
+              {[0,1,2].map(i => (
+                <div key={i} style={{
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: '#B07AAF',
+                  opacity: animDot === i ? 1 : 0.3,
+                  transition: 'opacity 0.3s ease'
+                }} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Strength card notification */}
+        {discoveredStrengths.length > 0 && messages.length > 4 && (
+          <button onClick={() => setShowStrengths(true)} style={{
+            width: '100%', background: `${gold}10`,
+            border: `1px solid ${gold}25`, borderRadius: 16,
+            padding: '12px 16px', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 10,
+            marginBottom: 12
+          }}>
+            <span style={{ fontSize: 18 }}>🏆</span>
+            <div style={{ textAlign: 'left' }}>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: gold, fontWeight: 600 }}>
+                {discoveredStrengths.length} Strengths Discovered
+              </p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>
+                Tap to view your Strength Profile
+              </p>
+            </div>
+          </button>
+        )}
+
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input */}
+      <div style={{
+        padding: '12px 20px 36px',
+        background: glassBg, backdropFilter: 'blur(20px)',
+        borderTop: `1px solid ${glassBorder}`
+      }}>
+        <div style={{
+          display: 'flex', gap: 10, alignItems: 'flex-end'
+        }}>
+          <textarea
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+            placeholder="Share your thoughts..."
+            rows={1}
+            style={{
+              flex: 1, background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)',
+              border: `1px solid ${glassBorder}`, borderRadius: 20,
+              padding: '12px 16px', resize: 'none', outline: 'none',
+              fontFamily: "'Manrope', sans-serif", fontSize: 13,
+              color: textMain, maxHeight: 120, lineHeight: 1.5,
+              caretColor: '#B07AAF'
+            }}
+          />
+          <button onClick={handleSend} style={{
+            width: 44, height: 44, borderRadius: '50%',
+            background: inputText.trim() ? 'linear-gradient(135deg, #B07AAF, #7A4A79)' : (darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'),
+            border: 'none', cursor: inputText.trim() ? 'pointer' : 'default',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'all 0.3s ease', flexShrink: 0
+          }}>
+            <span style={{ fontSize: 18, opacity: inputText.trim() ? 1 : 0.3 }}>↑</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Strengths Modal */}
+      {showStrengths && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 20, zIndex: 200
+        }}>
+          <div style={{
+            background: bg, borderRadius: 28, padding: '28px 24px',
+            maxHeight: '80%', overflowY: 'auto', width: '100%',
+            scrollbarWidth: 'none'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <div>
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: textMain, fontWeight: 500 }}>
+                  Your Strengths
+                </p>
+                <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted }}>
+                  Discovered through our conversation
+                </p>
+              </div>
+              <button onClick={() => setShowStrengths(false)} style={{
+                background: glassBg, border: `1px solid ${glassBorder}`,
+                borderRadius: 12, width: 36, height: 36, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>✕</button>
+            </div>
+
+            {discoveredStrengths.map((strength, i) => (
+              <div key={i} style={{
+                background: glassBg, backdropFilter: 'blur(12px)',
+                border: `1px solid ${glassBorder}`, borderRadius: 20,
+                padding: '16px 18px', marginBottom: 10
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                  <span style={{ fontSize: 24 }}>{strength.icon}</span>
+                  <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 16, color: textMain, fontWeight: 600 }}>
+                    {strength.strength}
+                  </p>
+                </div>
+                <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, lineHeight: 1.6 }}>
+                  {strength.description}
+                </p>
+              </div>
+            ))}
+
+            <button style={{
+              width: '100%', background: `${gold}15`, border: `1px solid ${gold}30`,
+              borderRadius: 16, padding: '14px', cursor: 'pointer',
+              marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8
+            }}>
+              <span style={{ fontSize: 14 }}>📤</span>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: gold, fontWeight: 500 }}>
+                Share Strength Profile
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
+      minHeight: '100vh', background: darkMode ? '#020805' : '#F0EDE8',
+      padding: 20, fontFamily: "'Manrope', sans-serif"
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+        @keyframes breathe-glow { 0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 0.3; } 50% { transform: translate(-50%,-50%) scale(1.2); opacity: 0.5; } }
+      `}</style>
+
+      <div style={{
+        width: 390, height: 844, background: bg,
+        borderRadius: 44, overflow: 'hidden', position: 'relative',
+        boxShadow: darkMode
+          ? '0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,160,89,0.08)'
+          : '0 25px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)',
+      }}>
+        {view === 'welcome' && renderWelcome()}
+        {view === 'chat' && renderChat()}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<AvaCoach />, document.getElementById('root'));

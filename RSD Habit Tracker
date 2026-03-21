@@ -1,0 +1,364 @@
+const { useState, useEffect } = React;
+
+// ============================================================
+// RSD HABIT TRACKER - Track emotional patterns, build resilience
+// Polyvagal-aware. RSD-specific habits. Watch widget support.
+// ============================================================
+
+const RSD_HABITS = [
+  { id: 'breathwork', name: 'Breathwork Practice', icon: '🌬', color: '#6A9BC2', category: 'calm', streak: 5, target: 1, completed: true, description: 'Daily calming breath session' },
+  { id: 'journal', name: 'Journal Entry', icon: '📔', color: '#C5A059', category: 'reflect', streak: 12, target: 1, completed: true, description: 'Write freely or use a prompt' },
+  { id: 'reframe', name: 'Rejection Reframe', icon: '🔄', color: '#B07AAF', category: 'grow', streak: 3, target: 1, completed: false, description: 'Reframe one rejection thought' },
+  { id: 'grounding', name: '5-4-3-2-1 Grounding', icon: '🌿', color: '#7BA68C', category: 'calm', streak: 8, target: 1, completed: false, description: 'Sensory grounding exercise' },
+  { id: 'selfcompassion', name: 'Self-Compassion Check', icon: '💜', color: '#B07AAF', category: 'grow', streak: 2, target: 1, completed: false, description: 'Speak to yourself as you would a friend' },
+  { id: 'movement', name: 'Move Your Body', icon: '🏃', color: '#D4896A', category: 'body', streak: 7, target: 1, completed: true, description: 'Any movement for 10+ minutes' },
+  { id: 'connection', name: 'Reach Out to Someone', icon: '💬', color: '#6A9BC2', category: 'connect', streak: 1, target: 1, completed: false, description: 'Text, call, or see someone you care about' },
+  { id: 'meditation', name: 'Guided Meditation', icon: '🧘', color: '#8B7EC8', category: 'calm', streak: 4, target: 1, completed: false, description: 'Chapter meditation or free practice' },
+  { id: 'sleep', name: 'Wind-Down Routine', icon: '🌙', color: '#5A6A8A', category: 'body', streak: 6, target: 1, completed: false, description: 'Screen-free wind-down before bed' },
+  { id: 'boundary', name: 'Set a Boundary', icon: '🛡', color: '#D4896A', category: 'grow', streak: 0, target: 3, completed: false, description: 'Practice saying no or setting a limit', weekly: true },
+];
+
+const CATEGORIES = [
+  { id: 'all', label: 'All', icon: '✨' },
+  { id: 'calm', label: 'Calm', icon: '🌬' },
+  { id: 'reflect', label: 'Reflect', icon: '📔' },
+  { id: 'grow', label: 'Grow', icon: '🌱' },
+  { id: 'body', label: 'Body', icon: '🏃' },
+  { id: 'connect', label: 'Connect', icon: '💬' },
+];
+
+const WEEK_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const WEEK_DATA = [
+  [1,1,1,0,1,0,0], // breathwork
+  [1,1,1,1,1,1,1], // journal
+  [0,1,0,1,1,0,0], // reframe
+  [1,1,1,1,0,1,1], // grounding
+];
+
+const MOOD_HISTORY = [
+  { day: 'Mon', score: 6, label: 'Hopeful' },
+  { day: 'Tue', score: 4, label: 'Triggered' },
+  { day: 'Wed', score: 7, label: 'Calm' },
+  { day: 'Thu', score: 3, label: 'Overwhelmed' },
+  { day: 'Fri', score: 8, label: 'Thriving' },
+  { day: 'Sat', score: 7, label: 'Calm' },
+  { day: 'Sun', score: 6, label: 'Processing' },
+];
+
+function RSDHabitTracker() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [habits, setHabits] = useState(RSD_HABITS);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [view, setView] = useState('today');
+  const [selectedHabit, setSelectedHabit] = useState(null);
+  const [showInsights, setShowInsights] = useState(false);
+
+  const bg = darkMode ? '#05100B' : '#FAFAF8';
+  const textMain = darkMode ? '#E8F0EA' : '#122E21';
+  const textMuted = darkMode ? '#8A9C91' : '#5C7065';
+  const textLight = darkMode ? '#5C7065' : '#8A9C91';
+  const glassBg = darkMode ? 'rgba(10, 28, 20, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+  const glassBorder = darkMode ? 'rgba(197, 160, 89, 0.12)' : 'rgba(18, 46, 33, 0.08)';
+  const gold = '#C5A059';
+
+  const completedCount = habits.filter(h => h.completed).length;
+  const totalCount = habits.length;
+  const completionRate = Math.round((completedCount / totalCount) * 100);
+
+  const filteredHabits = selectedCategory === 'all' ? habits : habits.filter(h => h.category === selectedCategory);
+
+  const toggleHabit = (id) => {
+    setHabits(prev => prev.map(h =>
+      h.id === id ? { ...h, completed: !h.completed, streak: !h.completed ? h.streak + 1 : h.streak - 1 } : h
+    ));
+  };
+
+  const renderToday = () => (
+    <div style={{ padding: '60px 20px 100px' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>
+            SATURDAY, MARCH 21
+          </p>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, color: textMain, fontWeight: 500 }}>
+            Your Habits
+          </p>
+        </div>
+        <button onClick={() => setDarkMode(!darkMode)} style={{
+          background: glassBg, border: `1px solid ${glassBorder}`,
+          borderRadius: 14, width: 40, height: 40, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: 16 }}>{darkMode ? '☀️' : '🌙'}</span>
+        </button>
+      </div>
+
+      {/* Progress Ring */}
+      <div style={{
+        background: glassBg, backdropFilter: 'blur(16px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 24,
+        padding: '24px', marginBottom: 20,
+        display: 'flex', alignItems: 'center', gap: 20
+      }}>
+        <div style={{ position: 'relative', width: 80, height: 80 }}>
+          <svg width="80" height="80" style={{ transform: 'rotate(-90deg)' }}>
+            <circle cx="40" cy="40" r="34" fill="none" stroke={darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'} strokeWidth="6" />
+            <circle cx="40" cy="40" r="34" fill="none" stroke={gold}
+              strokeWidth="6" strokeLinecap="round"
+              strokeDasharray={`${2 * Math.PI * 34}`}
+              strokeDashoffset={`${2 * Math.PI * 34 * (1 - completionRate / 100)}`}
+              style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+            />
+          </svg>
+          <div style={{
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <span style={{
+              fontFamily: "'Cormorant Garamond', serif", fontSize: 22,
+              color: gold, fontWeight: 600
+            }}>{completionRate}%</span>
+          </div>
+        </div>
+        <div>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: textMain, fontWeight: 600, marginBottom: 4 }}>
+            {completedCount} of {totalCount} complete
+          </p>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, lineHeight: 1.5 }}>
+            {completionRate >= 80 ? "Amazing! You're nurturing yourself today. 🌟" :
+             completionRate >= 50 ? "Great progress! Keep going at your own pace. 💚" :
+             "Every small step counts. Be gentle with yourself. 🌿"}
+          </p>
+        </div>
+      </div>
+
+      {/* Mood Graph */}
+      <div style={{
+        background: glassBg, backdropFilter: 'blur(16px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 20,
+        padding: '16px 20px', marginBottom: 20
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+            MOOD THIS WEEK
+          </p>
+          <button onClick={() => setShowInsights(!showInsights)} style={{
+            background: 'transparent', border: 'none', cursor: 'pointer'
+          }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: gold, fontWeight: 500 }}>
+              {showInsights ? 'Hide' : 'Insights'}
+            </span>
+          </button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: 80, gap: 4 }}>
+          {MOOD_HISTORY.map((day, i) => (
+            <div key={i} style={{ flex: 1, textAlign: 'center' }}>
+              <div style={{
+                height: day.score * 8,
+                background: `linear-gradient(to top, ${day.score >= 7 ? '#7BA68C' : day.score >= 5 ? gold : '#D4896A'}80, ${day.score >= 7 ? '#7BA68C' : day.score >= 5 ? gold : '#D4896A'}20)`,
+                borderRadius: '8px 8px 4px 4px',
+                marginBottom: 6,
+                transition: 'height 0.5s ease'
+              }} />
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: textLight }}>
+                {day.day}
+              </span>
+            </div>
+          ))}
+        </div>
+        {showInsights && (
+          <div style={{
+            marginTop: 12, padding: '12px',
+            background: darkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+            borderRadius: 14
+          }}>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMain, lineHeight: 1.6 }}>
+              📊 Your mood tends to be higher on days you complete breathwork and journaling.
+              Tuesday's trigger correlated with skipping your morning grounding routine.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Category Filter */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 16, overflowX: 'auto', scrollbarWidth: 'none' }}>
+        {CATEGORIES.map(cat => (
+          <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} style={{
+            background: selectedCategory === cat.id ? `${gold}20` : glassBg,
+            border: `1px solid ${selectedCategory === cat.id ? `${gold}40` : glassBorder}`,
+            borderRadius: 14, padding: '8px 14px', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap'
+          }}>
+            <span style={{ fontSize: 14 }}>{cat.icon}</span>
+            <span style={{
+              fontFamily: "'Manrope', sans-serif", fontSize: 11,
+              color: selectedCategory === cat.id ? gold : textMuted,
+              fontWeight: selectedCategory === cat.id ? 600 : 400
+            }}>{cat.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Habit Cards */}
+      {filteredHabits.map(habit => (
+        <div key={habit.id} style={{
+          background: glassBg, backdropFilter: 'blur(12px)',
+          border: `1px solid ${habit.completed ? habit.color + '30' : glassBorder}`,
+          borderRadius: 20, padding: '14px 16px', marginBottom: 8,
+          display: 'flex', alignItems: 'center', gap: 14,
+          opacity: habit.completed ? 0.85 : 1,
+          transition: 'all 0.3s ease'
+        }}>
+          {/* Checkbox */}
+          <button onClick={() => toggleHabit(habit.id)} style={{
+            width: 36, height: 36, borderRadius: 12,
+            background: habit.completed ? habit.color : 'transparent',
+            border: `2px solid ${habit.completed ? habit.color : textLight}`,
+            cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'all 0.3s ease', flexShrink: 0
+          }}>
+            {habit.completed ? (
+              <span style={{ color: '#FFF', fontSize: 16 }}>✓</span>
+            ) : (
+              <span style={{ fontSize: 16 }}>{habit.icon}</span>
+            )}
+          </button>
+
+          {/* Details */}
+          <div style={{ flex: 1 }}>
+            <p style={{
+              fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain,
+              fontWeight: 500, textDecoration: habit.completed ? 'line-through' : 'none',
+              opacity: habit.completed ? 0.7 : 1
+            }}>{habit.name}</p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>
+              {habit.description}
+            </p>
+          </div>
+
+          {/* Streak */}
+          <div style={{ textAlign: 'center' }}>
+            <p style={{
+              fontFamily: "'Cormorant Garamond', serif", fontSize: 18,
+              color: habit.streak > 5 ? '#7BA68C' : habit.streak > 0 ? gold : textLight,
+              fontWeight: 600
+            }}>{habit.streak}</p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 8, color: textMuted }}>
+              {habit.weekly ? 'week' : 'day'} streak
+            </p>
+          </div>
+        </div>
+      ))}
+
+      {/* Week Heatmap */}
+      <div style={{
+        background: glassBg, backdropFilter: 'blur(16px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 20,
+        padding: '16px 20px', marginTop: 16
+      }}>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 12 }}>
+          THIS WEEK'S CONSISTENCY
+        </p>
+        {WEEK_DATA.map((week, habitIdx) => (
+          <div key={habitIdx} style={{ display: 'flex', gap: 4, marginBottom: 4, alignItems: 'center' }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: textMuted, width: 60, flexShrink: 0 }}>
+              {['Breathe', 'Journal', 'Reframe', 'Ground'][habitIdx]}
+            </span>
+            {week.map((done, dayIdx) => (
+              <div key={dayIdx} style={{
+                flex: 1, height: 14, borderRadius: 4,
+                background: done ? `${[RSD_HABITS[0].color, RSD_HABITS[1].color, RSD_HABITS[2].color, RSD_HABITS[3].color][habitIdx]}60` :
+                  (darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)')
+              }} />
+            ))}
+          </div>
+        ))}
+        <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+          <span style={{ width: 60 }} />
+          {WEEK_DAYS.map((d, i) => (
+            <span key={i} style={{ flex: 1, textAlign: 'center', fontFamily: "'Manrope', sans-serif", fontSize: 8, color: textLight }}>
+              {d}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Watch Widget Preview */}
+      <div style={{
+        background: glassBg, backdropFilter: 'blur(16px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 20,
+        padding: '16px 20px', marginTop: 16
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+          <span style={{ fontSize: 20 }}>⌚</span>
+          <div>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMain, fontWeight: 500 }}>Watch Widget</p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>Quick habit check-off from your wrist</p>
+          </div>
+        </div>
+        {/* Mini watch preview */}
+        <div style={{
+          width: 160, height: 160, borderRadius: '50%',
+          background: '#0A1C14', margin: '0 auto',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          padding: 20, position: 'relative',
+          border: '3px solid #1B402E'
+        }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 8, color: '#8A9C91', marginBottom: 6 }}>
+            RSD HABITS
+          </p>
+          <div style={{ display: 'flex', gap: 3, marginBottom: 6 }}>
+            {habits.slice(0, 4).map((h, i) => (
+              <div key={i} style={{
+                width: 18, height: 18, borderRadius: 6,
+                background: h.completed ? h.color : 'rgba(255,255,255,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 8
+              }}>
+                {h.completed ? '✓' : ''}
+              </div>
+            ))}
+          </div>
+          <p style={{
+            fontFamily: "'Cormorant Garamond', serif", fontSize: 16,
+            color: gold, fontWeight: 600
+          }}>{completedCount}/{totalCount}</p>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 7, color: '#5C7065' }}>
+            Tap to check off
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
+      minHeight: '100vh', background: darkMode ? '#020805' : '#F0EDE8',
+      padding: 20, fontFamily: "'Manrope', sans-serif"
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      <div style={{
+        width: 390, minHeight: 844, background: bg,
+        borderRadius: 44, overflow: 'hidden', position: 'relative',
+        boxShadow: darkMode
+          ? '0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,160,89,0.08)'
+          : '0 25px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)',
+      }}>
+        <div style={{ height: 844, overflowY: 'auto', scrollbarWidth: 'none' }}>
+          {renderToday()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<RSDHabitTracker />, document.getElementById('root'));

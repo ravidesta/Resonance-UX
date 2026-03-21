@@ -1,0 +1,461 @@
+const { useState, useEffect } = React;
+
+// ============================================================
+// RSD WATCH APP - Apple Watch Companion
+// Appreciative questions, breathwork, habit check-offs, SOS
+// Complications & widgets for every watch face
+// ============================================================
+
+const APPRECIATIVE_QUESTIONS = [
+  { question: "What made you smile today?", category: "joy" },
+  { question: "Who loves you exactly as you are?", category: "connection" },
+  { question: "What's one thing you did well today?", category: "strength" },
+  { question: "When did you feel most alive this week?", category: "vitality" },
+  { question: "What are you grateful for right now?", category: "gratitude" },
+  { question: "What challenge have you overcome before?", category: "resilience" },
+  { question: "What makes you uniquely you?", category: "identity" },
+  { question: "Who would you call if you needed to hear you're enough?", category: "connection" },
+  { question: "What's one kind thing you can do for yourself right now?", category: "compassion" },
+  { question: "What value do you bring to the world?", category: "purpose" },
+  { question: "What would your best friend say about you?", category: "identity" },
+  { question: "When did sensitivity help you connect deeply with someone?", category: "strength" },
+];
+
+const WATCH_FACES = ['modular', 'infograph', 'simple'];
+
+function RSDWatchApp() {
+  const [watchFace, setWatchFace] = useState('modular');
+  const [view, setView] = useState('face');
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [breathPhase, setBreathPhase] = useState('inhale');
+  const [breathTimer, setBreathTimer] = useState(4);
+  const [isBreathing, setIsBreathing] = useState(false);
+  const [habits, setHabits] = useState([
+    { id: 'breathe', icon: '🌬', done: true, label: 'Breathe' },
+    { id: 'journal', icon: '📔', done: true, label: 'Journal' },
+    { id: 'reframe', icon: '🔄', done: false, label: 'Reframe' },
+    { id: 'ground', icon: '🌿', done: false, label: 'Ground' },
+    { id: 'move', icon: '🏃', done: true, label: 'Move' },
+    { id: 'connect', icon: '💬', done: false, label: 'Connect' },
+  ]);
+  const [sosActive, setSosActive] = useState(false);
+  const [hapticPulse, setHapticPulse] = useState(false);
+  const [animCount, setAnimCount] = useState(0);
+  const [darkMode] = useState(true);
+
+  const gold = '#C5A059';
+  const green = '#7BA68C';
+  const bg = '#0A0A0A';
+
+  useEffect(() => {
+    const interval = setInterval(() => setAnimCount(prev => (prev + 1) % 360), 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (!isBreathing) return;
+    const interval = setInterval(() => {
+      setBreathTimer(prev => {
+        if (prev <= 1) {
+          setBreathPhase(p => p === 'inhale' ? 'hold' : p === 'hold' ? 'exhale' : p === 'exhale' ? 'rest' : 'inhale');
+          return breathPhase === 'inhale' ? 4 : breathPhase === 'hold' ? 4 : breathPhase === 'exhale' ? 6 : 2;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isBreathing, breathPhase]);
+
+  const breathScale = isBreathing
+    ? (breathPhase === 'inhale' || breathPhase === 'hold' ? 1.3 : 0.8)
+    : 1 + Math.sin(animCount * 0.03) * 0.05;
+
+  const completedHabits = habits.filter(h => h.done).length;
+
+  const renderWatchFrame = (children, label = '') => (
+    <div style={{ textAlign: 'center', marginBottom: 20 }}>
+      <div style={{
+        width: 198, height: 242,
+        borderRadius: 48,
+        background: bg,
+        border: '4px solid #1A1A1A',
+        overflow: 'hidden',
+        position: 'relative',
+        margin: '0 auto',
+        boxShadow: '0 15px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)'
+      }}>
+        {/* Crown */}
+        <div style={{
+          position: 'absolute', top: 80, right: -6,
+          width: 8, height: 28, borderRadius: 4,
+          background: '#2A2A2A',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.1)'
+        }} />
+        {/* Side button */}
+        <div style={{
+          position: 'absolute', top: 120, right: -5,
+          width: 6, height: 14, borderRadius: 3,
+          background: '#222'
+        }} />
+        {children}
+      </div>
+      {label && (
+        <p style={{
+          fontFamily: "'Manrope', sans-serif", fontSize: 11,
+          color: '#8A9C91', marginTop: 10, fontWeight: 500
+        }}>{label}</p>
+      )}
+    </div>
+  );
+
+  const renderAppreciativeQuestion = () => {
+    const q = APPRECIATIVE_QUESTIONS[currentQuestion];
+    return renderWatchFrame(
+      <div style={{
+        height: '100%', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', padding: 20,
+        background: `radial-gradient(circle at 50% 40%, ${gold}15, transparent 70%)`
+      }}>
+        <span style={{ fontSize: 24, marginBottom: 10 }}>✨</span>
+        <p style={{
+          fontFamily: "'Cormorant Garamond', serif", fontSize: 14,
+          color: '#E8F0EA', textAlign: 'center', lineHeight: 1.5,
+          fontStyle: 'italic', fontWeight: 500
+        }}>{q.question}</p>
+        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+          <button onClick={() => setCurrentQuestion((currentQuestion + 1) % APPRECIATIVE_QUESTIONS.length)} style={{
+            background: 'rgba(255,255,255,0.08)', border: 'none',
+            borderRadius: 12, padding: '6px 14px', cursor: 'pointer'
+          }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: '#8A9C91' }}>Next</span>
+          </button>
+          <button style={{
+            background: `${gold}25`, border: 'none',
+            borderRadius: 12, padding: '6px 14px', cursor: 'pointer'
+          }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: gold }}>Save</span>
+          </button>
+        </div>
+        <p style={{
+          fontFamily: "'Manrope', sans-serif", fontSize: 7,
+          color: '#5C7065', marginTop: 10, letterSpacing: '0.05em'
+        }}>{q.category.toUpperCase()}</p>
+      </div>,
+      'Appreciative Questions'
+    );
+  };
+
+  const renderBreathwatch = () => renderWatchFrame(
+    <div style={{
+      height: '100%', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: `radial-gradient(circle, ${isBreathing ? '#6A9BC2' : gold}10, transparent 60%)`
+    }}>
+      <div style={{
+        width: 90, height: 90, borderRadius: '50%',
+        background: `radial-gradient(circle, #6A9BC240, #6A9BC210)`,
+        boxShadow: `0 0 30px #6A9BC220`,
+        transform: `scale(${breathScale})`,
+        transition: `transform ${breathPhase === 'inhale' ? '4s' : breathPhase === 'exhale' ? '6s' : '0.5s'} ease-in-out`,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center'
+      }}>
+        <p style={{
+          fontFamily: "'Manrope', sans-serif", fontSize: 9,
+          color: '#6A9BC2', fontWeight: 600, marginBottom: 2
+        }}>
+          {isBreathing
+            ? (breathPhase === 'inhale' ? 'BREATHE IN' : breathPhase === 'hold' ? 'HOLD' : breathPhase === 'exhale' ? 'BREATHE OUT' : 'REST')
+            : 'TAP TO START'
+          }
+        </p>
+        {isBreathing && (
+          <p style={{
+            fontFamily: "'Cormorant Garamond', serif", fontSize: 28,
+            color: '#E8F0EA', fontWeight: 600
+          }}>{breathTimer}</p>
+        )}
+      </div>
+      <button onClick={() => setIsBreathing(!isBreathing)} style={{
+        background: isBreathing ? 'rgba(255,255,255,0.08)' : '#6A9BC230',
+        border: 'none', borderRadius: 10,
+        padding: '4px 16px', cursor: 'pointer', marginTop: 12
+      }}>
+        <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: '#6A9BC2' }}>
+          {isBreathing ? 'Stop' : 'Calm the Storm'}
+        </span>
+      </button>
+    </div>,
+    'Breathwork'
+  );
+
+  const renderHabitWidget = () => renderWatchFrame(
+    <div style={{
+      height: '100%', display: 'flex', flexDirection: 'column',
+      padding: '20px 14px'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 8, color: '#8A9C91', letterSpacing: '0.05em' }}>
+          RSD HABITS
+        </p>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: gold, fontWeight: 600 }}>
+          {completedHabits}/{habits.length}
+        </p>
+      </div>
+
+      {/* Mini progress */}
+      <div style={{
+        height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)',
+        marginBottom: 10
+      }}>
+        <div style={{
+          width: `${(completedHabits / habits.length) * 100}%`,
+          height: '100%', borderRadius: 2, background: gold,
+          transition: 'width 0.3s ease'
+        }} />
+      </div>
+
+      {/* Habit grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, flex: 1 }}>
+        {habits.map(habit => (
+          <button key={habit.id} onClick={() => {
+            setHabits(prev => prev.map(h => h.id === habit.id ? { ...h, done: !h.done } : h));
+          }} style={{
+            background: habit.done ? `${green}30` : 'rgba(255,255,255,0.04)',
+            border: `1px solid ${habit.done ? `${green}50` : 'rgba(255,255,255,0.06)'}`,
+            borderRadius: 10, cursor: 'pointer',
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', gap: 2,
+            padding: '4px 2px'
+          }}>
+            <span style={{ fontSize: 14 }}>{habit.done ? '✓' : habit.icon}</span>
+            <span style={{
+              fontFamily: "'Manrope', sans-serif", fontSize: 7,
+              color: habit.done ? green : '#5C7065'
+            }}>{habit.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>,
+    'Habit Check-Off'
+  );
+
+  const renderSOSWatch = () => renderWatchFrame(
+    <div style={{
+      height: '100%', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: sosActive ? `radial-gradient(circle, #D4896A20, transparent 60%)` : 'transparent'
+    }}>
+      {!sosActive ? (
+        <>
+          <button onClick={() => setSosActive(true)} style={{
+            width: 80, height: 80, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #D4896A, #A45A3A)',
+            border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 20px rgba(212, 137, 106, 0.3)',
+            fontSize: 32
+          }}>🆘</button>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 9,
+            color: '#D4896A', marginTop: 10, fontWeight: 500
+          }}>TAP FOR CALM</p>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 7,
+            color: '#5C7065', marginTop: 4
+          }}>Haptic breathing guide</p>
+        </>
+      ) : (
+        <>
+          <div style={{
+            width: 70, height: 70, borderRadius: '50%',
+            background: `radial-gradient(circle, #7BA68C40, transparent)`,
+            transform: `scale(${breathScale})`,
+            transition: 'transform 4s ease-in-out',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <span style={{
+              fontFamily: "'Cormorant Garamond', serif", fontSize: 28,
+              color: '#E8F0EA', fontWeight: 600
+            }}>4</span>
+          </div>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 10,
+            color: '#7BA68C', marginTop: 8, fontWeight: 600
+          }}>BREATHE IN</p>
+          <p style={{
+            fontFamily: "'Manrope', sans-serif", fontSize: 7,
+            color: '#5C7065', marginTop: 4
+          }}>Feel the haptic pulse</p>
+          <button onClick={() => setSosActive(false)} style={{
+            background: 'rgba(255,255,255,0.06)', border: 'none',
+            borderRadius: 8, padding: '4px 12px', cursor: 'pointer', marginTop: 8
+          }}>
+            <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 8, color: '#8A9C91' }}>End</span>
+          </button>
+        </>
+      )}
+    </div>,
+    'SOS Calm Down'
+  );
+
+  const renderQuoteWatch = () => {
+    const quotes = [
+      "Your sensitivity is your superpower",
+      "Between the trigger and response, there is you",
+      "You are not your rejection",
+      "This feeling will pass"
+    ];
+    const quote = quotes[animCount % quotes.length > 200 ? 3 : animCount % quotes.length > 100 ? 2 : animCount % quotes.length > 50 ? 1 : 0];
+
+    return renderWatchFrame(
+      <div style={{
+        height: '100%', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', padding: 20,
+        background: `radial-gradient(circle at 50% 30%, ${gold}10, transparent 60%)`
+      }}>
+        <div style={{
+          fontFamily: "'Cormorant Garamond', serif", fontSize: 20,
+          color: gold, marginBottom: 6, lineHeight: 1
+        }}>"</div>
+        <p style={{
+          fontFamily: "'Cormorant Garamond', serif", fontSize: 12,
+          color: '#E8F0EA', textAlign: 'center', lineHeight: 1.5,
+          fontStyle: 'italic'
+        }}>{quote}</p>
+        <p style={{
+          fontFamily: "'Manrope', sans-serif", fontSize: 7,
+          color: '#5C7065', marginTop: 10
+        }}>— RSD & ADHD Book</p>
+        <button style={{
+          background: `${gold}20`, border: 'none',
+          borderRadius: 8, padding: '4px 12px', cursor: 'pointer', marginTop: 8
+        }}>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 8, color: gold }}>📤 Share</span>
+        </button>
+      </div>,
+      'Favorite Quotes'
+    );
+  };
+
+  const renderNervousSystemWatch = () => renderWatchFrame(
+    <div style={{
+      height: '100%', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', padding: 16
+    }}>
+      <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 7, color: '#8A9C91', letterSpacing: '0.06em', marginBottom: 8 }}>
+        NERVOUS SYSTEM
+      </p>
+      <div style={{
+        width: 80, height: 80, borderRadius: '50%',
+        background: `conic-gradient(${green} 0deg, ${green} 180deg, #D4896A 180deg, #D4896A 270deg, #5A6A8A 270deg, #5A6A8A 360deg)`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        position: 'relative'
+      }}>
+        <div style={{
+          width: 60, height: 60, borderRadius: '50%',
+          background: bg,
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center'
+        }}>
+          <span style={{ fontSize: 20 }}>🌿</span>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 7, color: green, fontWeight: 600 }}>
+            SAFE
+          </p>
+        </div>
+      </div>
+      <p style={{
+        fontFamily: "'Manrope', sans-serif", fontSize: 8,
+        color: '#E8F0EA', marginTop: 8
+      }}>Ventral Vagal</p>
+      <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 7, color: '#5C7065', marginTop: 2 }}>
+        Heart rate: calm
+      </p>
+    </div>,
+    'Polyvagal State'
+  );
+
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
+      minHeight: '100vh', background: '#020805',
+      padding: 20, fontFamily: "'Manrope', sans-serif"
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      <div style={{ maxWidth: 800, width: '100%' }}>
+        {/* Title */}
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: '#8A9C91', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+            APPLE WATCH COMPANION
+          </p>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 32, color: '#E8F0EA', fontWeight: 500 }}>
+            RSD on Your Wrist
+          </p>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#5C7065', marginTop: 8, maxWidth: 400, margin: '8px auto 0' }}>
+            Appreciative questions, breathwork with haptic guidance, habit tracking, and SOS calm-down — all accessible from a glance.
+          </p>
+        </div>
+
+        {/* Watch Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 24,
+          justifyItems: 'center'
+        }}>
+          {renderAppreciativeQuestion()}
+          {renderBreathwatch()}
+          {renderHabitWidget()}
+          {renderSOSWatch()}
+          {renderQuoteWatch()}
+          {renderNervousSystemWatch()}
+        </div>
+
+        {/* Complication Previews */}
+        <div style={{
+          marginTop: 40, textAlign: 'center',
+          background: 'rgba(255,255,255,0.02)',
+          borderRadius: 24, padding: '24px',
+          border: '1px solid rgba(197,160,89,0.08)'
+        }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: '#8A9C91', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 16 }}>
+            WATCH FACE COMPLICATIONS
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 20 }}>
+            {[
+              { label: 'Habit Ring', preview: `${completedHabits}/${habits.length}`, color: gold },
+              { label: 'Breath Reminder', preview: '🌬 Due', color: '#6A9BC2' },
+              { label: 'Daily Quote', preview: '" Be kind "', color: '#B07AAF' },
+              { label: 'Mood Log', preview: '🌿 Calm', color: green },
+            ].map((comp, i) => (
+              <div key={i} style={{
+                background: 'rgba(255,255,255,0.03)', borderRadius: 16,
+                padding: '12px 16px', textAlign: 'center'
+              }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: '50%',
+                  background: `${comp.color}15`, margin: '0 auto 8px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: comp.color, fontWeight: 600 }}>
+                    {comp.preview}
+                  </span>
+                </div>
+                <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: '#5C7065' }}>
+                  {comp.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<RSDWatchApp />, document.getElementById('root'));

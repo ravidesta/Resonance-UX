@@ -1,0 +1,587 @@
+const { useState, useEffect, useRef } = React;
+
+// ============================================================
+// RSD CHECK-IN - "Am I Overreacting?" Real-Time Support Chat
+// Polyvagal-informed. Grounding techniques. Reframing tools.
+// ============================================================
+
+const SCENARIOS = [
+  {
+    id: 'work-email',
+    title: 'Got a vague email from my boss',
+    category: 'Work',
+    icon: '💼',
+    commonThoughts: [
+      "They're going to fire me",
+      "I did something wrong",
+      "Everyone noticed my mistake",
+      "I'm about to be criticized"
+    ],
+    reframe: "A vague email usually means exactly what it says — they need to discuss something. Your RSD is filling in the blanks with worst-case scenarios.",
+    grounding: "Before you respond or spiral: What evidence do you actually have? Has your boss ever fired someone via vague email? Probably not."
+  },
+  {
+    id: 'friend-cancel',
+    title: 'Friend cancelled plans',
+    category: 'Relationships',
+    icon: '👥',
+    commonThoughts: [
+      "They don't actually want to see me",
+      "I'm not a priority to them",
+      "They're probably with someone else",
+      "Our friendship is fading"
+    ],
+    reframe: "People cancel plans for countless reasons — exhaustion, anxiety, emergencies, needing alone time. It's almost never about you.",
+    grounding: "Think about the last 5 interactions with this person. Were they warm? Engaged? That's the real pattern, not this one cancellation."
+  },
+  {
+    id: 'no-reply',
+    title: 'Someone didn\'t text back',
+    category: 'Relationships',
+    icon: '📱',
+    commonThoughts: [
+      "They're ignoring me on purpose",
+      "I said something wrong",
+      "They don't care about me",
+      "I'm being ghosted"
+    ],
+    reframe: "People are busy, distracted, overwhelmed by their own lives. A delayed reply is rarely personal.",
+    grounding: "How often do YOU forget to reply to messages? Probably more than you realize. Extend that same grace."
+  },
+  {
+    id: 'social-awkward',
+    title: 'Said something awkward in a group',
+    category: 'Social',
+    icon: '🗣',
+    commonThoughts: [
+      "Everyone noticed and judged me",
+      "They think I'm weird",
+      "I ruined the conversation",
+      "They're talking about me now"
+    ],
+    reframe: "The spotlight effect is real — you notice your own awkward moments 10x more than anyone else does. They've already forgotten.",
+    grounding: "Can you remember the last awkward thing someone else said? Probably not. That's how much others remember yours."
+  },
+  {
+    id: 'feedback',
+    title: 'Received constructive criticism',
+    category: 'Work',
+    icon: '📋',
+    commonThoughts: [
+      "They think I'm incompetent",
+      "I should have known better",
+      "I'm going to lose this job",
+      "Everyone can see I'm failing"
+    ],
+    reframe: "Feedback is information, not a verdict on your worth. People who give feedback are investing in your growth — they wouldn't bother if they didn't believe in you.",
+    grounding: "Separate the feedback from your identity. The work had an issue. YOU are not the issue."
+  },
+  {
+    id: 'excluded',
+    title: 'Wasn\'t invited to something',
+    category: 'Social',
+    icon: '🚪',
+    commonThoughts: [
+      "They deliberately excluded me",
+      "Nobody actually likes me",
+      "I'm always the outsider",
+      "There's something wrong with me"
+    ],
+    reframe: "Not every gathering involves every person. Sometimes logistics, group dynamics, or simple oversight determines the guest list. It's not a statement about your worth.",
+    grounding: "Have you ever planned something and not invited everyone you know? Of course. It wasn't personal then, and it likely isn't now."
+  }
+];
+
+const GROUNDING_EXERCISES = [
+  {
+    name: '5-4-3-2-1 Senses',
+    steps: ['Name 5 things you can SEE', 'Name 4 things you can TOUCH', 'Name 3 things you can HEAR', 'Name 2 things you can SMELL', 'Name 1 thing you can TASTE'],
+    duration: '2 min',
+    icon: '👁'
+  },
+  {
+    name: 'Cold Water Reset',
+    steps: ['Run cold water over your wrists for 30 seconds', 'Focus on the sensation', 'Let it ground you in your body', 'Take 3 deep breaths'],
+    duration: '1 min',
+    icon: '💧'
+  },
+  {
+    name: 'Box Breathing',
+    steps: ['Breathe in for 4 counts', 'Hold for 4 counts', 'Breathe out for 4 counts', 'Hold for 4 counts', 'Repeat 4 times'],
+    duration: '2 min',
+    icon: '🫁'
+  },
+  {
+    name: 'Body Scan',
+    steps: ['Notice your feet on the ground', 'Feel your legs supporting you', 'Relax your stomach', 'Drop your shoulders', 'Unclench your jaw', 'Soften your forehead'],
+    duration: '1 min',
+    icon: '🧘'
+  }
+];
+
+function RSDCheckIn() {
+  const [view, setView] = useState('home');
+  const [darkMode, setDarkMode] = useState(false);
+  const [selectedScenario, setSelectedScenario] = useState(null);
+  const [checkStep, setCheckStep] = useState(0);
+  const [selectedThoughts, setSelectedThoughts] = useState([]);
+  const [intensity, setIntensity] = useState(7);
+  const [postIntensity, setPostIntensity] = useState(null);
+  const [showGrounding, setShowGrounding] = useState(false);
+  const [currentExercise, setCurrentExercise] = useState(null);
+  const [exerciseStep, setExerciseStep] = useState(0);
+  const [customSituation, setCustomSituation] = useState('');
+  const [nervousSystemState, setNervousSystemState] = useState('sympathetic');
+
+  const bg = darkMode ? '#05100B' : '#FAFAF8';
+  const textMain = darkMode ? '#E8F0EA' : '#122E21';
+  const textMuted = darkMode ? '#8A9C91' : '#5C7065';
+  const textLight = darkMode ? '#5C7065' : '#8A9C91';
+  const glassBg = darkMode ? 'rgba(10, 28, 20, 0.85)' : 'rgba(255, 255, 255, 0.75)';
+  const glassBorder = darkMode ? 'rgba(197, 160, 89, 0.12)' : 'rgba(18, 46, 33, 0.08)';
+  const gold = '#C5A059';
+
+  const getNervousSystemColor = () => {
+    switch (nervousSystemState) {
+      case 'ventral': return '#7BA68C';
+      case 'sympathetic': return '#D4896A';
+      case 'dorsal': return '#5A6A8A';
+      default: return textMuted;
+    }
+  };
+
+  const getNervousSystemLabel = () => {
+    switch (nervousSystemState) {
+      case 'ventral': return 'Safe & Social';
+      case 'sympathetic': return 'Fight or Flight';
+      case 'dorsal': return 'Freeze / Shutdown';
+      default: return '';
+    }
+  };
+
+  const renderHome = () => (
+    <div style={{ padding: '60px 20px 100px' }}>
+      <div style={{ marginBottom: 24 }}>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>
+          REAL-TIME SUPPORT
+        </p>
+        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, color: textMain, fontWeight: 500 }}>
+          What's happening?
+        </p>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted, lineHeight: 1.6, marginTop: 6 }}>
+          Choose a scenario or describe what's going on. I'll help you figure out if it's RSD talking or something real.
+        </p>
+      </div>
+
+      {/* Nervous System Check */}
+      <div style={{
+        background: glassBg, backdropFilter: 'blur(16px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 20,
+        padding: '16px 20px', marginBottom: 20
+      }}>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: 10 }}>
+          YOUR NERVOUS SYSTEM RIGHT NOW
+        </p>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {[
+            { id: 'ventral', label: 'Safe', emoji: '🌿' },
+            { id: 'sympathetic', label: 'Activated', emoji: '⚡' },
+            { id: 'dorsal', label: 'Shutdown', emoji: '🌑' },
+          ].map(state => (
+            <button key={state.id} onClick={() => setNervousSystemState(state.id)} style={{
+              flex: 1,
+              background: nervousSystemState === state.id ? getNervousSystemColor() + '20' : 'transparent',
+              border: `1.5px solid ${nervousSystemState === state.id ? getNervousSystemColor() : glassBorder}`,
+              borderRadius: 14, padding: '10px 8px', cursor: 'pointer', textAlign: 'center'
+            }}>
+              <span style={{ fontSize: 18, display: 'block', marginBottom: 4 }}>{state.emoji}</span>
+              <span style={{
+                fontFamily: "'Manrope', sans-serif", fontSize: 10,
+                color: nervousSystemState === state.id ? getNervousSystemColor() : textMuted,
+                fontWeight: nervousSystemState === state.id ? 600 : 400
+              }}>{state.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* SOS Grounding Button */}
+      {(nervousSystemState === 'sympathetic' || nervousSystemState === 'dorsal') && (
+        <button onClick={() => setShowGrounding(true)} style={{
+          width: '100%',
+          background: 'linear-gradient(135deg, #6A9BC2 0%, #3A5A7A 100%)',
+          border: 'none', borderRadius: 20, padding: '16px 20px',
+          cursor: 'pointer', marginBottom: 20,
+          display: 'flex', alignItems: 'center', gap: 14
+        }}>
+          <span style={{ fontSize: 24 }}>🫁</span>
+          <div style={{ textAlign: 'left' }}>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#FFFFFF', fontWeight: 600 }}>
+              Ground Me First
+            </p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
+              Let's calm your nervous system before we think
+            </p>
+          </div>
+        </button>
+      )}
+
+      {/* Intensity Slider */}
+      <div style={{
+        background: glassBg, backdropFilter: 'blur(16px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 20,
+        padding: '16px 20px', marginBottom: 20
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted }}>Emotional intensity right now</p>
+          <span style={{
+            fontFamily: "'Cormorant Garamond', serif", fontSize: 24,
+            color: intensity > 7 ? '#D4896A' : intensity > 4 ? gold : '#7BA68C',
+            fontWeight: 600
+          }}>{intensity}/10</span>
+        </div>
+        <input type="range" min="1" max="10" value={intensity}
+          onChange={(e) => setIntensity(Number(e.target.value))}
+          style={{ width: '100%', accentColor: intensity > 7 ? '#D4896A' : intensity > 4 ? gold : '#7BA68C' }}
+        />
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: textLight }}>Mild</span>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 9, color: textLight }}>Overwhelming</span>
+        </div>
+      </div>
+
+      {/* Common Scenarios */}
+      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, color: textMain, fontWeight: 500, marginBottom: 14 }}>
+        Common RSD Triggers
+      </p>
+
+      {SCENARIOS.map(scenario => (
+        <button key={scenario.id} onClick={() => {
+          setSelectedScenario(scenario);
+          setCheckStep(1);
+          setSelectedThoughts([]);
+          setView('checkin');
+        }} style={{
+          width: '100%', background: glassBg, backdropFilter: 'blur(12px)',
+          border: `1px solid ${glassBorder}`, borderRadius: 20,
+          padding: '14px 18px', cursor: 'pointer', marginBottom: 8,
+          display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left'
+        }}>
+          <span style={{ fontSize: 24 }}>{scenario.icon}</span>
+          <div>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain, fontWeight: 500 }}>{scenario.title}</p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>{scenario.category}</p>
+          </div>
+        </button>
+      ))}
+
+      {/* Custom situation */}
+      <div style={{
+        background: glassBg, backdropFilter: 'blur(12px)',
+        border: `1px solid ${glassBorder}`, borderRadius: 20,
+        padding: '16px 18px', marginTop: 16
+      }}>
+        <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, marginBottom: 8 }}>
+          Something else? Describe it:
+        </p>
+        <textarea
+          value={customSituation}
+          onChange={(e) => setCustomSituation(e.target.value)}
+          placeholder="What happened? Write it out..."
+          style={{
+            width: '100%', minHeight: 80, background: darkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+            border: `1px solid ${glassBorder}`, borderRadius: 14,
+            padding: '12px', resize: 'none', outline: 'none',
+            fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain,
+            lineHeight: 1.6, caretColor: gold
+          }}
+        />
+      </div>
+    </div>
+  );
+
+  const renderCheckIn = () => {
+    if (!selectedScenario) return null;
+    const s = selectedScenario;
+
+    return (
+      <div style={{ padding: '60px 20px 100px' }}>
+        <button onClick={() => {
+          if (checkStep > 1) setCheckStep(checkStep - 1);
+          else { setView('home'); setSelectedScenario(null); }
+        }} style={{
+          background: 'transparent', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20
+        }}>
+          <span style={{ color: textMuted }}>‹</span>
+          <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted }}>Back</span>
+        </button>
+
+        {/* Progress */}
+        <div style={{ display: 'flex', gap: 4, marginBottom: 24 }}>
+          {[1,2,3,4].map(step => (
+            <div key={step} style={{
+              flex: 1, height: 4, borderRadius: 2,
+              background: step <= checkStep ? '#6A9BC2' : (darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)')
+            }} />
+          ))}
+        </div>
+
+        {/* Step 1: Identify thoughts */}
+        {checkStep === 1 && (
+          <>
+            <div style={{ marginBottom: 24 }}>
+              <span style={{ fontSize: 40 }}>{s.icon}</span>
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: textMain, fontWeight: 500, marginTop: 12, marginBottom: 6 }}>
+                {s.title}
+              </p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted }}>
+                What thoughts are you having? Select all that apply:
+              </p>
+            </div>
+
+            {s.commonThoughts.map((thought, i) => (
+              <button key={i} onClick={() => {
+                setSelectedThoughts(prev =>
+                  prev.includes(thought) ? prev.filter(t => t !== thought) : [...prev, thought]
+                );
+              }} style={{
+                width: '100%',
+                background: selectedThoughts.includes(thought) ? '#6A9BC220' : glassBg,
+                border: `1.5px solid ${selectedThoughts.includes(thought) ? '#6A9BC2' : glassBorder}`,
+                borderRadius: 16, padding: '14px 18px', cursor: 'pointer',
+                marginBottom: 8, textAlign: 'left',
+                display: 'flex', alignItems: 'center', gap: 12
+              }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: 8,
+                  border: `2px solid ${selectedThoughts.includes(thought) ? '#6A9BC2' : textLight}`,
+                  background: selectedThoughts.includes(thought) ? '#6A9BC2' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  {selectedThoughts.includes(thought) && <span style={{ color: '#FFF', fontSize: 12 }}>✓</span>}
+                </div>
+                <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain }}>
+                  "{thought}"
+                </span>
+              </button>
+            ))}
+
+            <button onClick={() => setCheckStep(2)} disabled={selectedThoughts.length === 0} style={{
+              width: '100%', background: selectedThoughts.length > 0 ? '#6A9BC2' : (darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'),
+              border: 'none', borderRadius: 16, padding: '16px', cursor: 'pointer', marginTop: 16
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#FFFFFF', fontWeight: 600 }}>
+                That's what I'm thinking
+              </span>
+            </button>
+          </>
+        )}
+
+        {/* Step 2: Validate */}
+        {checkStep === 2 && (
+          <>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: textMain, fontWeight: 500, marginBottom: 8 }}>
+              I hear you. Those feelings are real.
+            </p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted, lineHeight: 1.7, marginBottom: 24 }}>
+              Your RSD brain is responding to a perceived threat. That pain is legitimate — it's neurological, not a choice. But let's check: is the threat real?
+            </p>
+
+            <div style={{
+              background: '#6A9BC210', border: `1px solid #6A9BC230`,
+              borderRadius: 20, padding: '20px', marginBottom: 20
+            }}>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: '#6A9BC2', fontWeight: 600, letterSpacing: '0.04em', marginBottom: 8 }}>
+                THE REFRAME
+              </p>
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 17, color: textMain, lineHeight: 1.6, fontStyle: 'italic' }}>
+                {s.reframe}
+              </p>
+            </div>
+
+            <div style={{
+              background: glassBg, backdropFilter: 'blur(12px)',
+              border: `1px solid ${glassBorder}`, borderRadius: 20,
+              padding: '20px', marginBottom: 20
+            }}>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: gold, fontWeight: 600, letterSpacing: '0.04em', marginBottom: 8 }}>
+                REALITY CHECK
+              </p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain, lineHeight: 1.6 }}>
+                {s.grounding}
+              </p>
+            </div>
+
+            <button onClick={() => setCheckStep(3)} style={{
+              width: '100%', background: '#6A9BC2', border: 'none',
+              borderRadius: 16, padding: '16px', cursor: 'pointer'
+            }}>
+              <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: '#FFFFFF', fontWeight: 600 }}>
+                That helps. What else?
+              </span>
+            </button>
+          </>
+        )}
+
+        {/* Step 3: Grounding */}
+        {checkStep === 3 && (
+          <>
+            <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: textMain, fontWeight: 500, marginBottom: 8 }}>
+              Let's ground your body too
+            </p>
+            <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMuted, lineHeight: 1.7, marginBottom: 20 }}>
+              Your nervous system needs a signal that you're safe. Choose one:
+            </p>
+
+            {GROUNDING_EXERCISES.map((exercise, i) => (
+              <button key={i} onClick={() => {
+                setCurrentExercise(exercise);
+                setExerciseStep(0);
+              }} style={{
+                width: '100%', background: currentExercise === exercise ? '#7BA68C15' : glassBg,
+                backdropFilter: 'blur(12px)',
+                border: `1px solid ${currentExercise === exercise ? '#7BA68C40' : glassBorder}`,
+                borderRadius: 20, padding: '16px 18px', cursor: 'pointer',
+                marginBottom: 10, textAlign: 'left'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: currentExercise === exercise ? 12 : 0 }}>
+                  <span style={{ fontSize: 24 }}>{exercise.icon}</span>
+                  <div>
+                    <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 14, color: textMain, fontWeight: 500 }}>{exercise.name}</p>
+                    <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 10, color: textMuted }}>{exercise.duration}</p>
+                  </div>
+                </div>
+                {currentExercise === exercise && (
+                  <div style={{ marginTop: 8 }}>
+                    {exercise.steps.map((step, j) => (
+                      <div key={j} style={{
+                        display: 'flex', alignItems: 'center', gap: 10,
+                        padding: '8px 0',
+                        opacity: j <= exerciseStep ? 1 : 0.4
+                      }}>
+                        <div style={{
+                          width: 20, height: 20, borderRadius: '50%',
+                          background: j <= exerciseStep ? '#7BA68C' : 'transparent',
+                          border: `1.5px solid ${j <= exerciseStep ? '#7BA68C' : textLight}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 10, color: '#FFF', flexShrink: 0
+                        }}>
+                          {j < exerciseStep ? '✓' : j + 1}
+                        </div>
+                        <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMain }}>
+                          {step}
+                        </span>
+                      </div>
+                    ))}
+                    <button onClick={(e) => {
+                      e.stopPropagation();
+                      if (exerciseStep < exercise.steps.length - 1) setExerciseStep(exerciseStep + 1);
+                      else setCheckStep(4);
+                    }} style={{
+                      width: '100%', background: '#7BA68C', border: 'none',
+                      borderRadius: 12, padding: '10px', cursor: 'pointer', marginTop: 8
+                    }}>
+                      <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: '#FFFFFF', fontWeight: 600 }}>
+                        {exerciseStep < exercise.steps.length - 1 ? 'Next' : 'Done'}
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </button>
+            ))}
+          </>
+        )}
+
+        {/* Step 4: Reflect */}
+        {checkStep === 4 && (
+          <>
+            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+              <span style={{ fontSize: 48 }}>🌿</span>
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: textMain, fontWeight: 500, marginTop: 12 }}>
+                How are you feeling now?
+              </p>
+            </div>
+
+            <div style={{
+              background: glassBg, backdropFilter: 'blur(16px)',
+              border: `1px solid ${glassBorder}`, borderRadius: 20,
+              padding: '20px', marginBottom: 20
+            }}>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 12, color: textMuted, marginBottom: 8 }}>
+                Intensity now: {postIntensity || intensity}/10
+              </p>
+              <input type="range" min="1" max="10" value={postIntensity || intensity}
+                onChange={(e) => setPostIntensity(Number(e.target.value))}
+                style={{ width: '100%', accentColor: '#7BA68C' }}
+              />
+              {postIntensity && postIntensity < intensity && (
+                <p style={{
+                  fontFamily: "'Manrope', sans-serif", fontSize: 12,
+                  color: '#7BA68C', fontWeight: 500, marginTop: 8
+                }}>Down from {intensity} to {postIntensity}. That's real progress. 💚</p>
+              )}
+            </div>
+
+            <div style={{
+              background: `${gold}10`, border: `1px solid ${gold}25`,
+              borderRadius: 20, padding: '20px', marginBottom: 20
+            }}>
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 17, color: textMain, fontWeight: 500, lineHeight: 1.5, fontStyle: 'italic' }}>
+                "Between the trigger and the response, there is a space. In that space is your power to choose."
+              </p>
+              <p style={{ fontFamily: "'Manrope', sans-serif", fontSize: 11, color: textMuted, marginTop: 8 }}>
+                You just used that space. Be proud of yourself.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => { setView('home'); setSelectedScenario(null); setCheckStep(0); }} style={{
+                flex: 1, background: glassBg, border: `1px solid ${glassBorder}`,
+                borderRadius: 16, padding: '14px', cursor: 'pointer'
+              }}>
+                <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: textMain }}>Done</span>
+              </button>
+              <button style={{
+                flex: 1, background: gold, border: 'none',
+                borderRadius: 16, padding: '14px', cursor: 'pointer'
+              }}>
+                <span style={{ fontFamily: "'Manrope', sans-serif", fontSize: 13, color: '#FFF', fontWeight: 600 }}>Save to Journal</span>
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
+      minHeight: '100vh', background: darkMode ? '#020805' : '#F0EDE8',
+      padding: 20, fontFamily: "'Manrope', sans-serif"
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        ::-webkit-scrollbar { display: none; }
+      `}</style>
+
+      <div style={{
+        width: 390, minHeight: 844, background: bg,
+        borderRadius: 44, overflow: 'hidden', position: 'relative',
+        boxShadow: darkMode
+          ? '0 25px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(197,160,89,0.08)'
+          : '0 25px 80px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)',
+      }}>
+        <div style={{ height: 844, overflowY: 'auto', scrollbarWidth: 'none' }}>
+          {view === 'home' && renderHome()}
+          {view === 'checkin' && renderCheckIn()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<RSDCheckIn />, document.getElementById('root'));
