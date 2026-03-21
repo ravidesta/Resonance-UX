@@ -116,6 +116,34 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: ResonanceSpacing.md) {
             sectionHeader("Storage Backend", subtitle: "Where backups are stored")
 
+            settingsGroup("This Device") {
+                HStack(spacing: 12) {
+                    Image(systemName: viewModel.currentDevice.icon)
+                        .font(.title2)
+                        .foregroundColor(ResonanceColors.goldPrimary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(viewModel.currentDevice.rawValue)
+                            .font(ResonanceTypography.bodySystem)
+                            .foregroundColor(ResonanceColors.textMain)
+                        Text("Local backups: \(viewModel.backupPath)")
+                            .font(ResonanceTypography.captionSystem)
+                            .foregroundColor(ResonanceColors.textLight)
+                    }
+                    Spacer()
+                }
+                HStack {
+                    Text("Device label")
+                        .font(ResonanceTypography.bodySystem)
+                    Spacer()
+                    TextField("My iPhone", text: $viewModel.deviceLabel)
+                        .frame(width: 200)
+                        .textFieldStyle(.roundedBorder)
+                }
+                Text("Label identifies this device in cloud backups (e.g. s3://bucket/My-iPhone/repo)")
+                    .font(ResonanceTypography.captionSystem)
+                    .foregroundColor(ResonanceColors.textLight)
+            }
+
             Text("Current: \(viewModel.kopiaConfig.storageBackend.displayName)")
                 .font(ResonanceTypography.bodySystem)
 
@@ -202,6 +230,98 @@ struct SettingsView: View {
                         Text(viewModel.azureProgress)
                             .font(ResonanceTypography.captionSystem)
                             .foregroundColor(ResonanceColors.strategicBlue)
+                    }
+                }
+            }
+
+            settingsGroup("Amazon S3 — Live Garden") {
+                Toggle("Sync repos to Amazon S3", isOn: $viewModel.uploadToS3)
+
+                if viewModel.uploadToS3 {
+                    HStack {
+                        Text("S3 Bucket")
+                        Spacer()
+                        TextField("my-github-backups", text: $viewModel.s3Bucket)
+                            .frame(width: 200)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    HStack {
+                        Text("Region")
+                        Spacer()
+                        TextField("us-east-1", text: $viewModel.s3Region)
+                            .frame(width: 200)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    HStack {
+                        Text("Access Key")
+                        Spacer()
+                        TextField("AKIA...", text: $viewModel.s3AccessKey)
+                            .frame(width: 200)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    HStack {
+                        Text("Secret Key")
+                        Spacer()
+                        SecureField("Secret access key", text: $viewModel.s3SecretKey)
+                            .frame(width: 200)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    HStack {
+                        Text("Path Prefix")
+                        Spacer()
+                        TextField("resonance-backups", text: $viewModel.s3Prefix)
+                            .frame(width: 200)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    Text("Each device syncs to its own S3 folder: s3://\(viewModel.s3Bucket.isEmpty ? "bucket" : viewModel.s3Bucket)/\(viewModel.s3Prefix.isEmpty ? viewModel.deviceLabel : "\(viewModel.s3Prefix)/\(viewModel.deviceLabel)")/repo-name")
+                        .font(ResonanceTypography.captionSystem)
+                        .foregroundColor(ResonanceColors.textLight)
+
+                    HStack(spacing: ResonanceSpacing.sm) {
+                        Image(systemName: "iphone")
+                        Image(systemName: "ipad")
+                        Image(systemName: "desktopcomputer")
+                        Text("All devices keep local + Amazon copies in sync")
+                            .font(ResonanceTypography.captionSystem)
+                            .foregroundColor(ResonanceColors.textMuted)
+                    }
+
+                    if !viewModel.portfolios.isEmpty {
+                        Button(action: {
+                            Task {
+                                await MainActor.run { viewModel.isLoading = true }
+                                await viewModel.uploadAllToS3()
+                                await MainActor.run { viewModel.isLoading = false }
+                            }
+                        }) {
+                            HStack(spacing: 8) {
+                                if viewModel.isLoading {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                } else {
+                                    Image(systemName: "leaf.arrow.triangle.circlepath")
+                                }
+                                Text(viewModel.isLoading ? "Syncing..." : "Sync to Amazon Now")
+                                    .font(ResonanceTypography.bodySystem)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(ResonanceColors.growthGreen.opacity(0.15))
+                            .foregroundColor(ResonanceColors.growthGreen)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(ResonanceColors.growthGreen.opacity(0.4), lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(viewModel.s3Bucket.isEmpty || viewModel.s3AccessKey.isEmpty || viewModel.s3SecretKey.isEmpty || viewModel.isLoading)
+                    }
+
+                    if !viewModel.s3Progress.isEmpty {
+                        Text(viewModel.s3Progress)
+                            .font(ResonanceTypography.captionSystem)
+                            .foregroundColor(ResonanceColors.growthGreen)
                     }
                 }
             }

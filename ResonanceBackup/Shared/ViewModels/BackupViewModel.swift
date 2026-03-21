@@ -5,6 +5,45 @@
 import SwiftUI
 import Combine
 
+// MARK: - Device Type
+
+enum ResonanceDevice: String, CaseIterable, Identifiable {
+    case iPhone = "iPhone"
+    case iPad = "iPad"
+    case mac = "Mac"
+
+    var id: String { rawValue }
+
+    var icon: String {
+        switch self {
+        case .iPhone: return "iphone"
+        case .iPad: return "ipad"
+        case .mac: return "desktopcomputer"
+        }
+    }
+
+    var defaultBackupPath: String {
+        switch self {
+        case .iPhone:
+            return NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+                .map { $0 + "/ResonanceBackups" } ?? "~/ResonanceBackups"
+        case .iPad:
+            return NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+                .map { $0 + "/ResonanceBackups" } ?? "~/ResonanceBackups"
+        case .mac:
+            return "~/ResonanceBackups"
+        }
+    }
+
+    static var current: ResonanceDevice {
+        #if os(macOS)
+        return .mac
+        #else
+        return UIDevice.current.userInterfaceIdiom == .pad ? .iPad : .iPhone
+        #endif
+    }
+}
+
 class BackupViewModel: ObservableObject {
     // MARK: - Published State
     @Published var portfolios: [Portfolio] = []
@@ -16,13 +55,26 @@ class BackupViewModel: ObservableObject {
     @Published var selectedNavigation: NavigationDestination = .gallery
     @Published var globalCommandOutput: String = ""
     @Published var githubToken: String = ""
-    @Published var backupPath: String = "~/ResonanceBackups"
+    @Published var backupPath: String = ResonanceDevice.current.defaultBackupPath
     @Published var cloneProgress: String = ""
     @Published var azureAccount: String = ""
     @Published var azureContainer: String = ""
     @Published var azureKey: String = ""
     @Published var uploadToAzure: Bool = false
     @Published var azureProgress: String = ""
+
+    // Amazon S3
+    @Published var uploadToS3: Bool = false
+    @Published var s3Bucket: String = ""
+    @Published var s3Region: String = "us-east-1"
+    @Published var s3AccessKey: String = ""
+    @Published var s3SecretKey: String = ""
+    @Published var s3Prefix: String = ""
+    @Published var s3Progress: String = ""
+
+    // Device
+    @Published var currentDevice: ResonanceDevice = .current
+    @Published var deviceLabel: String = ResonanceDevice.current.rawValue
 
     // Services
     let backupService = GitHubBackupService()
@@ -132,6 +184,11 @@ class BackupViewModel: ObservableObject {
             await uploadAllToAzure()
         }
 
+        // Upload to Amazon S3 if enabled
+        if uploadToS3 && !s3Bucket.isEmpty && !s3AccessKey.isEmpty && !s3SecretKey.isEmpty {
+            await uploadAllToS3()
+        }
+
         await MainActor.run {
             isLoading = false
             let succeeded = portfolios.filter { $0.backupStatus == .synced }.count
@@ -174,6 +231,53 @@ class BackupViewModel: ObservableObject {
         let uploaded = portfolios.filter { $0.backupStatus == .synced }.count
         await MainActor.run {
             azureProgress = "Azure upload done — \(uploaded) repos → \(azureAccount)/\(azureContainer)"
+        }
+    }
+
+    // MARK: - Amazon S3 Upload
+
+    func uploadAllToS3() async {
+        let dest = resolvedBackupPath
+        // Include device name in S3 prefix so each device gets its own garden
+        let devicePrefix: String
+        if s3Prefix.isEmpty {
+            devicePrefix = deviceLabel
+        } else {
+            devicePrefix = "\(s3Prefix.trimmingCharacters(in: CharacterSet(charactersIn: "/")))/\(deviceLabel)"
+        }
+
+        for (i, portfolio) in portfolios.enumerated() {
+            let repoDir = "\(dest)/\(portfolio.repositoryName).git"
+            guard portfolio.backupStatus == .synced else { continue }
+
+            await MainActor.run {
+                s3Progress = "Syncing [\(i + 1)/\(portfolios.count)] \(portfolio.repositoryName) → S3..."
+            }
+
+            let result = await backupService.uploadToS3(
+                repoPath: repoDir,
+                repoName: portfolio.repositoryName,
+                bucket: s3Bucket,
+                region: s3Region,
+                accessKey: s3AccessKey,
+                secretKey: s3SecretKey,
+                prefix: devicePrefix
+            )
+
+            await MainActor.run {
+                logChange(
+                    portfolioID: portfolio.id,
+                    action: .backup,
+                    description: result.isSuccess
+                        ? "Synced to S3 (\(s3Bucket)/\(devicePrefix)/\(portfolio.repositoryName))"
+                        : "S3 upload failed: \(result.output)"
+                )
+            }
+        }
+
+        let uploaded = portfolios.filter { $0.backupStatus == .synced }.count
+        await MainActor.run {
+            s3Progress = "Amazon sync done — \(uploaded) repos → s3://\(s3Bucket)/\(devicePrefix)/"
         }
     }
 

@@ -232,6 +232,46 @@ class GitHubBackupService: ObservableObject {
         ])
     }
 
+    // MARK: - Amazon S3 Storage
+
+    /// Upload a repo directory to Amazon S3.
+    /// Tries aws cli s3 sync for efficient incremental uploads.
+    func uploadToS3(repoPath: String, repoName: String,
+                    bucket: String, region: String,
+                    accessKey: String, secretKey: String,
+                    prefix: String) async -> CommandResult {
+        let s3Path: String
+        if prefix.isEmpty {
+            s3Path = "s3://\(bucket)/\(repoName)/"
+        } else {
+            let trimmed = prefix.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            s3Path = "s3://\(bucket)/\(trimmed)/\(repoName)/"
+        }
+
+        // Set credentials via environment by using env command
+        // aws s3 sync is ideal — incremental, only uploads changed files
+        let syncResult = await executeCommand("env", arguments: [
+            "AWS_ACCESS_KEY_ID=\(accessKey)",
+            "AWS_SECRET_ACCESS_KEY=\(secretKey)",
+            "AWS_DEFAULT_REGION=\(region)",
+            "aws", "s3", "sync",
+            repoPath, s3Path,
+            "--delete"
+        ])
+
+        if syncResult.isSuccess { return syncResult }
+
+        // Fallback: aws s3 cp --recursive
+        return await executeCommand("env", arguments: [
+            "AWS_ACCESS_KEY_ID=\(accessKey)",
+            "AWS_SECRET_ACCESS_KEY=\(secretKey)",
+            "AWS_DEFAULT_REGION=\(region)",
+            "aws", "s3", "cp",
+            repoPath, s3Path,
+            "--recursive"
+        ])
+    }
+
     func getRepositoryInfo(repoPath: String) async -> CommandResult {
         return await executeCommand("git", arguments: [
             "-C", repoPath, "log", "--oneline", "-20"
